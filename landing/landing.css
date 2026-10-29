@@ -616,17 +616,73 @@ h2 {
   font: inherit;
 }
 
-.status {
-  min-height: 1.55em;
-  margin-top: 18px;
-  color: var(--muted);
+.card .status {
+  flex: none;
+  font-size: 15px;
+}
+
+.status:empty {
+  display: none;
 }
 
 .status.error {
   color: #ff8a8a;
 }
 
-/* Chart picker */
+.status a {
+  color: var(--text);
+}
+
+/* Demo charts: one tile per chart, linking straight to practice mode */
+
+.demo-charts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.demo-chart {
+  --diff: #a0a4ad;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 64px;
+  padding: 8px 4px;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--diff);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.demo-chart:hover {
+  background: var(--surface-hover);
+}
+
+.demo-chart .meter {
+  color: var(--diff);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Chart picker, shown as a dialog */
+
+.picker {
+  width: min(640px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  color: var(--text);
+}
+
+.picker::backdrop {
+  background: rgba(5, 6, 8, 0.7);
+}
 
 .picker-head {
   display: flex;

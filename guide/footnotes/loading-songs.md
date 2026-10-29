@@ -6,12 +6,13 @@ You can try the demo song, load a song from a link, or open a song folder from y
 ## The demo song
 
 The [Footnotes home page](https://chihduo.github.io/footnotes/) has a one-minute demo song with Beginner, Easy and Medium charts.
-It was made for Footnotes, so you can share it freely.
+**Try the demo song** opens the Beginner chart, and the **Try the demo** card has a button for each chart.
+The song was made for Footnotes, so you can share it freely.
 
 ## From a link
 
 Paste a link to a `.sm` or `.ssc` file into **From a link** on the home page and press **Find charts**.
-Footnotes lists the charts in the file, and you pick the one you want to practice.
+Footnotes lists the charts in the file in a pop-up, and you pick the one you want to practice.
 
 For a link to work:
 
