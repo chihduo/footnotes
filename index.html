@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>self["MonacoEnvironment"] = (function (paths) {
+          return {
+            globalAPI: false,
+            getWorkerUrl : function (moduleId, label) {
+              var result =  paths[label];
+              if (/^((http:)|(https:)|(file:)|(\/\/))/.test(result)) {
+                var currentUrl = String(window.location);
+                var currentOrigin = currentUrl.substr(0, currentUrl.length - window.location.hash.length - window.location.search.length - window.location.pathname.length);
+                if (result.substring(0, currentOrigin.length) !== currentOrigin) {
+                  var js = '/*' + label + '*/importScripts("' + result + '");';
+                  var blob = new Blob([js], { type: 'application/javascript' });
+                  return URL.createObjectURL(blob);
+                }
+              }
+              return result;
+            }
+          };
+        })({
+  "typescript": "/footnotes/monacoeditorwork/ts.worker.bundle.js",
+  "editorWorkerService": "/footnotes/monacoeditorwork/editor.worker.bundle.js",
+  "javascript": "/footnotes/monacoeditorwork/ts.worker.bundle.js"
+});</script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Footnotes helps you learn to dance StepMania charts. A dancing bot shows which foot goes where, right above the arrows you're about to hit."
+    />
+    <meta property="og:title" content="Footnotes" />
+    <meta
+      property="og:description"
+      content="The notes, with your feet written in. Learn to dance any StepMania chart with a dancing bot that shows your footing."
+    />
+    <meta
+      property="og:image"
+      content="https://chihduo.github.io/footnotes/media/footnotes-og.png"
+    />
+    <meta name="theme-color" content="#121316" />
+    <link rel="icon" type="image/svg+xml" href="/footnotes/assets/icon/footnotes.svg" />
+    <title>Footnotes · Learn to dance any StepMania chart</title>
+    <script type="module" crossorigin src="/footnotes/main.js"></script>
+    <link rel="modulepreload" crossorigin href="/footnotes/modulepreload-polyfill-B5Qt9EMX.js">
+    <link rel="modulepreload" crossorigin href="/footnotes/preload-helper-DKEB-Rd8.js">
+    <link rel="stylesheet" crossorigin href="/footnotes/assets/main-DsKASd9z.css">
+  <link rel="manifest" href="/footnotes/manifest.json"></head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="sole" viewBox="-11 -1 22 48">
+          <path
+            d="M0 0C6.5 0 10 4.6 10 11.5 10 18 7.4 21.5 6.2 25 5.4 27.6 6.6 30.5 6.6 35 6.6 41.5 3.9 46 0 46S-6.6 41.5-6.6 35C-6.6 30.5-5.4 27.6-6.2 25-7.4 21.5-10 18-10 11.5-10 4.6-6.5 0 0 0Z"
+          />
+        </symbol>
+        <symbol id="arrow" viewBox="0 0 64 64">
+          <path
+            d="M8 32 30 10v13h26v18H30v13Z"
+            stroke-linejoin="round"
+            stroke-width="5"
+          />
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="site-header">
+      <div class="container header-row">
+        <a class="brand" href="./">
+          <img src="/footnotes/assets/icon/footnotes.svg" alt="" width="32" height="32" />
+          <span>Footnotes</span>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <a href="guide/footnotes/">Guide</a>
+          <a href="app/">Chart editor</a>
+          <a href="https://github.com/chihduo/footnotes">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-text">
+            <h1>Footnotes</h1>
+            <p class="tagline">The notes, with your feet written in.</p>
+            <p class="lede">
+              Learn to dance any StepMania chart. A dancing bot shows which foot
+              goes where, right above the arrows you're about to hit.
+            </p>
+            <div class="hero-actions">
+              <button class="button primary" id="hero-demo" type="button">
+                Try the demo song
+              </button>
+              <a class="button" href="#start">Load your own song</a>
+            </div>
+          </div>
+
+          <div class="minibot" aria-hidden="true">
+            <div class="pad">
+              <div class="panel panel-up">
+                <svg class="arrow up"><use href="#arrow" /></svg>
+              </div>
+              <div class="panel panel-left">
+                <svg class="arrow left"><use href="#arrow" /></svg>
+              </div>
+              <div class="panel panel-right">
+                <svg class="arrow right"><use href="#arrow" /></svg>
+              </div>
+              <div class="panel panel-down">
+                <svg class="arrow down"><use href="#arrow" /></svg>
+              </div>
+              <div class="foot foot-left">
+                <svg><use href="#sole" /></svg><span>L</span>
+              </div>
+              <div class="foot foot-right">
+                <svg><use href="#sole" /></svg><span>R</span>
+              </div>
+            </div>
+            <div class="lane">
+              <div class="receptors">
+                <svg class="arrow left"><use href="#arrow" /></svg>
+                <svg class="arrow down"><use href="#arrow" /></svg>
+                <svg class="arrow up"><use href="#arrow" /></svg>
+                <svg class="arrow right"><use href="#arrow" /></svg>
+              </div>
+              <svg class="note arrow left"><use href="#arrow" /></svg>
+              <svg class="note arrow down"><use href="#arrow" /></svg>
+              <svg class="note arrow up"><use href="#arrow" /></svg>
+              <svg class="note arrow right"><use href="#arrow" /></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="start">
+        <div class="container">
+          <h2>Pick a song</h2>
+          <p class="section-lede">
+            Footnotes plays StepMania simfiles (.sm and .ssc) together with
+            their music.
+          </p>
+          <div class="cards">
+            <div class="card">
+              <h3>Try the demo</h3>
+              <p>
+                A one-minute practice song made for Footnotes, with Beginner,
+                Easy and Medium charts.
+              </p>
+              <button class="button primary" id="demo-button" type="button">
+                Load the demo
+              </button>
+            </div>
+            <div class="card">
+              <h3>From a link</h3>
+              <p>
+                Paste a link to a .sm or .ssc file. Its music file has to sit
+                next to it.
+              </p>
+              <form class="link-form" id="link-form">
+                <label class="visually-hidden" for="link-input"
+                  >Link to a .sm or .ssc file</label
+                >
+                <input
+                  id="link-input"
+                  type="url"
+                  required
+                  placeholder="https://…/song.ssc"
+                  autocomplete="url"
+                />
+                <button class="button" type="submit">Find charts</button>
+              </form>
+            </div>
+            <div class="card">
+              <h3>From your computer</h3>
+              <p>
+                Import a song folder that holds a .sm or .ssc file and its
+                music. It stays in your browser.
+              </p>
+              <a class="button" href="app/?flags=D">Open a song folder</a>
+            </div>
+          </div>
+
+          <p class="status" id="status" role="status"></p>
+
+          <div class="picker" id="picker" hidden>
+            <div class="picker-head">
+              <div>
+                <h3 id="picker-title"></h3>
+                <p class="muted" id="picker-artist"></p>
+              </div>
+              <button
+                class="icon-button"
+                id="picker-close"
+                type="button"
+                aria-label="Close the chart list"
+              >
+                ×
+              </button>
+            </div>
+            <p class="picker-hint">Choose a chart to start practicing.</p>
+            <div id="picker-charts"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h2>How it works</h2>
+          <ol class="steps">
+            <li class="step">
+              <div class="step-icon">
+                <svg class="sole-icon left"><use href="#sole" /></svg>
+                <svg class="sole-icon right"><use href="#sole" /></svg>
+              </div>
+              <h3>Watch the bot</h3>
+              <p>
+                The pad at the top shows where each foot goes. Blue is your left
+                foot, orange is your right.
+              </p>
+            </li>
+            <li class="step">
+              <div class="step-icon">
+                <svg class="arrow up note-icon"><use href="#arrow" /></svg>
+              </div>
+              <h3>Read the arrows</h3>
+              <p>
+                Arrows rise into the targets just under the bot. Step as they
+                reach them, and they slide away under the pad.
+              </p>
+            </li>
+            <li class="step">
+              <div class="step-icon">
+                <span class="rate-badge">75%</span>
+              </div>
+              <h3>Practice at your pace</h3>
+              <p>
+                Slow the song down, change the scroll speed, and jump to any
+                part of the chart from the strip on the right.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h2>See it in action</h2>
+          <figure class="preview">
+            <video
+              src="media/footnotes-preview.webm"
+              poster="media/footnotes-preview.jpg"
+              autoplay
+              muted
+              loop
+              playsinline
+            ></video>
+            <figcaption>
+              The demo song's Medium chart: the bot crosses its feet over, and
+              the arrows below show what's coming next.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container controls-grid">
+          <div>
+            <h2>Controls</h2>
+            <p class="section-lede">
+              Everything you need while practicing stays on screen. These keys
+              make it quicker.
+            </p>
+            <a class="button" href="guide/footnotes/controls.html"
+              >All controls</a
+            >
+          </div>
+          <table class="keys">
+            <tbody>
+              <tr>
+                <th scope="row">Play or pause</th>
+                <td><kbd>Space</kbd></td>
+              </tr>
+              <tr>
+                <th scope="row">Slower or faster</th>
+                <td><kbd>Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd></td>
+              </tr>
+              <tr>
+                <th scope="row">Scroll speed</th>
+                <td><kbd>Shift</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd></td>
+              </tr>
+              <tr>
+                <th scope="row">Back to the start</th>
+                <td><kbd>Home</kbd></td>
+              </tr>
+              <tr>
+                <th scope="row">Choose another chart</th>
+                <td>
+                  <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd>
+                  <span class="muted">(⌘ ⇧ O on Mac)</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Open the chart editor</th>
+                <td><kbd>Shift</kbd> + <kbd>H</kbd></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p>
+          Footnotes is built on
+          <a href="https://github.com/tillvit/smeditor">SMEditor</a> by tillvit
+          and released under the MIT License.
+        </p>
+        <nav aria-label="Footer">
+          <a href="guide/footnotes/">Guide</a>
+          <a href="app/">Chart editor</a>
+          <a href="https://github.com/chihduo/footnotes">GitHub</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>
