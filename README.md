@@ -7,7 +7,7 @@
 <a href="https://chihduo.github.io/footnotes/"><img src=".github/readme/hero.svg" width="100%" alt="Footnotes. The notes, with your feet written in. Learn to dance any StepMania chart. A dancing bot shows which foot goes where, right above the arrows you're about to hit." /></a>
 
 <p>
-  <a href="https://chihduo.github.io/footnotes/?song=https%3A%2F%2Fchihduo.github.io%2Ffootnotes%2Fdemo%2Ffootnotes-demo.sm"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
+  <a href="https://chihduo.github.io/footnotes/app/?url=../demo/footnotes-demo.sm&chartType=dance-single&chartIndex=0&flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/button-songs.svg" height="44" alt="Load your own song" /></a>
 </p>
 
@@ -16,7 +16,7 @@
 Footnotes plays StepMania simfiles (`.sm` and `.ssc`) together with their music.
 
 <p>
-  <a href="https://chihduo.github.io/footnotes/?song=https%3A%2F%2Fchihduo.github.io%2Ffootnotes%2Fdemo%2Ffootnotes-demo.sm"><img src=".github/readme/card-demo.svg" width="32%" alt="Try the demo: a one-minute practice song made for Footnotes, with Beginner, Easy and Medium charts." /></a>
+  <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-demo.svg" width="32%" alt="Try the demo: a one-minute practice song made for Footnotes. Pick a chart to start dancing: Beginner 1, Easy 3 or Medium 5." /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-link.svg" width="32%" alt="From a link: paste a link to a .sm or .ssc file. Its music file has to sit next to it." /></a>
   <a href="https://chihduo.github.io/footnotes/app/?flags=D"><img src=".github/readme/card-computer.svg" width="32%" alt="From your computer: import a song folder that holds a .sm or .ssc file and its music. It stays in your browser." /></a>
 </p>

@@ -66,9 +66,11 @@
               goes where, right above the arrows you're about to hit.
             </p>
             <div class="hero-actions">
-              <button class="button primary" id="hero-demo" type="button">
-                Try the demo song
-              </button>
+              <a
+                class="button primary"
+                href="app/?url=../demo/footnotes-demo.sm&amp;chartType=dance-single&amp;chartIndex=0&amp;flags=D"
+                >Try the demo song</a
+              >
               <a class="button" href="#start">Load your own song</a>
             </div>
           </div>
@@ -121,12 +123,26 @@
             <div class="card">
               <h3>Try the demo</h3>
               <p>
-                A one-minute practice song made for Footnotes, with Beginner,
-                Easy and Medium charts.
+                A one-minute practice song made for Footnotes. Pick a chart to
+                start dancing.
               </p>
-              <button class="button primary" id="demo-button" type="button">
-                Load the demo
-              </button>
+              <div class="demo-charts">
+                <a
+                  class="demo-chart diff-beginner"
+                  href="app/?url=../demo/footnotes-demo.sm&amp;chartType=dance-single&amp;chartIndex=0&amp;flags=D"
+                  ><span class="meter">1</span>Beginner</a
+                >
+                <a
+                  class="demo-chart diff-easy"
+                  href="app/?url=../demo/footnotes-demo.sm&amp;chartType=dance-single&amp;chartIndex=1&amp;flags=D"
+                  ><span class="meter">3</span>Easy</a
+                >
+                <a
+                  class="demo-chart diff-medium"
+                  href="app/?url=../demo/footnotes-demo.sm&amp;chartType=dance-single&amp;chartIndex=2&amp;flags=D"
+                  ><span class="meter">5</span>Medium</a
+                >
+              </div>
             </div>
             <div class="card">
               <h3>From a link</h3>
@@ -147,6 +163,7 @@
                 />
                 <button class="button" type="submit">Find charts</button>
               </form>
+              <p class="status" id="status" role="status"></p>
             </div>
             <div class="card">
               <h3>From your computer</h3>
@@ -158,26 +175,21 @@
             </div>
           </div>
 
-          <p class="status" id="status" role="status"></p>
-
-          <div class="picker" id="picker" hidden>
+          <dialog class="picker" id="picker" aria-labelledby="picker-title">
             <div class="picker-head">
               <div>
                 <h3 id="picker-title"></h3>
                 <p class="muted" id="picker-artist"></p>
               </div>
-              <button
-                class="icon-button"
-                id="picker-close"
-                type="button"
-                aria-label="Close the chart list"
-              >
-                ×
-              </button>
+              <form method="dialog">
+                <button class="icon-button" aria-label="Close the chart list">
+                  ×
+                </button>
+              </form>
             </div>
             <p class="picker-hint">Choose a chart to start practicing.</p>
             <div id="picker-charts"></div>
-          </div>
+          </dialog>
         </div>
       </section>
 

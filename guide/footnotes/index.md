@@ -8,9 +8,9 @@ Copy its feet while you read the arrows, and slow the song down until the patter
 
 ## Your first song
 
-1. Open [Footnotes](https://chihduo.github.io/footnotes/) and press **Try the demo song**.
-2. Pick a chart. **Beginner** is a good place to start.
-3. Press <kbd>Space</kbd> or the play button to start the song, and watch the bot.
+1. Open [Footnotes](https://chihduo.github.io/footnotes/) and press **Try the demo song**. It opens the demo's **Beginner** chart.
+2. Press <kbd>Space</kbd> or the play button to start the song, and watch the bot.
+3. When you're ready for more, pick **Easy** or **Medium** in the **Try the demo** card on the home page, or press **Charts** in the bottom bar.
 
 To practice your own songs, see [Loading songs](./loading-songs).
 

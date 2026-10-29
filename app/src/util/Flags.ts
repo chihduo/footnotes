@@ -22,7 +22,8 @@ export function loadFlags() {
   const url = params.get("url")
   if (url != null) {
     try {
-      Flags.url = new URL(url).toString()
+      // Relative links, like ../demo/footnotes-demo.sm, resolve against the app's page
+      Flags.url = new URL(url, location.href).toString()
     } catch {
       WaterfallManager.createFormatted("Invalid url " + url, "warn")
       Flags.url = null

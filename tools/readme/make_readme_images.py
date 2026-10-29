@@ -194,44 +194,74 @@ def paragraph(ts, lines, top):
     )
 
 
+DEMO_CHARTS = [("Beginner", 1, "#3fd6f5"), ("Easy", 3, "#6ad35f"), ("Medium", 5, "#ffd23f")]
+
+
+def demo_tiles(ts, y):
+    """The demo card's chart tiles: a colored top edge, the meter and the difficulty."""
+    gap = 8
+    width = (TEXT_WIDTH - 2 * gap) / 3
+    defs, body = "", ""
+    for i, (label, meter, color) in enumerate(DEMO_CHARTS):
+        x = PAD + i * (width + gap)
+        defs += (
+            f'<clipPath id="tile-{i}"><rect x="{num(x)}" y="{y}" width="{num(width)}" '
+            'height="64" rx="12"/></clipPath>'
+        )
+        body += (
+            f'<g clip-path="url(#tile-{i})">'
+            f'<rect x="{num(x)}" y="{y}" width="{num(width)}" height="64" fill="{SURFACE}"/>'
+            f'<rect x="{num(x)}" y="{y}" width="{num(width)}" height="3" fill="{color}"/></g>'
+            f'<rect x="{num(x + 0.5)}" y="{y + 0.5}" width="{num(width - 1)}" height="63" '
+            f'rx="11.5" fill="none" {BORDER}/>'
+        )
+        meter_width = ts.width(str(meter), 800, 22)
+        body += ts.text(str(meter), 800, 22, x + (width - meter_width) / 2, y + 30, color)
+        label_width = ts.width(label, 700, 15)
+        body += ts.text(label, 700, 15, x + (width - label_width) / 2, y + 51, TEXT)
+    return defs, body
+
+
 def make_song_cards(ts):
     """The three cards of the website's "Pick a song" section."""
     cards = [
         ("card-demo", "Try the demo",
-         "A one-minute practice song made for Footnotes, with Beginner, Easy and Medium charts.",
-         "Load the demo", True, False),
+         "A one-minute practice song made for Footnotes. Pick a chart to start dancing.",
+         "tiles", None),
         ("card-link", "From a link",
          "Paste a link to a .sm or .ssc file. Its music file has to sit next to it.",
-         "Find charts", False, True),
+         "input", "Find charts"),
         ("card-computer", "From your computer",
          "Import a song folder that holds a .sm or .ssc file and its music. It stays in your browser.",
-         "Open a song folder", False, False),
+         "button", "Open a song folder"),
     ]
+    controls_height = {"tiles": 64, "input": 96, "button": 44}
     wrapped = [ts.wrap(c[2], 400, 17, TEXT_WIDTH) for c in cards]
-    height = max(
-        PAD + 31 + 12 + len(lines) * LINE + 12 + (96 if c[5] else 44) + PAD
+    height = round(max(
+        PAD + 31 + 12 + len(lines) * LINE + 12 + controls_height[c[3]] + PAD
         for c, lines in zip(cards, wrapped)
-    )
-    height = round(height)
+    ))
     files = {}
-    for (name, title, text, label, primary, has_input), lines in zip(cards, wrapped):
+    for (name, title, text, kind, label), lines in zip(cards, wrapped):
+        defs = ""
         body = card_frame(CARD_WIDTH, height)
         body += ts.text(title, 800, 20, PAD, 45, TEXT)
         body += paragraph(ts, lines, 65)
-        button_y = height - PAD - 44
-        if has_input:
-            input_y = button_y - 8 - 44
-            body += (
-                f'<rect x="{PAD + 0.5}" y="{input_y + 0.5}" width="{TEXT_WIDTH - 1}" '
-                f'height="43" rx="10" fill="#0f1013" {BORDER}/>'
-            )
-            body += ts.text("https://…/song.ssc", 400, 17, PAD + 15, input_y + 27.8, "#6c707b")
-        part, _ = button(ts, label, PAD, button_y, primary)
-        body += part
-        files[name] = svg(
-            CARD_WIDTH, height, f"{title}. {text}", body,
-            defs=PRIMARY_GRADIENT if primary else "",
-        )
+        bottom = height - PAD
+        if kind == "tiles":
+            defs, tiles = demo_tiles(ts, bottom - 64)
+            body += tiles
+        else:
+            if kind == "input":
+                input_y = bottom - 44 - 8 - 44
+                body += (
+                    f'<rect x="{PAD + 0.5}" y="{input_y + 0.5}" width="{TEXT_WIDTH - 1}" '
+                    f'height="43" rx="10" fill="#0f1013" {BORDER}/>'
+                )
+                body += ts.text("https://…/song.ssc", 400, 17, PAD + 15, input_y + 27.8, "#6c707b")
+            part, _ = button(ts, label, PAD, bottom - 44, False)
+            body += part
+        files[name] = svg(CARD_WIDTH, height, f"{title}. {text}", body, defs=defs)
     return files
 
 
