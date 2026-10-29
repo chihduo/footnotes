@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Footnotes</title>
+  <defs>
+    <path
+      id="sole"
+      d="M0 0C6.5 0 10 4.6 10 11.5 10 18 7.4 21.5 6.2 25 5.4 27.6 6.6 30.5 6.6 35 6.6 41.5 3.9 46 0 46S-6.6 41.5-6.6 35C-6.6 30.5-5.4 27.6-6.2 25-7.4 21.5-10 18-10 11.5-10 4.6-6.5 0 0 0Z"
+    />
+  </defs>
+  <use href="#sole" fill="#2f9bff" transform="translate(18 15) rotate(-8)" />
+  <use href="#sole" fill="#ffad1f" transform="translate(46 4) rotate(8)" />
+</svg>

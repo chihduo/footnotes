@@ -26,6 +26,10 @@ import { Foot, ParityState } from "../../chart/stats/parity/ParityDataTypes"
 import { assignTint, getParityColor } from "../../util/Color"
 import { Flags } from "../../util/Flags"
 import { Options } from "../../util/Options"
+import {
+  BOT_PANEL_SIZE,
+  getPracticeBotPlacement,
+} from "../../util/PracticeLayout"
 import { BaseTimelineWidget } from "./timeline/BaseTimelineWidget"
 
 interface StagePanel extends Container {
@@ -38,13 +42,15 @@ interface FeetPosition {
   right: { x: number; y: number; angle: number }
 }
 
-const PANEL_SIZE = 80
+const PANEL_SIZE = BOT_PANEL_SIZE
 
 export class DancingBotWidget extends Widget {
   panels: StagePanel[] = []
   currentRow = -1
   lastBeat = 0
   lastSecond = 0
+  // Pivot used when the bot sits in the bottom right corner
+  cornerPivot = { x: 0, y: 0 }
 
   leftFoot?: Container
   rightFoot?: Container
@@ -154,7 +160,8 @@ export class DancingBotWidget extends Widget {
 
     this.addChild(this.leftFoot, this.rightFoot)
     this.lastBeat = -1
-    this.pivot.set(maxX + PANEL_SIZE / 2, maxY + PANEL_SIZE / 2)
+    this.cornerPivot = { x: maxX + PANEL_SIZE / 2, y: maxY + PANEL_SIZE / 2 }
+    this.pivot.set(this.cornerPivot.x, this.cornerPivot.y)
 
     const colorChange = (optionId: string) => {
       if (
@@ -194,11 +201,27 @@ export class DancingBotWidget extends Widget {
     const bestPath =
       this.manager.app.chartManager.loadedChart?.stats.parity?.states
 
-    const RIGHT_SAFE =
-      this.manager.chartManager.app.STAGE_WIDTH / 2 -
-      BaseTimelineWidget.getTotalWidgetWidth()
-    this.x = RIGHT_SAFE - 16
-    this.y = this.manager.app.STAGE_HEIGHT / 2 - 16
+    const app = this.manager.app
+    const gameTypeId = app.chartManager.loadedChart?.gameType.id
+    // In dance practice mode, the bot is enlarged and placed above the notefield
+    const placement =
+      Options.practice.enabled && gameTypeId
+        ? getPracticeBotPlacement(app.STAGE_WIDTH, app.STAGE_HEIGHT, gameTypeId)
+        : undefined
+    if (placement) {
+      this.scale.set(placement.scale)
+      this.pivot.set(placement.pivotX, placement.pivotY)
+      this.x = placement.x
+      this.y = placement.y
+    } else {
+      const RIGHT_SAFE =
+        this.manager.chartManager.app.STAGE_WIDTH / 2 -
+        BaseTimelineWidget.getTotalWidgetWidth()
+      this.scale.set(1)
+      this.pivot.set(this.cornerPivot.x, this.cornerPivot.y)
+      this.x = RIGHT_SAFE - 16
+      this.y = this.manager.app.STAGE_HEIGHT / 2 - 16
+    }
 
     if (
       !bestPath ||
@@ -206,7 +229,7 @@ export class DancingBotWidget extends Widget {
       !this.layout ||
       !Options.chart.parity.enabled ||
       !Options.chart.parity.showDancingBot ||
-      !Flags.barlines
+      (!Flags.barlines && !Options.practice.enabled)
     ) {
       this.visible = false
       return

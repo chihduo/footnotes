@@ -30,7 +30,7 @@ function Embed() {
   const loadOutputRef = useRef<HTMLDivElement>(null)
 
   function updateEmbedUrl() {
-    const url = new URL(`${location.origin}/smeditor/app/`)
+    const url = new URL(`${location.origin}${import.meta.env.BASE_URL}app/`)
     if (smURL !== undefined) url.searchParams.set("url", smURL)
     if (chartType !== undefined)
       url.searchParams.set(

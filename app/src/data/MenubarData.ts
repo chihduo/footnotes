@@ -130,6 +130,14 @@ export const MENUBAR_DATA: { [key: string]: MenuMain } = {
     title: "View",
     options: [
       {
+        type: "checkbox",
+        id: "togglePractice",
+        checked: () => Options.practice.enabled,
+      },
+      {
+        type: "separator",
+      },
+      {
         type: "dropdown",
         title: "Cursor",
         options: [

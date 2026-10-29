@@ -5,255 +5,301 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="An open source tool to view and edit StepMania charts."
+      content="Footnotes helps you learn to dance StepMania charts. A dancing bot shows which foot goes where, right above the arrows you're about to hit."
     />
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-9ZL269JG6H"
-    ></script>
-    <link rel="icon" type="image/mp4" href="/assets/icon/favicon.ico" />
+    <meta property="og:title" content="Footnotes" />
+    <meta
+      property="og:description"
+      content="The notes, with your feet written in. Learn to dance any StepMania chart with a dancing bot that shows your footing."
+    />
+    <meta
+      property="og:image"
+      content="https://chihduo.github.io/footnotes/media/footnotes-og.png"
+    />
+    <meta name="theme-color" content="#121316" />
+    <link rel="icon" type="image/svg+xml" href="/assets/icon/footnotes.svg" />
     <link rel="stylesheet" href="./index.css" />
-    <title>SMEditor</title>
+    <link rel="stylesheet" href="./landing/landing.css" />
+    <script type="module" src="./landing/main.ts"></script>
+    <title>Footnotes · Learn to dance any StepMania chart</title>
   </head>
   <body>
-    <div class="banner">
-      <img class="banner-background" src="assets/preview/banner.png" />
-      <div class="banner-content">
-        <div class="banner-title">
-          <img src="assets/icon/logo.png" />
-          <h1>SMEditor</h1>
-        </div>
-        <p>An open source tool to view and edit StepMania charts.</p>
-        <div class="banner-button-container">
-          <div
-            style="display: flex; flex-direction: column; align-items: center"
-          >
-            <a id="download-link">
-              <button id="download-button" class="large blue">
-                <div class="button-content">
-                  <svg
-                    width="800px"
-                    height="800px"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke="currentColor"
-                      d="M17 17H17.01M17.4 14H18C18.9319 14 19.3978 14 19.7654 14.1522C20.2554 14.3552 20.6448 14.7446 20.8478 15.2346C21 15.6022 21 16.0681 21 17C21 17.9319 21 18.3978 20.8478 18.7654C20.6448 19.2554 20.2554 19.6448 19.7654 19.8478C19.3978 20 18.9319 20 18 20H6C5.06812 20 4.60218 20 4.23463 19.8478C3.74458 19.6448 3.35523 19.2554 3.15224 18.7654C3 18.3978 3 17.9319 3 17C3 16.0681 3 15.6022 3.15224 15.2346C3.35523 14.7446 3.74458 14.3552 4.23463 14.1522C4.60218 14 5.06812 14 6 14H6.6M12 15V4M12 15L9 12M12 15L15 12"
-                      stroke="#000000"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                  <div class="button-text">
-                    <h3>Download the desktop app</h3>
-                    <div id="version" style="font-size: 12px">-</div>
-                  </div>
-                </div>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="sole" viewBox="-11 -1 22 48">
+          <path
+            d="M0 0C6.5 0 10 4.6 10 11.5 10 18 7.4 21.5 6.2 25 5.4 27.6 6.6 30.5 6.6 35 6.6 41.5 3.9 46 0 46S-6.6 41.5-6.6 35C-6.6 30.5-5.4 27.6-6.2 25-7.4 21.5-10 18-10 11.5-10 4.6-6.5 0 0 0Z"
+          />
+        </symbol>
+        <symbol id="arrow" viewBox="0 0 64 64">
+          <path
+            d="M8 32 30 10v13h26v18H30v13Z"
+            stroke-linejoin="round"
+            stroke-width="5"
+          />
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="site-header">
+      <div class="container header-row">
+        <a class="brand" href="./">
+          <img src="/assets/icon/footnotes.svg" alt="" width="32" height="32" />
+          <span>Footnotes</span>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <a href="guide/footnotes/">Guide</a>
+          <a href="app/">Chart editor</a>
+          <a href="https://github.com/chihduo/footnotes">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-text">
+            <h1>Footnotes</h1>
+            <p class="tagline">The notes, with your feet written in.</p>
+            <p class="lede">
+              Learn to dance any StepMania chart. A dancing bot shows which foot
+              goes where, right above the arrows you're about to hit.
+            </p>
+            <div class="hero-actions">
+              <button class="button primary" id="hero-demo" type="button">
+                Try the demo song
               </button>
-            </a>
-            <a
-              id="other-downloads"
-              href="https://github.com/tillvit/smeditor/releases/"
-              target="_blank"
-              >All Downloads</a
+              <a class="button" href="#start">Load your own song</a>
+            </div>
+          </div>
+
+          <div class="minibot" aria-hidden="true">
+            <div class="pad">
+              <div class="panel panel-up">
+                <svg class="arrow up"><use href="#arrow" /></svg>
+              </div>
+              <div class="panel panel-left">
+                <svg class="arrow left"><use href="#arrow" /></svg>
+              </div>
+              <div class="panel panel-right">
+                <svg class="arrow right"><use href="#arrow" /></svg>
+              </div>
+              <div class="panel panel-down">
+                <svg class="arrow down"><use href="#arrow" /></svg>
+              </div>
+              <div class="foot foot-left">
+                <svg><use href="#sole" /></svg><span>L</span>
+              </div>
+              <div class="foot foot-right">
+                <svg><use href="#sole" /></svg><span>R</span>
+              </div>
+            </div>
+            <div class="lane">
+              <div class="receptors">
+                <svg class="arrow left"><use href="#arrow" /></svg>
+                <svg class="arrow down"><use href="#arrow" /></svg>
+                <svg class="arrow up"><use href="#arrow" /></svg>
+                <svg class="arrow right"><use href="#arrow" /></svg>
+              </div>
+              <svg class="note arrow left"><use href="#arrow" /></svg>
+              <svg class="note arrow down"><use href="#arrow" /></svg>
+              <svg class="note arrow up"><use href="#arrow" /></svg>
+              <svg class="note arrow right"><use href="#arrow" /></svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="start">
+        <div class="container">
+          <h2>Pick a song</h2>
+          <p class="section-lede">
+            Footnotes plays StepMania simfiles (.sm and .ssc) together with
+            their music.
+          </p>
+          <div class="cards">
+            <div class="card">
+              <h3>Try the demo</h3>
+              <p>
+                A one-minute practice song made for Footnotes, with Beginner,
+                Easy and Medium charts.
+              </p>
+              <button class="button primary" id="demo-button" type="button">
+                Load the demo
+              </button>
+            </div>
+            <div class="card">
+              <h3>From a link</h3>
+              <p>
+                Paste a link to a .sm or .ssc file. Its music file has to sit
+                next to it.
+              </p>
+              <form class="link-form" id="link-form">
+                <label class="visually-hidden" for="link-input"
+                  >Link to a .sm or .ssc file</label
+                >
+                <input
+                  id="link-input"
+                  type="url"
+                  required
+                  placeholder="https://…/song.ssc"
+                  autocomplete="url"
+                />
+                <button class="button" type="submit">Find charts</button>
+              </form>
+            </div>
+            <div class="card">
+              <h3>From your computer</h3>
+              <p>
+                Import a song folder that holds a .sm or .ssc file and its
+                music. It stays in your browser.
+              </p>
+              <a class="button" href="app/?flags=D">Open a song folder</a>
+            </div>
+          </div>
+
+          <p class="status" id="status" role="status"></p>
+
+          <div class="picker" id="picker" hidden>
+            <div class="picker-head">
+              <div>
+                <h3 id="picker-title"></h3>
+                <p class="muted" id="picker-artist"></p>
+              </div>
+              <button
+                class="icon-button"
+                id="picker-close"
+                type="button"
+                aria-label="Close the chart list"
+              >
+                ×
+              </button>
+            </div>
+            <p class="picker-hint">Choose a chart to start practicing.</p>
+            <div id="picker-charts"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h2>How it works</h2>
+          <ol class="steps">
+            <li class="step">
+              <div class="step-icon">
+                <svg class="sole-icon left"><use href="#sole" /></svg>
+                <svg class="sole-icon right"><use href="#sole" /></svg>
+              </div>
+              <h3>Watch the bot</h3>
+              <p>
+                The pad at the top shows where each foot goes. Blue is your left
+                foot, orange is your right.
+              </p>
+            </li>
+            <li class="step">
+              <div class="step-icon">
+                <svg class="arrow up note-icon"><use href="#arrow" /></svg>
+              </div>
+              <h3>Read the arrows</h3>
+              <p>
+                Arrows rise into the targets just under the bot. Step as they
+                reach them, and they slide away under the pad.
+              </p>
+            </li>
+            <li class="step">
+              <div class="step-icon">
+                <span class="rate-badge">75%</span>
+              </div>
+              <h3>Practice at your pace</h3>
+              <p>
+                Slow the song down, change the scroll speed, and jump to any
+                part of the chart from the strip on the right.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h2>See it in action</h2>
+          <figure class="preview">
+            <video
+              src="media/footnotes-preview.webm"
+              poster="media/footnotes-preview.jpg"
+              autoplay
+              muted
+              loop
+              playsinline
+            ></video>
+            <figcaption>
+              The demo song's Medium chart: the bot crosses its feet over, and
+              the arrows below show what's coming next.
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container controls-grid">
+          <div>
+            <h2>Controls</h2>
+            <p class="section-lede">
+              Everything you need while practicing stays on screen. These keys
+              make it quicker.
+            </p>
+            <a class="button" href="guide/footnotes/controls.html"
+              >All controls</a
             >
           </div>
-          <a href="app/">
-            <button id="web-button" class="large green">
-              <div class="button-content">
-                <svg
-                  width="800px"
-                  height="800px"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill="currentColor"
-                    fill-rule="evenodd"
-                    clip-rule="evenodd"
-                    d="M9.83824 18.4467C10.0103 18.7692 10.1826 19.0598 10.3473 19.3173C8.59745 18.9238 7.07906 17.9187 6.02838 16.5383C6.72181 16.1478 7.60995 15.743 8.67766 15.4468C8.98112 16.637 9.40924 17.6423 9.83824 18.4467ZM11.1618 17.7408C10.7891 17.0421 10.4156 16.1695 10.1465 15.1356C10.7258 15.0496 11.3442 15 12.0001 15C12.6559 15 13.2743 15.0496 13.8535 15.1355C13.5844 16.1695 13.2109 17.0421 12.8382 17.7408C12.5394 18.3011 12.2417 18.7484 12 19.0757C11.7583 18.7484 11.4606 18.3011 11.1618 17.7408ZM9.75 12C9.75 12.5841 9.7893 13.1385 9.8586 13.6619C10.5269 13.5594 11.2414 13.5 12.0001 13.5C12.7587 13.5 13.4732 13.5593 14.1414 13.6619C14.2107 13.1384 14.25 12.5841 14.25 12C14.25 11.4159 14.2107 10.8616 14.1414 10.3381C13.4732 10.4406 12.7587 10.5 12.0001 10.5C11.2414 10.5 10.5269 10.4406 9.8586 10.3381C9.7893 10.8615 9.75 11.4159 9.75 12ZM8.38688 10.0288C8.29977 10.6478 8.25 11.3054 8.25 12C8.25 12.6946 8.29977 13.3522 8.38688 13.9712C7.11338 14.3131 6.05882 14.7952 5.24324 15.2591C4.76698 14.2736 4.5 13.168 4.5 12C4.5 10.832 4.76698 9.72644 5.24323 8.74088C6.05872 9.20472 7.1133 9.68686 8.38688 10.0288ZM10.1465 8.86445C10.7258 8.95042 11.3442 9 12.0001 9C12.6559 9 13.2743 8.95043 13.8535 8.86447C13.5844 7.83055 13.2109 6.95793 12.8382 6.2592C12.5394 5.69894 12.2417 5.25156 12 4.92432C11.7583 5.25156 11.4606 5.69894 11.1618 6.25918C10.7891 6.95791 10.4156 7.83053 10.1465 8.86445ZM15.6131 10.0289C15.7002 10.6479 15.75 11.3055 15.75 12C15.75 12.6946 15.7002 13.3521 15.6131 13.9711C16.8866 14.3131 17.9412 14.7952 18.7568 15.2591C19.233 14.2735 19.5 13.1679 19.5 12C19.5 10.8321 19.233 9.72647 18.7568 8.74093C17.9413 9.20477 16.8867 9.6869 15.6131 10.0289ZM17.9716 7.46178C17.2781 7.85231 16.39 8.25705 15.3224 8.55328C15.0189 7.36304 14.5908 6.35769 14.1618 5.55332C13.9897 5.23077 13.8174 4.94025 13.6527 4.6827C15.4026 5.07623 16.921 6.08136 17.9716 7.46178ZM8.67765 8.55325C7.61001 8.25701 6.7219 7.85227 6.02839 7.46173C7.07906 6.08134 8.59745 5.07623 10.3472 4.6827C10.1826 4.94025 10.0103 5.23076 9.83823 5.5533C9.40924 6.35767 8.98112 7.36301 8.67765 8.55325ZM15.3224 15.4467C15.0189 16.637 14.5908 17.6423 14.1618 18.4467C13.9897 18.7692 13.8174 19.0598 13.6527 19.3173C15.4026 18.9238 16.921 17.9186 17.9717 16.5382C17.2782 16.1477 16.3901 15.743 15.3224 15.4467ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z"
-                    fill="#080341"
-                  />
-                </svg>
-                <div class="button-text">
-                  <h3>Continue in web browser</h3>
-                </div>
-              </div>
-            </button>
-          </a>
+          <table class="keys">
+            <tbody>
+              <tr>
+                <th scope="row">Play or pause</th>
+                <td><kbd>Space</kbd></td>
+              </tr>
+              <tr>
+                <th scope="row">Slower or faster</th>
+                <td><kbd>Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd></td>
+              </tr>
+              <tr>
+                <th scope="row">Scroll speed</th>
+                <td><kbd>Shift</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd></td>
+              </tr>
+              <tr>
+                <th scope="row">Back to the start</th>
+                <td><kbd>Home</kbd></td>
+              </tr>
+              <tr>
+                <th scope="row">Choose another chart</th>
+                <td>
+                  <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd>
+                  <span class="muted">(⌘ ⇧ O on Mac)</span>
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">Open the chart editor</th>
+                <td><kbd>Shift</kbd> + <kbd>H</kbd></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
-    </div>
-    <div class="feature-jumbo">
-      <h3>Features</h3>
-      <div id="feature-container">
-        <div class="feature">
-          <div class="feature-overlay">
-            <h3 class="title">Automatic Parity Detection</h3>
-            <p class="description">
-              SMEditor automatically determines which foot to use for each note,
-              making pad charting easier.
-            </p>
-          </div>
-          <video
-            src="assets/preview/parity.webm"
-            class="preview"
-            autoplay
-            muted
-            loop
-            playsinline
-          ></video>
-        </div>
-        <div class="feature">
-          <div class="feature-overlay">
-            <h3 class="title">Custom Scripting</h3>
-            <p class="description">
-              Automate tasks by using the built-in scripting engine.
-            </p>
-          </div>
-          <video
-            src="assets/preview/scripts.webm"
-            class="preview"
-            autoplay
-            muted
-            loop
-            playsinline
-          ></video>
-        </div>
-        <div class="feature">
-          <div class="feature-overlay">
-            <h3 class="title">Audio Filtering and Tempo Detection</h3>
-            <p class="description">
-              Easily sync your charts with the built-in EQ and tempo detection
-              tools.
-            </p>
-          </div>
-          <video
-            src="assets/preview/audio.webm"
-            class="preview"
-            autoplay
-            muted
-            loop
-            playsinline
-          ></video>
-        </div>
-        <div class="feature">
-          <div class="feature-overlay">
-            <h3 class="title">Full Customization</h3>
-            <p class="description">
-              Change the editor's theme, noteskins, and key binds to your
-              liking.
-            </p>
-          </div>
-          <video
-            src="assets/preview/customize.webm"
-            class="preview"
-            autoplay
-            muted
-            loop
-            playsinline
-          ></video>
-        </div>
-      </div>
-    </div>
-    <div class="links-container">
-      <div class="link-content">
-        <h1>Help Guide</h1>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
         <p>
-          Learn how to use SMEditor with the built-in help guide, which contains
-          tutorials and documentation.
+          Footnotes is built on
+          <a href="https://github.com/tillvit/smeditor">SMEditor</a> by tillvit
+          and released under the MIT License.
         </p>
-        <a href="/smeditor/guide/" target="_blank">
-          <button class="large blue">
-            <div class="button-content">
-              <div class="button-text">
-                <h3>View Help Guide</h3>
-              </div>
-            </div>
-          </button>
-        </a>
+        <nav aria-label="Footer">
+          <a href="guide/footnotes/">Guide</a>
+          <a href="app/">Chart editor</a>
+          <a href="https://github.com/chihduo/footnotes">GitHub</a>
+        </nav>
       </div>
-      <div class="link-content">
-        <h1>Embed</h1>
-        <p>
-          SMEditor can be embedded into your own website. Click the button below
-          to start.
-        </p>
-        <a href="/smeditor/embed/" target="_blank">
-          <button class="large blue">
-            <div class="button-content">
-              <div class="button-text">
-                <h3>Embed</h3>
-              </div>
-            </div>
-          </button>
-        </a>
-      </div>
-      <div class="link-content">
-        <h1>Contribute</h1>
-        <p>
-          Found a bug or want to add a feature? Feel free to contribute on
-          SMEditor's GitHub page.
-        </p>
-        <a href="https://github.com/tillvit/smeditor" target="_blank">
-          <button class="large blue">
-            <div class="button-content">
-              <div class="button-text">
-                <h3>View on GitHub</h3>
-              </div>
-            </div>
-          </button>
-        </a>
-      </div>
-    </div>
-    <script>
-      ;(async () => {
-        const OS_NAMES = {
-          win: "Windows",
-          "mac-x64": "MacOS (Intel)",
-          "mac-arm": "MacOS (Apple Silicon)",
-          linux: "Linux",
-        }
-        const BUILD_TYPES = {
-          stable: 3,
-          beta: 2,
-          alpha: 1,
-          nightly: 0,
-        }
-        let os = "win"
-        if (navigator.userAgent.includes("Mac")) {
-          os = "mac-x64"
-          if (navigator.userAgentData) {
-            // Try to get architecture
-            const data = await navigator.userAgentData.getHighEntropyValues([
-              "architecture",
-            ])
-            if (data.architecture === "arm") {
-              os = "mac-arm"
-            }
-          }
-        } else if (navigator.userAgent.includes("Linux")) {
-          os = "linux"
-        }
-        fetch("/smeditor/assets/app/versions.json")
-          .then(data => data.json())
-          .then(versions => {
-            versions = versions.sort((a, b) => {
-              if (BUILD_TYPES[a.type] != BUILD_TYPES[b.type])
-                return BUILD_TYPES[b.type] - BUILD_TYPES[a.type]
-              return b.date - a.date
-            })
-            const version = versions[0]
-            document.getElementById("version").innerText =
-              `${version.version} • ${OS_NAMES[os]}`
-            document.getElementById("download-link").href =
-              version.downloads[os]
-          })
-      })()
-    </script>
+    </footer>
   </body>
 </html>

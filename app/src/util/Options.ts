@@ -7,6 +7,7 @@ const SAVE_BLACKLIST = [
   "chart.snap",
   "chart.CMod",
   "play.timingCollection",
+  "practice.enabled",
 ]
 
 export class DefaultOptions {
@@ -162,6 +163,10 @@ export class DefaultOptions {
       "dance-": "ITG",
       "pump-": "PUMP",
     } as { [key: string]: string },
+  }
+  static practice = {
+    enabled: false,
+    botHeight: 0.38,
   }
   static performance = {
     lowDetailHolds: false,

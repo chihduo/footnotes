@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { EventHandler } from "../../../util/EventHandler"
 import { Flags } from "../../../util/Flags"
+import { useOption } from "../../../util/Hooks"
 import { Keybinds } from "../../../util/Keybinds"
 import { Options } from "../../../util/Options"
 import { ReactIcon } from "../../Icons"
@@ -15,6 +16,8 @@ export function PlaybackOptions() {
   const [isCMod, setIsCMod] = useState(Options.chart.CMod)
   const [collapsed, setCollapsed] = useState(true)
   const chartLoaded = useRef(false)
+  // Dance practice mode keeps only playback rate, assist tick and speed visible
+  const practice = useOption<boolean>("practice.enabled")
 
   if (!Flags.playbackOptions) return <></>
 
@@ -41,9 +44,13 @@ export function PlaybackOptions() {
   }
 
   return (
-    <div id="playback-options" className={`${collapsed ? "collapsed" : ""}`}>
+    <div
+      id="playback-options"
+      className={`${collapsed && !practice ? "collapsed" : ""}`}
+    >
       <PlaybackOptionsGroup
         label="Zoom"
+        className="practice-hide"
         addTooltip={tooltip`Adjust playfield size ${"zoomOut"}/${"zoomIn"}`}
       >
         <PlusMinusSpinner
@@ -55,7 +62,7 @@ export function PlaybackOptions() {
           onChange={value => (Options.chart.zoom = value / 100)}
         />
       </PlaybackOptionsGroup>
-      <PlaybackOptionsSeparator />
+      <PlaybackOptionsSeparator className="practice-hide" />
       <PlaybackOptionsGroup
         label="Playback"
         addTooltip={tooltip`Adjust audio playback rate ${"rateDown"}/${"rateUp"}`}
@@ -97,6 +104,7 @@ export function PlaybackOptions() {
       <PlaybackOptionsGroup
         label="Scroll"
         addTooltip={tooltip`Change scroll direction ${"reverse"}`}
+        className="practice-hide"
       >
         <PlaybackOptionsToggle
           onChange={value => (Options.chart.reverse = !!value)}
@@ -136,11 +144,11 @@ export function PlaybackOptions() {
           onChange={value => (Options.chart.speed = value)}
         />
       </PlaybackOptionsGroup>
-      <PlaybackOptionsSeparator />
+      <PlaybackOptionsSeparator className="practice-hide" />
       <PlaybackOptionsGroup
         label="Speed Changes"
         addTooltip={tooltip`Allow scroll/speed events (XMod only) ${"doSpeedChanges"}`}
-        className={isCMod && initialRender ? "hidden" : ""}
+        className={(isCMod && initialRender ? "hidden" : "") + " practice-hide"}
         scaling={true}
       >
         <PlaybackOptionsToggle
@@ -155,7 +163,9 @@ export function PlaybackOptions() {
       <PlaybackOptionsGroup
         label="Warped Notes"
         addTooltip={tooltip`Show/hide warped notes (CMod only) ${"hideWarpedArrows"}`}
-        className={isCMod || !initialRender ? "" : "hidden"}
+        className={
+          (isCMod || !initialRender ? "" : "hidden") + " practice-hide"
+        }
         scaling={true}
       >
         <PlaybackOptionsCheckbox
@@ -168,7 +178,9 @@ export function PlaybackOptions() {
       <PlaybackOptionsGroup
         label="Faked Notes"
         addTooltip={tooltip`Show/hide faked notes (CMod only) ${"hideFakedArrows"}`}
-        className={isCMod || !initialRender ? "" : "hidden"}
+        className={
+          (isCMod || !initialRender ? "" : "hidden") + " practice-hide"
+        }
         scaling={true}
       >
         <PlaybackOptionsCheckbox
@@ -181,6 +193,7 @@ export function PlaybackOptions() {
       <ReactIcon
         id="VOLUME"
         width={22}
+        className="practice-hide"
         style={{
           marginLeft: "auto",
           marginRight: "-1rem",
@@ -189,7 +202,7 @@ export function PlaybackOptions() {
           alignSelf: "center",
         }}
       />
-      <PlaybackOptionsGroup label="Master">
+      <PlaybackOptionsGroup label="Master" className="practice-hide">
         <PlusMinusSpinner
           step={5}
           altStep={1}
@@ -201,7 +214,7 @@ export function PlaybackOptions() {
           getValue={() => Options.audio.masterVolume * 100}
         />
       </PlaybackOptionsGroup>
-      <PlaybackOptionsGroup label="Song">
+      <PlaybackOptionsGroup label="Song" className="practice-hide">
         <PlusMinusSpinner
           step={5}
           altStep={1}
@@ -213,7 +226,7 @@ export function PlaybackOptions() {
           getValue={() => Options.audio.songVolume * 100}
         />
       </PlaybackOptionsGroup>
-      <PlaybackOptionsGroup label="FX">
+      <PlaybackOptionsGroup label="FX" className="practice-hide">
         <PlusMinusSpinner
           step={5}
           altStep={1}

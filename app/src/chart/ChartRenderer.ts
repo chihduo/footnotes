@@ -11,6 +11,7 @@ import { PopupManager } from "../gui/popup/PopupManager"
 import { Flags } from "../util/Flags"
 import { Options } from "../util/Options"
 import { isRightClick } from "../util/PixiUtil"
+import { getPracticeReceptorY } from "../util/PracticeLayout"
 import { bsearch } from "../util/Util"
 import { ChartManager, EditMode, EditTimingMode } from "./ChartManager"
 import { BarlineContainer } from "./component/edit/BarlineContainer"
@@ -330,7 +331,7 @@ export class ChartRenderer extends Container<ChartRendererComponent> {
     this.cachedBeat = this.chartManager.beat
     this.cachedTime = this.chartManager.time
 
-    this.x = Options.chart.receptorXPos
+    this.x = Options.practice.enabled ? 0 : Options.chart.receptorXPos
 
     this.speedMult = Options.chart.doSpeedChanges
       ? this.getCurrentSpeedMult()
@@ -606,6 +607,17 @@ export class ChartRenderer extends Container<ChartRendererComponent> {
    * @memberof ChartRenderer
    */
   getActualReceptorYPos(): number {
+    if (Options.practice.enabled) {
+      // Place the receptors directly under the dancing bot
+      const app = this.chartManager.app
+      const practiceY = getPracticeReceptorY(
+        app.STAGE_WIDTH,
+        app.STAGE_HEIGHT,
+        this.chart.gameType.id,
+        Options.chart.zoom
+      )
+      if (practiceY !== undefined) return practiceY / Options.chart.zoom
+    }
     return (
       (Options.chart.receptorYPos / Options.chart.zoom) *
       (Options.chart.reverse ? -1 : 1)
@@ -1239,6 +1251,7 @@ export class ChartRenderer extends Container<ChartRendererComponent> {
   }
 
   shouldDisplayEditGUI() {
+    if (Options.practice.enabled) return false
     return (
       (this.chartManager.getMode() != EditMode.Play ||
         !Options.play.hideBarlines) &&

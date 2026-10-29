@@ -86,7 +86,7 @@ export class Icons {
   }
 
   private static fetchIcon(id: string) {
-    fetch(`/smeditor/assets/svg/${id}.svg`)
+    fetch(`${import.meta.env.BASE_URL}assets/svg/${id}.svg`)
       .then(res => res.text())
       .then(text => {
         this.cache.set(id, text)
@@ -113,7 +113,7 @@ export function ReactIcon(props: ReactIconProps) {
   return (
     <div className={`icon ${className ?? ""}`} style={style} onClick={onClick}>
       <SVG
-        src={`/smeditor/assets/svg/${id}.svg`}
+        src={`${import.meta.env.BASE_URL}assets/svg/${id}.svg`}
         cacheRequests={true}
         width={width ? width / 16 + "rem" : undefined}
         height={height ? height / 16 + "rem" : undefined}

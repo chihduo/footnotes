@@ -14,7 +14,7 @@ export function FinishPage(props: SetupPageProps) {
       <h1>All set!</h1>
       <div>
         To learn more about SMEditor, check out the{" "}
-        <a href="/smeditor/guide" target="_blank">
+        <a href={import.meta.env.BASE_URL + "guide/"} target="_blank">
           help guide
         </a>{" "}
         (located under Help in the menubar).

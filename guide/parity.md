@@ -75,6 +75,18 @@ When this option is enabled, a stage will appear in the bottom right of the scre
 
 ![Dancing Bot](assets/parity/bot.gif)
 
+### Dance Practice Mode
+
+Dance practice mode is the heart of [Footnotes](./footnotes/), a tool for learning how to dance a chart.
+It enlarges the dancing bot and places it at the top of the screen, with the receptors directly underneath, so you can watch the bot's feet and the incoming arrows at the same time.
+The editing interface is hidden while you practice.
+
+Toggle practice mode with <kbd>Shift</kbd>+<kbd>H</kbd>, from **View > Dance practice mode**, or with the **Exit practice** button in the playback bar.
+Practice mode turns on parity checking and the dancing bot automatically, and restores your previous settings when you leave.
+The size of the bot can be changed in **Preferences > Parity > Dance practice bot size**.
+
+See the [Footnotes guide](./footnotes/) for more.
+
 ### Tech Counts
 
 When parity checking is enabled, you can see the number of each tech in the Chart List Window.

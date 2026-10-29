@@ -20,7 +20,7 @@ function ChangelogWindowContent() {
   const windowData = useContext(WindowContext)
   const [versions, setVersions] = useState<string[]>([])
   useEffect(() => {
-    fetch("/smeditor/assets/app/changelog.json")
+    fetch(import.meta.env.BASE_URL + "assets/app/changelog.json")
       .then(data => data.json())
       .then((versions: CoreVersion[]) => {
         setVersions(

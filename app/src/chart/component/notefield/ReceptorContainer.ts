@@ -12,8 +12,13 @@ export class ReceptorContainer extends Container {
   private dragStart: Point | null = null
   private dragOptionsStart: [number, number] | null = null
   private optionUpdate = (option: string) => {
-    if (option != "chart.allowReceptorDrag") return
-    this.eventMode = Options.chart.allowReceptorDrag ? "static" : "passive"
+    if (option != "chart.allowReceptorDrag" && option != "practice.enabled")
+      return
+    // Receptors are positioned automatically in dance practice mode
+    this.eventMode =
+      Options.chart.allowReceptorDrag && !Options.practice.enabled
+        ? "static"
+        : "passive"
   }
 
   constructor(notefield: Notefield) {
