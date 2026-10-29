@@ -39,14 +39,15 @@ The demo song's Medium chart: the bot crosses its feet over, and the arrows belo
 
 Everything you need while practicing stays on screen. These keys make it quicker.
 
-| Action                | Keys                                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------------- |
-| Play or pause         | <kbd>Space</kbd>                                                                                  |
-| Slower or faster      | <kbd>Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd>                                                    |
-| Scroll speed          | <kbd>Shift</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd>                                                    |
-| Back to the start     | <kbd>Home</kbd>                                                                                   |
-| Choose another chart  | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd> (<kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>O</kbd> on Mac) |
-| Open the chart editor | <kbd>Shift</kbd> + <kbd>H</kbd>                                                                   |
+| Action                               | Keys                                                                                              |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Play or pause                        | <kbd>Space</kbd>                                                                                  |
+| Step, on a dance pad or the keyboard | <kbd>←</kbd> <kbd>↓</kbd> <kbd>↑</kbd> <kbd>→</kbd>                                               |
+| Slower or faster                     | <kbd>Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd>                                                    |
+| Scroll speed                         | <kbd>Shift</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd>                                                    |
+| Back to the start                    | <kbd>Home</kbd>                                                                                   |
+| Choose another chart                 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd> (<kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>O</kbd> on Mac) |
+| Open the chart editor                | <kbd>Shift</kbd> + <kbd>H</kbd>                                                                   |
 
 <a href="https://chihduo.github.io/footnotes/guide/footnotes/controls.html"><img src=".github/readme/button-controls.svg" height="44" alt="All controls" /></a>
 

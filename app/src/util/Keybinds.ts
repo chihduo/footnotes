@@ -15,6 +15,7 @@ import {
 } from "../data/KeybindData"
 import { WindowManager } from "../gui/window/WindowManager"
 import { EventHandler } from "./EventHandler"
+import { Options } from "./Options"
 import { shouldBlockKeybinds, tippySafe } from "./Util"
 
 export class Keybinds {
@@ -57,12 +58,15 @@ export class Keybinds {
     }
     const key = Keybinds.getKeyNameFromEvent(event)
 
-    // Check for gameplay keybinds
+    // Check for gameplay keybinds.
+    // In dance practice mode, they're steps on a dance pad (or the keyboard),
+    // so they light up the receptors instead of moving through the chart.
+    const mode = this.app.chartManager.getMode()
+    const practicing =
+      Options.practice.enabled && mode == EditMode.View && mods.length == 0
     if (
-      (this.app.chartManager.getMode() == EditMode.Play ||
-        this.app.chartManager.getMode() == EditMode.Record) &&
-      this.app.chartManager.loadedChart?.gameType &&
-      !event.repeat
+      (mode == EditMode.Play || mode == EditMode.Record || practicing) &&
+      this.app.chartManager.loadedChart?.gameType
     ) {
       const kbds =
         GAMEPLAY_KEYBINDS[this.app.chartManager.loadedChart?.gameType.id] ?? []
@@ -73,13 +77,22 @@ export class Keybinds {
       const matchedColumn = Object.values(kbds).findIndex((kbd, col) =>
         (userKbds[col] ?? kbd.keys).some(k => key == k)
       )
-      if (matchedColumn != -1) {
+      // Holding a panel repeats its key, which mustn't fall through to
+      // keybinds like moving the cursor while practicing
+      if (matchedColumn != -1 && (practicing || !event.repeat)) {
         event.preventDefault()
         if (WindowManager.getFocusedWindow() == "keybind_options") return
         if (WindowManager.isBlocking()) return
-        this.app.chartManager[type == "keydown" ? "judgeCol" : "judgeColUp"](
-          matchedColumn
-        )
+        if (practicing) {
+          if (!event.repeat)
+            this.app.chartManager[type == "keydown" ? "pressCol" : "liftCol"](
+              matchedColumn
+            )
+        } else {
+          this.app.chartManager[type == "keydown" ? "judgeCol" : "judgeColUp"](
+            matchedColumn
+          )
+        }
         return
       }
     }
