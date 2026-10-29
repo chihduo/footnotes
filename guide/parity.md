@@ -77,22 +77,15 @@ When this option is enabled, a stage will appear in the bottom right of the scre
 
 ### Dance Practice Mode
 
-Dance practice mode turns SMEditor into a tool for learning how to dance a chart.
+Dance practice mode is the heart of [Footnotes](./footnotes/), a tool for learning how to dance a chart.
 It enlarges the dancing bot and places it at the top of the screen, with the receptors directly underneath, so you can watch the bot's feet and the incoming arrows at the same time.
-Notes scroll upwards into the receptors and disappear under the bot once they pass.
-
-The editing interface is hidden in practice mode. Only these controls remain:
-
-- Play/pause, skip to start/end, and the time and beat counters (click to seek)
-- Playback rate, to slow the song down while learning (<kbd>Shift</kbd>+<kbd>←</kbd>/<kbd>→</kbd>)
-- Scroll speed (<kbd>Shift</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd>), assist tick and metronome
-- The note layout on the right, which you can click to jump to a section
+The editing interface is hidden while you practice.
 
 Toggle practice mode with <kbd>Shift</kbd>+<kbd>H</kbd>, from **View > Dance practice mode**, or with the **Exit practice** button in the playback bar.
 Practice mode turns on parity checking and the dancing bot automatically, and restores your previous settings when you leave.
-
-To open a song directly in practice mode, add the `D` flag to the URL, for example `app/?url=<link to .sm/.ssc>&flags=D`.
 The size of the bot can be changed in **Preferences > Parity > Dance practice bot size**.
+
+See the [Footnotes guide](./footnotes/) for more.
 
 ### Tech Counts
 

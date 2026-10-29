@@ -24,6 +24,6 @@
       "vite-plugin-pwa/client.d.ts"
     ]
   },
-  "include": ["app/src", "embed/src"],
+  "include": ["app/src", "embed/src", "landing"],
   "exclude": ["**/smlib.d.ts"]
 }

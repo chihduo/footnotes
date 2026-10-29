@@ -5,15 +5,19 @@ on:
   push:
     branches: ["master"]
 
+# The deploy step pushes the built site to the gh-pages branch
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout master branch
+      # Builds the branch that triggered the workflow: master on push,
+      # or the branch chosen when running it manually
+      - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ref: master
 
       - name: Setup Node
         uses: actions/setup-node@v3

@@ -1,19 +1,58 @@
 import { defineConfig } from "vitepress"
 
 export default defineConfig({
-  title: "SMEditor Guide",
-  description: "Guide on how to use SMEditor",
-  base: "/smeditor/guide/",
+  title: "Footnotes Guide",
+  description:
+    "How to learn StepMania charts with Footnotes, and how to use the SMEditor chart editor it's built on",
+  base: "/footnotes/guide/",
   outDir: "../dist/guide",
+  head: [
+    [
+      "link",
+      {
+        rel: "icon",
+        type: "image/svg+xml",
+        href: "/footnotes/guide/footnotes.svg",
+      },
+    ],
+  ],
   themeConfig: {
+    logo: "/footnotes.svg",
     search: {
       provider: "local",
     },
-    nav: [{ text: "Home", link: "../" }],
+    nav: [
+      { text: "Home", link: "../" },
+      { text: "Open Footnotes", link: "../app/?flags=D" },
+    ],
+    socialLinks: [
+      { icon: "github", link: "https://github.com/chihduo/footnotes" },
+    ],
 
     sidebar: [
       {
-        text: "Introduction",
+        text: "Footnotes",
+        items: [
+          {
+            text: "Getting Started",
+            link: "/footnotes/",
+          },
+          {
+            text: "Loading Songs",
+            link: "/footnotes/loading-songs",
+          },
+          {
+            text: "Controls",
+            link: "/footnotes/controls",
+          },
+          {
+            text: "Tips and FAQ",
+            link: "/footnotes/tips",
+          },
+        ],
+      },
+      {
+        text: "Chart Editor",
         items: [
           {
             text: "Basic Guide",
@@ -34,7 +73,7 @@ export default defineConfig({
         ],
       },
       {
-        text: "Advanced",
+        text: "Chart Editor: Advanced",
         items: [
           // {
           //   text: "Audio Filtering",

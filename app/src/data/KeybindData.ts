@@ -1493,7 +1493,7 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
     combos: [],
     disabled: false,
     callback: () => {
-      window.open("/smeditor/guide/")
+      window.open(import.meta.env.BASE_URL + "guide/")
     },
   },
   openChangelog: {

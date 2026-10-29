@@ -16,7 +16,7 @@ export default defineConfig(() => {
     console.error("Couldn't fetch git data", error)
   }
   return {
-    base: "/smeditor/",
+    base: "/footnotes/",
     appType: "mpa",
     plugins: [
       react(),
@@ -30,16 +30,16 @@ export default defineConfig(() => {
         registerType: "autoUpdate",
         manifestFilename: "manifest.json",
         manifest: {
-          short_name: "SMEditor",
-          name: "SMEditor",
-          start_url: "/smeditor/app",
+          short_name: "Footnotes",
+          name: "Footnotes",
+          start_url: "/footnotes/app",
           display: "standalone",
           theme_color: "#18191c",
           background_color: "#18191c",
           version: "1.0.0",
           icons: [
             {
-              src: "assets/icon/icon_512.png",
+              src: "assets/icon/footnotes_512.png",
               sizes: "512x512",
               type: "image/png",
               purpose: "maskable"

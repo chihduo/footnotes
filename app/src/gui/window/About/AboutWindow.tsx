@@ -5,7 +5,7 @@ export function AboutWindowContent() {
     <div className="flex-column-full">
       <div className="about-container">
         <div className="logo-container">
-          <img src="/smeditor/assets/icon/logo.png" />
+          <img src={import.meta.env.BASE_URL + "assets/icon/logo.png"} />
           <div>SMEditor</div>
         </div>
         <div style={{ textAlign: "center" }}>
