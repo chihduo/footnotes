@@ -25,8 +25,9 @@ export class ParityAnalyzer extends ChartAnalyzer {
 
   private eventHandler = ((item: string) => {
     if (item === "chart.parity.enabled") {
-      if (Options.chart.parity.enabled && this.active) {
-        this.initializeWorker().then(() => this.calculateAll())
+      if (Options.chart.parity.enabled) {
+        // If the analyzer is still loading, onLoad calculates parity itself
+        if (this.active) this.initializeWorker().then(() => this.calculateAll())
         return
       } else {
         this.terminateWorker()
@@ -175,7 +176,9 @@ export class ParityAnalyzer extends ChartAnalyzer {
       })
       .catch(error => {
         console.error("Failed to calculate parity:", error)
-        this.chart.stats.parity!.debugTime = performance.now() - start
+        // Parity data is cleared when parity is disabled mid-calculation
+        if (this.chart.stats.parity)
+          this.chart.stats.parity.debugTime = performance.now() - start
       })
   }
 
@@ -197,7 +200,8 @@ export class ParityAnalyzer extends ChartAnalyzer {
   }
 
   async initializeWorker() {
-    this.worker = new ParityInternals()
+    const worker = new ParityInternals()
+    this.worker = worker
     this.worker.onmessage = (event: MessageEvent<ParityOutboundMessage>) => {
       const { id } = event.data
       if (this.pendingJobs.has(id)) {
@@ -217,6 +221,9 @@ export class ParityAnalyzer extends ChartAnalyzer {
       type: "init",
       gameType: this.chart.gameType.id,
     }).catch(error => {
+      // Ignore workers terminated before they finished initializing,
+      // e.g. when switching charts
+      if (this.worker !== worker) return
       WaterfallManager.createFormatted(
         "Failed to initialize parity worker: " + error,
         "error"

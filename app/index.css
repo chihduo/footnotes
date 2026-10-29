@@ -1459,6 +1459,20 @@ input[type="range"] {
   transition: 0.2s cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
+/* Dance practice mode hides the editing UI */
+body.practice #menubar,
+body.practice .practice-hide {
+  display: none !important;
+}
+
+#status-widget button.practice-exit {
+  width: auto;
+  padding: 0 1rem;
+  white-space: nowrap;
+  color: var(--text-color);
+  font-size: 0.875rem;
+}
+
 #status-widget .playback-separator {
   padding: 0 0.125rem;
   height: 3rem;

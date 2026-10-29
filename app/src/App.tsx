@@ -42,6 +42,7 @@ import { CustomScripts } from "./util/custom-script/CustomScripts"
 import { EventHandler } from "./util/EventHandler"
 import { FileHandler } from "./util/file-handler/FileHandler"
 import { Flags, loadFlags } from "./util/Flags"
+import { PracticeMode } from "./util/PracticeMode"
 import { Keybinds } from "./util/Keybinds"
 import { Options } from "./util/Options"
 import { extname } from "./util/Path"
@@ -184,6 +185,7 @@ export class App {
 
     this.chartManager = new ChartManager(this)
     this.actionHistory = new ActionHistory(this)
+    PracticeMode.init(this)
 
     this.registerListeners()
 

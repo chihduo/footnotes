@@ -1,7 +1,9 @@
 import { App } from "../../../App"
 import { EditMode } from "../../../chart/ChartManager"
 import { Flags } from "../../../util/Flags"
+import { useOption } from "../../../util/Hooks"
 import { Keybinds } from "../../../util/Keybinds"
+import { PracticeMode } from "../../../util/PracticeMode"
 import { ReactIcon } from "../../Icons"
 import { TimeCounters } from "./TimeCounters"
 
@@ -10,6 +12,7 @@ export function PlaybackBar(props: {
   playing: boolean
   state: EditMode
 }) {
+  const practice = useOption<boolean>("practice.enabled")
   return (
     <div className="playback-bar">
       <button
@@ -48,7 +51,9 @@ export function PlaybackBar(props: {
             props.app.chartManager.getMode() == EditMode.Record ||
             props.app.chartManager.getMode() == EditMode.Play
           ) {
-            props.app.chartManager.setMode(EditMode.Edit)
+            props.app.chartManager.setMode(
+              practice ? EditMode.View : EditMode.Edit
+            )
           }
           props.app.chartManager.playPause()
           e.currentTarget.blur()
@@ -67,7 +72,7 @@ export function PlaybackBar(props: {
           style={{ display: props.playing ? "none" : "block" }}
         />
       </button>
-      {!Flags.viewMode && Flags.recordMode && (
+      {!Flags.viewMode && Flags.recordMode && !practice && (
         <button
           tabIndex={-1}
           ref={Keybinds.createReactKeybindTooltip`Record ${"recordMode"}`}
@@ -91,7 +96,7 @@ export function PlaybackBar(props: {
           <ReactIcon id="RECORD" width={36} height={36} color="red" />
         </button>
       )}
-      {Flags.playMode && (
+      {Flags.playMode && !practice && (
         <button
           tabIndex={-1}
           ref={Keybinds.createReactKeybindTooltip`Playtest ${"playMode"}`}
@@ -117,6 +122,22 @@ export function PlaybackBar(props: {
       )}
       <div className="playback-separator" />
       <TimeCounters app={props.app} state={props.state} />
+      {practice && (
+        <>
+          <div className="playback-separator" />
+          <button
+            tabIndex={-1}
+            className="practice-exit"
+            ref={Keybinds.createReactKeybindTooltip`Exit dance practice ${"togglePractice"}`}
+            onClick={e => {
+              PracticeMode.exit(props.app)
+              e.currentTarget.blur()
+            }}
+          >
+            Exit practice
+          </button>
+        </>
+      )}
     </div>
   )
 }

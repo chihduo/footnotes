@@ -300,6 +300,21 @@ export const USER_OPTIONS_WINDOW_DATA: UserOption[] = [
             },
           },
           {
+            type: "item",
+            label: "Dance practice bot size",
+            id: "practice.botHeight",
+            tooltip:
+              "Height of the dancing bot in dance practice mode, as a fraction of the screen height.",
+            input: {
+              type: "slider",
+              min: 0.2,
+              step: 0.01,
+              max: 0.5,
+              hardMin: 0.1,
+              hardMax: 0.8,
+            },
+          },
+          {
             type: "subgroup",
             label: "Colors",
             children: [

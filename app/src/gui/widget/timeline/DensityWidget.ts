@@ -110,7 +110,7 @@ export class DensityWidget extends BaseTimelineWidget {
   }
 
   update() {
-    if (!Options.chart.npsGraph.enabled) {
+    if (!Options.chart.npsGraph.enabled || Options.practice.enabled) {
       this.visible = false
       return
     }

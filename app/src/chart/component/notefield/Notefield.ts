@@ -1,4 +1,4 @@
-import { Container, Sprite, Texture } from "pixi.js"
+import { Container, Graphics, Sprite, Texture } from "pixi.js"
 import { WaterfallManager } from "../../../gui/element/WaterfallManager"
 import { rgbtoHex } from "../../../util/Color"
 import { EventHandler } from "../../../util/EventHandler"
@@ -233,7 +233,7 @@ export class HoldObject extends Container {
     if (this.loaded) return
     ;(this.elements as any) = {}
     for (const state of ["Active", "Inactive"] as const) {
-      (this.elements[state] as any) = {}
+      ;(this.elements[state] as any) = {}
       for (const part of ["BottomCap", "Body", "TopCap", "Head"] as const) {
         const element = this.getNoteskinElement(`${state} ${part}`)
         if (part == "BottomCap") {
@@ -251,7 +251,7 @@ export class HoldObject extends Container {
         } else {
           this.elements[state][part] = element
         }
-        (state == "Active" ? this.active : this.inactive).addChild(
+        ;(state == "Active" ? this.active : this.inactive).addChild(
           this.elements[state][part]
         )
       }
@@ -288,7 +288,7 @@ export class HoldObject extends Container {
     for (const state of states) {
       for (const item of items) {
         if ("tint" in this.elements[state][item]) {
-          (this.elements[state][item] as Sprite).tint = rgbtoHex(
+          ;(this.elements[state][item] as Sprite).tint = rgbtoHex(
             brightness * 255,
             brightness * 255,
             brightness * 255
@@ -363,6 +363,8 @@ export class Notefield extends Container implements ChartRendererComponent {
   private holdJudges?: HoldJudgementContainer
   private ghostNote?: NoteWrapper
   private ghostNoteEntry?: NotedataEntry
+  // Hides notes that have passed the receptors in dance practice mode
+  private readonly practiceMask = new Graphics()
 
   private readonly columnX: number[] = []
 
@@ -370,6 +372,7 @@ export class Notefield extends Container implements ChartRendererComponent {
     super()
 
     this.renderer = renderer
+    this.practiceMask.visible = false
     this.gameType = renderer.chart.gameType
     NoteskinRegistry.getNoteskin(
       this.gameType,
@@ -408,11 +411,33 @@ export class Notefield extends Container implements ChartRendererComponent {
         this.notes,
         this.selectionNotes,
         this.flashes,
-        this.holdJudges
+        this.holdJudges,
+        this.practiceMask
       )
 
       EventHandler.emit("noteskinLoaded")
     })
+  }
+
+  private updatePracticeMask() {
+    if (!Options.practice.enabled) {
+      if (this.mask) {
+        this.mask = null
+        this.practiceMask.visible = false
+      }
+      return
+    }
+    // Clip notes once they pass the receptors so they don't scroll through the bot
+    const halfWidth =
+      this.renderer.chartManager.app.STAGE_WIDTH / 2 / Options.chart.zoom
+    const top = this.renderer.getActualReceptorYPos() - 48
+    const bottom = this.renderer.getLowerBound()
+    this.practiceMask.clear()
+    this.practiceMask.beginFill(0xffffff)
+    this.practiceMask.drawRect(-halfWidth, top, halfWidth * 2, bottom - top)
+    this.practiceMask.endFill()
+    this.practiceMask.visible = true
+    this.mask = this.practiceMask
   }
 
   setGhostNote(note?: NotedataEntry): void {
@@ -440,6 +465,7 @@ export class Notefield extends Container implements ChartRendererComponent {
 
   update(firstBeat: number, lastBeat: number): void {
     if (this.noteskin === undefined) return
+    this.updatePracticeMask()
     this.noteskin.update(this.renderer)
     this.receptors!.update()
     this.flashes!.update()

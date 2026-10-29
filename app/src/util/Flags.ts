@@ -100,6 +100,10 @@ export const FLAG_MAP: Record<BooleanFlags, { char: string; name: string }> = {
     char: "H",
     name: `Hide "Powered by SMEditor" text`,
   },
+  practice: {
+    char: "D",
+    name: "Open in dance practice mode",
+  },
 }
 
 const CHAR_MAP = Object.fromEntries(
@@ -119,6 +123,7 @@ interface URLFlags {
   autoPlay: boolean
   openWindows: boolean
   hidePoweredByText: boolean
+  practice: boolean
   url: string | null
   chartIndex: number | null
   chartType: string | null
@@ -137,6 +142,7 @@ export const Flags: URLFlags = {
   autoPlay: false,
   hidePoweredByText: false,
   openWindows: true,
+  practice: false,
   url: null,
   chartIndex: null,
   chartType: null,

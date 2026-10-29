@@ -1,3 +1,3 @@
-export function PlaybackOptionsSeparator() {
-  return <div className="po-separator" />
+export function PlaybackOptionsSeparator(props: { className?: string }) {
+  return <div className={"po-separator " + (props.className || "")} />
 }

@@ -36,6 +36,7 @@ import { Flags } from "../util/Flags"
 import { maxArr, roundDigit } from "../util/Math"
 import { Options } from "../util/Options"
 import { basename, dirname } from "../util/Path"
+import { PracticeMode } from "../util/PracticeMode"
 import {
   getNoteEnd,
   IS_OSX,
@@ -800,10 +801,21 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
       WaterfallManager.create("Switched to CMod")
     },
   },
+  togglePractice: {
+    label: "Dance practice mode",
+    combos: [{ key: "H", mods: [Modifier.SHIFT] }],
+    disabled: app => !app.chartManager.hasLoadedChart(),
+    callback: app => {
+      PracticeMode.toggle(app)
+      WaterfallManager.create(
+        "Dance Practice: " + (Options.practice.enabled ? "on" : "off")
+      )
+    },
+  },
   reverse: {
     label: "Reverse playfield",
     combos: [],
-    disabled: false,
+    disabled: () => Options.practice.enabled,
     callback: () => {
       Options.chart.reverse = !Options.chart.reverse
       WaterfallManager.create(

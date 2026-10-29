@@ -79,7 +79,11 @@ export class FacingLayoutWidget extends BaseTimelineWidget {
   }
 
   update() {
-    if (!Options.chart.facingLayout.enabled || !Options.chart.parity.enabled) {
+    if (
+      !Options.chart.facingLayout.enabled ||
+      !Options.chart.parity.enabled ||
+      Options.practice.enabled
+    ) {
       this.visible = false
       return
     }
