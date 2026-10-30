@@ -34,8 +34,9 @@ To change the volume, press <kbd>Alt</kbd>+<kbd>↑</kbd> or <kbd>Alt</kbd>+<kbd
 
 ### Can I use a dance pad?
 
-Footnotes doesn't need one: you can dance on the floor and follow the bot.
-To get timing judgments, press <kbd>P</kbd> to play along with keyboard keys or a dance pad that sends key presses. See [Playing along](./controls#playing-along).
+Yes. A dance pad that sends the arrow keys works while you practice: each step lights up its target arrow, without changing the song's position or speed.
+You don't need one, though: you can dance on the floor and follow the bot.
+To get timing judgments, press <kbd>P</kbd> to play along. See [Dancing on a pad](./controls#dancing-on-a-pad) and [Playing along](./controls#playing-along).
 
 ### Is Footnotes the same as SMEditor?
 

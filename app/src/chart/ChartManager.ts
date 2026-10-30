@@ -1727,6 +1727,27 @@ export class ChartManager {
   }
 
   /**
+   * Lights up the receptor of a column without judging it.
+   * Used for steps on a dance pad in dance practice mode.
+   *
+   * @param {number} col
+   * @memberof ChartManager
+   */
+  pressCol(col: number) {
+    this.chartView?.getNotefield().press(col)
+  }
+
+  /**
+   * Releases the receptor of a column pressed with pressCol.
+   *
+   * @param {number} col
+   * @memberof ChartManager
+   */
+  liftCol(col: number) {
+    this.chartView?.getNotefield().lift(col)
+  }
+
+  /**
    * Saves the current chart to disk.
    *
    * @memberof ChartManager
