@@ -44,6 +44,13 @@ interface FeetPosition {
 
 const PANEL_SIZE = BOT_PANEL_SIZE
 
+const FOOT_COLOR_OPTIONS = [
+  "chart.parity.leftHeelColor",
+  "chart.parity.leftToeColor",
+  "chart.parity.rightHeelColor",
+  "chart.parity.rightToeColor",
+]
+
 export class DancingBotWidget extends Widget {
   panels: StagePanel[] = []
   currentRow = -1
@@ -58,26 +65,45 @@ export class DancingBotWidget extends Widget {
   layout?: StageLayout
   dirty = false
 
+  // Increases with every build, so a build that finishes after a newer one
+  // started can tell it's out of date
+  private buildId = 0
+  private footParts: { sprite: Sprite; label: BitmapText; foot: Foot }[] = []
+
   constructor(manager: WidgetManager) {
     super(manager)
     this.sortableChildren = true
 
     EventHandler.on("chartLoaded", () => this.build())
     EventHandler.on("parityModified", () => this.reindex())
+    EventHandler.on("userOptionUpdated", (optionId: string) => {
+      if (FOOT_COLOR_OPTIONS.includes(optionId)) this.updateFootColors()
+    })
   }
 
   async build() {
-    this.removeChildren()
-    this.panels = []
-    if (!this.manager.app.chartManager.loadedChart) return
-
-    this.layout =
-      STAGE_LAYOUTS[this.manager.app.chartManager.loadedChart.gameType.id]
-    if (!this.layout) {
+    const buildId = ++this.buildId
+    const chart = this.manager.app.chartManager.loadedChart
+    const layout = chart ? STAGE_LAYOUTS[chart.gameType.id] : undefined
+    if (!layout) {
+      this.removeChildren()
+      this.panels = []
+      this.footParts = []
+      this.layout = undefined
       return
     }
 
-    const receptorTex = await Assets.load(receptorUrl)
+    const [receptorTex, footTex] = await Promise.all([
+      Assets.load(receptorUrl),
+      Assets.load(footUrl),
+    ])
+    // Charts can load in quick succession, e.g. the default chart and then
+    // the one in the URL. Only the newest build may add panels and feet.
+    if (buildId != this.buildId) return
+
+    this.removeChildren()
+    this.panels = []
+    this.layout = layout
 
     let maxX = 0
     let maxY = 0
@@ -120,7 +146,6 @@ export class DancingBotWidget extends Widget {
       maxX = Math.max(maxX, Math.abs(container.x))
       maxY = Math.max(maxY, Math.abs(container.y))
     })
-    const footTex = await Assets.load(footUrl)
 
     const leftContainer = new Container()
     const rightContainer = new Container()
@@ -163,22 +188,17 @@ export class DancingBotWidget extends Widget {
     this.cornerPivot = { x: maxX + PANEL_SIZE / 2, y: maxY + PANEL_SIZE / 2 }
     this.pivot.set(this.cornerPivot.x, this.cornerPivot.y)
 
-    const colorChange = (optionId: string) => {
-      if (
-        [
-          "chart.parity.leftHeelColor",
-          "chart.parity.leftToeColor",
-          "chart.parity.rightHeelColor",
-          "chart.parity.rightToeColor",
-        ].includes(optionId)
-      ) {
-        leftFoot.tint = getParityColor(Foot.LEFT_HEEL)
-        rightFoot.tint = getParityColor(Foot.RIGHT_HEEL)
-        leftText.tint = getParityColor(Foot.LEFT_HEEL)
-        rightText.tint = getParityColor(Foot.RIGHT_HEEL)
-      }
+    this.footParts = [
+      { sprite: leftFoot, label: leftText, foot: Foot.LEFT_HEEL },
+      { sprite: rightFoot, label: rightText, foot: Foot.RIGHT_HEEL },
+    ]
+  }
+
+  updateFootColors() {
+    for (const part of this.footParts) {
+      part.sprite.tint = getParityColor(part.foot)
+      part.label.tint = getParityColor(part.foot)
     }
-    EventHandler.on("userOptionUpdated", colorChange)
   }
 
   reindex() {
