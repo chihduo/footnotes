@@ -154,16 +154,20 @@ def cycle(patterns, start, end):
     return {m: patterns[(m - start) % len(patterns)] for m in range(start, end)}
 
 
+# Beginner steps alternate feet, starting each measure with the left foot,
+# so arrows 1 and 3 of a measure are for the left foot and 2 and 4 for the
+# right. Keeping Right off the left foot's turns and Left off the right
+# foot's means the feet never cross over or switch places.
 BEGINNER = {
     2: "L . . . R . . .", 3: "L . . . R . . .",
     4: "D . . . U . . .", 5: "D . . . U . . .",
     **cycle(["L . R . L . R .", "D . U . D . U .",
-             "L . D . U . R .", "R . U . D . L ."], 6, 14),
+             "L . D . U . R .", "L . U . D . R ."], 6, 14),
     14: "L . . . R . . .", 15: "D . . . U . . .",
     16: "L . R . L . R .", 17: "LR . . . . . . .",
     19: "LR . . . . . . .",
     **cycle(["L . R . L . R .", "L . D . U . R .",
-             "D . U . D . U .", "R . U . D . L ."], 20, 30),
+             "D . U . D . U .", "L . U . D . R ."], 20, 30),
     30: "L . R . L . R .", 31: "LR . . . . . . .",
 }
 
