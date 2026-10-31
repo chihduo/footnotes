@@ -7,7 +7,7 @@ Rhythm games call this the chart's parity, and Footnotes works it out with SMEdi
 ## The rules
 
 1. **One foot per arrow, two for a jump.** Each arrow is stepped by one foot. When two arrows come at the same time, that's a jump, and both feet land together.
-2. **Two feet never share an arrow.** If one foot is standing on an arrow, putting the other foot on it doesn't press it again. So when the same arrow comes twice in a row, the foot that's already on it steps it again.
+2. **Two feet never share an arrow.** If one foot is standing on an arrow, putting the other foot on it doesn't press it again. So when the same arrow comes twice in a row, the foot that's already on it steps it again. On the bot, that foot disappears for a moment and lands again on the beat.
 3. **Alternate when it's comfortable.** Left, right, left, right is the default, as long as each foot can stay on its own side of the pad.
 4. **The same foot twice is fine when it's slow.** When steps are 0.4 seconds or more apart, the bot would rather step twice with the same foot than cross your legs over.
 5. **Fast passages alternate.** When steps are 0.2 seconds apart or closer, stepping twice with one foot is hard, so the bot alternates, crossing over or turning your body when the chart needs it.

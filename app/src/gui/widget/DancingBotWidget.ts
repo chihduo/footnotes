@@ -22,7 +22,11 @@ import { bsearch } from "../../util/Util"
 
 import footUrl from "../../../assets/foot.png"
 import receptorUrl from "../../../assets/receptor.png"
-import { Foot, ParityState } from "../../chart/stats/parity/ParityDataTypes"
+import {
+  Foot,
+  OTHER_PART_OF_FOOT,
+  ParityState,
+} from "../../chart/stats/parity/ParityDataTypes"
 import { assignTint, getParityColor } from "../../util/Color"
 import { Flags } from "../../util/Flags"
 import { Options } from "../../util/Options"
@@ -44,6 +48,14 @@ interface FeetPosition {
 
 const PANEL_SIZE = BOT_PANEL_SIZE
 
+// A foot that steps again on the panel it's standing on doesn't move, so it
+// disappears for this long before the step and reappears on the beat, like a
+// tap. In seconds of real time, so it looks the same at any playback rate.
+const TAP_LIFT_SECONDS = 0.3
+// A foot stays visible for at least this long after the previous step before
+// it disappears for a tap, or half the time between the steps if that's less
+const TAP_MIN_LANDED_SECONDS = 0.1
+
 const FOOT_COLOR_OPTIONS = [
   "chart.parity.leftHeelColor",
   "chart.parity.leftToeColor",
@@ -64,6 +76,8 @@ export class DancingBotWidget extends Widget {
 
   layout?: StageLayout
   dirty = false
+  // Feet only disappear for taps while the song plays, so pausing redraws them
+  wasPlaying = false
 
   // Increases with every build, so a build that finishes after a newer one
   // started can tell it's out of date
@@ -257,11 +271,17 @@ export class DancingBotWidget extends Widget {
     this.visible = true
     const visualBeat = this.manager.app.chartManager.chartView.getVisualBeat()
     const visualSecond = this.manager.app.chartManager.chartView.getVisualTime()
+    const playing = this.manager.app.chartManager.chartAudio.isPlaying()
 
-    if (this.lastSecond == visualSecond && !this.dirty) {
+    if (
+      this.lastSecond == visualSecond &&
+      !this.dirty &&
+      playing == this.wasPlaying
+    ) {
       return
     }
     this.dirty = false
+    this.wasPlaying = playing
     this.panels.forEach(panel => {
       const partialBeat = ((visualBeat % 1) + 1) % 1
       panel.arrow.alpha = 0.3 + clamp(1 - partialBeat, 0.5, 1) * 0.8
@@ -283,11 +303,15 @@ export class DancingBotWidget extends Widget {
     this.lastSecond = visualSecond
 
     if (this.leftFoot && this.rightFoot) {
-      let oldState = bestPath[this.currentRow]
+      // The last state marks the end of the chart, so stay on the last row
+      const oldIndex =
+        this.currentRow == bestPath.length - 1
+          ? this.currentRow - 1
+          : this.currentRow
+      const oldState = bestPath[oldIndex]
       const newState = bestPath[this.currentRow + 1] ?? bestPath.at(-2)
-      if (bestPath.at(-1) == oldState) {
-        oldState = bestPath.at(-2)!
-      }
+      let leftVisible = true
+      let rightVisible = true
 
       if (oldState) {
         const oldPosition = this.getFeetPosition(oldState)
@@ -313,12 +337,37 @@ export class DancingBotWidget extends Widget {
         let leftScale = 1
         let rightScale = 1
 
-        const movedLeftOld = oldState.movedFeet.has(Foot.LEFT_HEEL)
-        const movedRightOld = oldState.movedFeet.has(Foot.RIGHT_HEEL)
-        const movedLeftNew = newState.movedFeet.has(Foot.LEFT_HEEL)
-        const movedRightNew = newState.movedFeet.has(Foot.RIGHT_HEEL)
+        // A foot that steps again on the panel it's standing on keeps its
+        // size. It disappears before the step instead (below).
+        const previousState = bestPath[oldIndex - 1]
+        const tapLeftOld = this.tapsInPlace(
+          previousState,
+          oldState,
+          Foot.LEFT_HEEL
+        )
+        const tapRightOld = this.tapsInPlace(
+          previousState,
+          oldState,
+          Foot.RIGHT_HEEL
+        )
+        const tapLeftNew = this.tapsInPlace(oldState, newState, Foot.LEFT_HEEL)
+        const tapRightNew = this.tapsInPlace(
+          oldState,
+          newState,
+          Foot.RIGHT_HEEL
+        )
 
-        if (visualSecond > newState.second - 0.1) {
+        const movedLeftOld =
+          oldState.movedFeet.has(Foot.LEFT_HEEL) && !tapLeftOld
+        const movedRightOld =
+          oldState.movedFeet.has(Foot.RIGHT_HEEL) && !tapRightOld
+        const movedLeftNew =
+          newState.movedFeet.has(Foot.LEFT_HEEL) && !tapLeftNew
+        const movedRightNew =
+          newState.movedFeet.has(Foot.RIGHT_HEEL) && !tapRightNew
+
+        // Past the last row there's no next step, so nothing shrinks
+        if (newState !== oldState && visualSecond > newState.second - 0.1) {
           const t = clamp(
             unlerp(newState.second - 0.1, newState.second, visualSecond),
             0,
@@ -347,6 +396,18 @@ export class DancingBotWidget extends Widget {
         this.leftFoot.scale.set(leftScale)
         this.rightFoot.scale.set(rightScale)
 
+        // While the song plays, a foot about to step again on the panel it's
+        // standing on is in the air, and lands on the beat
+        if (
+          playing &&
+          visualSecond < newState.second &&
+          visualSecond >=
+            newState.second - this.getTapLiftTime(oldState, newState)
+        ) {
+          leftVisible = !tapLeftNew
+          rightVisible = !tapRightNew
+        }
+
         this.leftFoot.x = newPosition.left.x
         this.leftFoot.y = newPosition.left.y
         this.leftFoot.rotation = newPosition.left.angle
@@ -354,6 +415,8 @@ export class DancingBotWidget extends Widget {
         this.rightFoot.y = newPosition.right.y
         this.rightFoot.rotation = newPosition.right.angle
       }
+      this.leftFoot.visible = leftVisible
+      this.rightFoot.visible = rightVisible
     }
   }
 
@@ -482,6 +545,33 @@ export class DancingBotWidget extends Widget {
           : positionA.right.angle,
       },
     }
+  }
+
+  // Whether the foot with this heel steps at state on the same panels it was
+  // standing on at previous, so it doesn't move
+  tapsInPlace(
+    previous: ParityState | undefined,
+    state: ParityState,
+    heel: Foot
+  ) {
+    if (!previous || previous === state) return false
+    const toe = OTHER_PART_OF_FOOT[heel]
+    return (
+      (state.movedFeet.has(heel) || state.movedFeet.has(toe)) &&
+      state.footColumns[heel] == previous.footColumns[heel] &&
+      state.footColumns[toe] == previous.footColumns[toe]
+    )
+  }
+
+  // How long before newState a foot that taps in place disappears, in
+  // seconds of chart time
+  getTapLiftTime(oldState: ParityState, newState: ParityState) {
+    const rate = Options.audio.rate
+    const gap = newState.second - oldState.second
+    return Math.min(
+      TAP_LIFT_SECONDS * rate,
+      Math.max(gap - TAP_MIN_LANDED_SECONDS * rate, gap / 2)
+    )
   }
 
   flashPanel(col: number) {
