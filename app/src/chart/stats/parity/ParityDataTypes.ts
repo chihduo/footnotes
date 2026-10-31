@@ -44,6 +44,22 @@ export const FEET_LABEL_TO_FOOT: { [key: string]: Foot } = {
 
 export type FootOverride = "Left" | "Right" | Foot
 
+// How feet are chosen.
+// Natural: a foot may step twice in a row when steps are slow, and two feet
+// never stand on one arrow.
+// Alternating: SMEditor's original footing, which alternates feet whenever
+// it can, crossing over or switching feet to do so.
+export type FootingStyle = "Natural" | "Alternating"
+export const FOOTING_STYLES: FootingStyle[] = ["Natural", "Alternating"]
+
+// In Natural footing, a foot stepping twice in a row costs the full
+// DOUBLESTEP weight when steps are this close together or closer...
+export const NATURAL_FAST_STEP = 0.2
+// ...and only NATURAL_SLOW_DOUBLESTEP when they're this far apart or more,
+// blending in between. That's less than any crossover.
+export const NATURAL_SLOW_STEP = 0.4
+export const NATURAL_SLOW_DOUBLESTEP = 30
+
 export interface PlacementData {
   previousLeftPos: { x: number; y: number } // can probably cache this?
   previousRightPos: { x: number; y: number }
@@ -84,6 +100,7 @@ export const DEFAULT_WEIGHTS: { [key: string]: number } = {
   CROWDED_BRACKET: 0,
   OTHER: 0,
   START_XO: 10000,
+  SHARED_ARROW: 100000,
 }
 
 export const WEIGHT_SHORT_NAMES: { [id: string]: string } = {
@@ -105,6 +122,7 @@ export const WEIGHT_SHORT_NAMES: { [id: string]: string } = {
   SIDESWITCH: "SSW",
   CROWDED_BRACKET: "CBK",
   OTHER: "OTH",
+  SHARED_ARROW: "SHA",
   OVERRIDE: "OVR",
   TOTAL: "TOT",
 }

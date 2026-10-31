@@ -35,6 +35,15 @@ export class ParityAnalyzer extends ChartAnalyzer {
         EventHandler.emit("parityModified")
       }
     }
+    // The footing style is set when the worker starts, so restart it.
+    // A new worker also starts with empty caches of costs.
+    if (item === "chart.parity.footing") {
+      if (this.active && Options.chart.parity.enabled) {
+        this.terminateWorker()
+        this.initializeWorker().then(() => this.calculateAll())
+      }
+      return
+    }
     if (
       (item == "debug.parity.showGraph" || item == "debug.parity.showDebug") &&
       this.worker &&
@@ -220,6 +229,10 @@ export class ParityAnalyzer extends ChartAnalyzer {
     this.postMessage({
       type: "init",
       gameType: this.chart.gameType.id,
+      footing:
+        Options.chart.parity.footing == "Alternating"
+          ? "Alternating"
+          : "Natural",
     }).catch(error => {
       // Ignore workers terminated before they finished initializing,
       // e.g. when switching charts

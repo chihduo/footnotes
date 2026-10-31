@@ -38,6 +38,10 @@ export default defineConfig({
             link: "/footnotes/",
           },
           {
+            text: "How the Bot Chooses Feet",
+            link: "/footnotes/footing",
+          },
+          {
             text: "Loading Songs",
             link: "/footnotes/loading-songs",
           },

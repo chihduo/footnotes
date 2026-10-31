@@ -55,6 +55,7 @@ export class DefaultOptions {
     },
     parity: {
       enabled: false,
+      footing: "Natural",
       showHighlights: true,
       showTech: true,
       showCandles: false,

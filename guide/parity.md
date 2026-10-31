@@ -12,6 +12,11 @@ SMEditor to automatically identify tech and warn you about flow errors.
 You can enable parity checking using the default keybind `E`, through *View > Parity > Enable parity checking*,
 or the preferences menu.
 
+The **Footing** setting in the Parity preferences chooses how feet are predicted.
+**Natural**, the default in Footnotes, lets a foot step twice in a row when steps are slow and never puts both feet on one arrow.
+**Alternating** is SMEditor's original footing, which alternates feet whenever it can.
+See [How the bot chooses your feet](./footnotes/footing) for the rules.
+
 ::: tip
 Charting for 4K/spread? This feature is meant for pad-oriented charts.
 :::
