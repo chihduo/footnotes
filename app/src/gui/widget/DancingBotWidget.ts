@@ -51,10 +51,7 @@ const PANEL_SIZE = BOT_PANEL_SIZE
 // A foot that steps again on the panel it's standing on doesn't move, so it
 // disappears for this long before the step and reappears on the beat, like a
 // tap. In seconds of real time, so it looks the same at any playback rate.
-const TAP_LIFT_SECONDS = 0.3
-// A foot stays visible for at least this long after the previous step before
-// it disappears for a tap, or half the time between the steps if that's less
-const TAP_MIN_LANDED_SECONDS = 0.1
+const TAP_LIFT_SECONDS = 0.1
 
 const FOOT_COLOR_OPTIONS = [
   "chart.parity.leftHeelColor",
@@ -564,14 +561,11 @@ export class DancingBotWidget extends Widget {
   }
 
   // How long before newState a foot that taps in place disappears, in
-  // seconds of chart time
+  // seconds of chart time. When steps are close together, it's half the time
+  // between them, so the foot still shows after landing.
   getTapLiftTime(oldState: ParityState, newState: ParityState) {
-    const rate = Options.audio.rate
     const gap = newState.second - oldState.second
-    return Math.min(
-      TAP_LIFT_SECONDS * rate,
-      Math.max(gap - TAP_MIN_LANDED_SECONDS * rate, gap / 2)
-    )
+    return Math.min(TAP_LIFT_SECONDS * Options.audio.rate, gap / 2)
   }
 
   flashPanel(col: number) {
