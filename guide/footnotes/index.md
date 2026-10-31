@@ -18,6 +18,7 @@ To practice your own songs, see [Loading songs](./loading-songs).
 
 - The pad at the top is the dance stage, seen from above. Blue is your **left** foot and orange is your **right** foot, and each foot is labeled **L** or **R**.
 - A foot moves onto a panel just as the arrow for that panel reaches the targets. The panel lights up when it's stepped on.
+- When a foot steps again on the panel it's already standing on, it disappears for a moment and reappears exactly on the beat, like a tap. In a jump on the same two panels, both feet do this.
 - A foot that holds a panel for a hold note stays on it until the hold ends.
 - When the chart asks you to cross over or turn, the bot's feet cross and turn too.
 
