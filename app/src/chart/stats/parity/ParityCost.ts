@@ -1,7 +1,11 @@
-import { clamp } from "../../../util/Math"
+import { clamp, lerp } from "../../../util/Math"
 import {
   DEFAULT_WEIGHTS,
   Foot,
+  FootingStyle,
+  NATURAL_FAST_STEP,
+  NATURAL_SLOW_DOUBLESTEP,
+  NATURAL_SLOW_STEP,
   OTHER_PART_OF_FOOT,
   ParityState,
   PlacementData,
@@ -11,16 +15,22 @@ import { getPlayerAngle } from "./ParityUtils"
 
 import { STAGE_LAYOUTS, StageLayout } from "./StageLayouts"
 
+const LEFT_FOOT_PARTS = [Foot.LEFT_HEEL, Foot.LEFT_TOE]
+const RIGHT_FOOT_PARTS = [Foot.RIGHT_HEEL, Foot.RIGHT_TOE]
+
 export class ParityCostCalculator {
   private readonly layout: StageLayout
+  private readonly footing: FootingStyle
 
   private WEIGHTS: { [key: string]: number }
 
   constructor(
     type: string,
-    weights: { [key: string]: number } | undefined = undefined
+    weights: { [key: string]: number } | undefined = undefined,
+    footing: FootingStyle = "Natural"
   ) {
     this.layout = STAGE_LAYOUTS[type]
+    this.footing = footing
     if (weights != undefined) {
       this.WEIGHTS = { ...weights }
     } else {
@@ -113,6 +123,8 @@ export class ParityCostCalculator {
       placementData,
       elapsedTime
     )
+
+    costs["SHARED_ARROW"] = this.calcSharedArrowCost(resultState)
 
     let totalCost = 0
     for (const c in costs) {
@@ -317,7 +329,36 @@ export class ParityCostCalculator {
         if (willHitMine) return 0
       }
 
-      return this.WEIGHTS.DOUBLESTEP / clamp(elapsedTime * 4, 0.3, 1)
+      return this.doublestepCost(elapsedTime)
+    }
+    return 0
+  }
+
+  // Natural footing lets a foot step twice in a row when steps are slow,
+  // where that's easier than crossing over or switching feet
+  doublestepCost(elapsedTime: number) {
+    const cost = this.WEIGHTS.DOUBLESTEP / clamp(elapsedTime * 4, 0.3, 1)
+    if (this.footing != "Natural" || elapsedTime <= NATURAL_FAST_STEP)
+      return cost
+    if (elapsedTime >= NATURAL_SLOW_STEP) return NATURAL_SLOW_DOUBLESTEP
+    return lerp(
+      cost,
+      NATURAL_SLOW_DOUBLESTEP,
+      (elapsedTime - NATURAL_FAST_STEP) /
+        (NATURAL_SLOW_STEP - NATURAL_FAST_STEP)
+    )
+  }
+
+  // In Natural footing, two feet never stand on one arrow: stepping on an
+  // arrow the other foot is already on doesn't press it again, so a repeated
+  // arrow is stepped by the foot that's already there
+  calcSharedArrowCost(state: ParityState) {
+    if (this.footing != "Natural") return 0
+    for (const left of LEFT_FOOT_PARTS) {
+      const col = state.footColumns[left]
+      if (col == -1) continue
+      if (RIGHT_FOOT_PARTS.some(right => state.footColumns[right] == col))
+        return this.WEIGHTS.SHARED_ARROW
     }
     return 0
   }

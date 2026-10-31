@@ -1,6 +1,7 @@
 import { Notedata } from "../../sm/NoteTypes"
 import {
   Foot,
+  FootingStyle,
   ParityState,
   Row,
   TechCategory,
@@ -72,6 +73,7 @@ export interface ParityBaseMessage {
 export interface ParityInboundInitMessage extends ParityBaseMessage {
   type: "init"
   gameType: string
+  footing: FootingStyle
 }
 
 export interface ParityOutboundInitMessage extends ParityBaseMessage {

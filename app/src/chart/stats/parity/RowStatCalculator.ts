@@ -1,5 +1,7 @@
 import {
   Foot,
+  FootingStyle,
+  NATURAL_SLOW_STEP,
   OTHER_PART_OF_FOOT,
   PlacementData,
   Row,
@@ -13,7 +15,8 @@ import { StageLayout } from "./StageLayouts"
 export function calculateRowStats(
   nodes: ParityGraphNode[],
   rows: Row[],
-  layout: StageLayout
+  layout: StageLayout,
+  footing: FootingStyle
 ) {
   const techRows: (Set<TechCategory> | undefined)[] = [undefined]
   const techErrors = new Map<number, Set<TechErrors>>()
@@ -83,7 +86,14 @@ export function calculateRowStats(
       ) {
         techs.add(TechCategory.Doublesteps)
 
-        if (!isDoublestepMarked(data, initialRow, currentRow, layout)) {
+        // Natural footing chooses slow doublesteps on purpose
+        const chosenDoublestep =
+          footing == "Natural" &&
+          currentRow.second - initialRow.second >= NATURAL_SLOW_STEP
+        if (
+          !chosenDoublestep &&
+          !isDoublestepMarked(data, initialRow, currentRow, layout)
+        ) {
           errors.add(TechErrors.UnmarkedDoublestep)
         }
       }

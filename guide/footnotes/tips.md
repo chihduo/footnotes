@@ -18,7 +18,7 @@ For long charts, it can take a moment to work out the footing before the bot app
 
 ### The bot's feet look wrong
 
-The footing is a prediction from SMEditor's [parity checker](../parity).
+The footing is a suggestion, worked out by the rules in [How the bot chooses your feet](./footing).
 It's right for most charts, but some patterns, such as decorative mines or brackets, can confuse it.
 You can correct individual steps in the chart editor, as described in [Correcting the parity checker](../parity#correcting-the-parity-checker).
 

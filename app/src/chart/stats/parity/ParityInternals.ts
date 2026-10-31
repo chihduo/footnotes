@@ -11,7 +11,14 @@ import {
   isHoldNote,
 } from "../../sm/NoteTypes"
 import { ParityCostCalculator } from "./ParityCost"
-import { FEET, Foot, FootOverride, ParityState, Row } from "./ParityDataTypes"
+import {
+  FEET,
+  Foot,
+  FootingStyle,
+  FootOverride,
+  ParityState,
+  Row,
+} from "./ParityDataTypes"
 import {
   ParityDebugData,
   ParityDebugStats,
@@ -46,6 +53,7 @@ export class ParityGraphNode {
 export class ParityInternals {
   private readonly costCalc: ParityCostCalculator
   private readonly layout: StageLayout
+  private readonly footing: FootingStyle
 
   private readonly initialRow = {
     notes: [],
@@ -123,14 +131,15 @@ export class ParityInternals {
   notedataRows: Row[] = []
   nodeRows: { beat: number; nodes: ParityGraphNode[] }[] = []
 
-  constructor(gameType: string) {
+  constructor(gameType: string, footing: FootingStyle = "Natural") {
     this.notedataRows = []
     this.layout = STAGE_LAYOUTS[gameType]
     if (!this.layout) {
       throw new Error(`Unsupported game type: ${gameType}`)
     }
 
-    this.costCalc = new ParityCostCalculator(gameType)
+    this.footing = footing
+    this.costCalc = new ParityCostCalculator(gameType, undefined, footing)
     this.initialNode = new ParityGraphNode(
       new ParityState(this.initialRow, [], new Array(5).fill(-1))
     )
@@ -205,7 +214,8 @@ export class ParityInternals {
     const rowStats = calculateRowStats(
       bestNodes,
       this.notedataRows,
-      this.layout
+      this.layout,
+      this.footing
     )
 
     this.debugStats.rowStatsUpdateTime = performance.now() - rowStatsTimeStart
@@ -1141,7 +1151,7 @@ self.onmessage = (e: MessageEvent<ParityInboundMessage>) => {
         return
       }
       try {
-        instance = new ParityInternals(e.data.gameType)
+        instance = new ParityInternals(e.data.gameType, e.data.footing)
         postMessage({
           type: "init",
           id: e.data.id,
