@@ -13,7 +13,8 @@ You can enable parity checking using the default keybind `E`, through *View > Pa
 or the preferences menu.
 
 The **Footing** setting in the Parity preferences chooses how feet are predicted.
-**Natural**, the default in Footnotes, lets a foot step twice in a row when steps are slow and never puts both feet on one arrow.
+**Minimal effort**, the default in Footnotes, moves feet as little as it can: each move costs more the farther and faster the foot travels.
+**Natural** lets a foot step twice in a row when steps are slow and never puts both feet on one arrow, and Minimal effort keeps these rules.
 **Alternating** is SMEditor's original footing, which alternates feet whenever it can.
 See [How the bot chooses your feet](./footnotes/footing) for the rules.
 

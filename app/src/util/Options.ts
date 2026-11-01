@@ -55,7 +55,9 @@ export class DefaultOptions {
     },
     parity: {
       enabled: false,
-      footing: "Natural",
+      // Not "footing": saved values of that older option, from when Natural
+      // was the default, would override this default
+      footingStyle: "Minimal effort",
       showHighlights: true,
       showTech: true,
       showCandles: false,

@@ -45,12 +45,20 @@ export const FEET_LABEL_TO_FOOT: { [key: string]: Foot } = {
 export type FootOverride = "Left" | "Right" | Foot
 
 // How feet are chosen.
+// Minimal effort: like Natural, but each move costs effort that grows with
+// how far the foot travels and with the square of its speed, so feet move as
+// little as they can.
 // Natural: a foot may step twice in a row when steps are slow, and two feet
 // never stand on one arrow.
 // Alternating: SMEditor's original footing, which alternates feet whenever
 // it can, crossing over or switching feet to do so.
-export type FootingStyle = "Natural" | "Alternating"
-export const FOOTING_STYLES: FootingStyle[] = ["Natural", "Alternating"]
+export type FootingStyle = "Minimal effort" | "Natural" | "Alternating"
+export const FOOTING_STYLES: FootingStyle[] = [
+  "Minimal effort",
+  "Natural",
+  "Alternating",
+]
+export const DEFAULT_FOOTING_STYLE: FootingStyle = "Minimal effort"
 
 // In Natural footing, a foot stepping twice in a row costs the full
 // DOUBLESTEP weight when steps are this close together or closer...
@@ -101,6 +109,10 @@ export const DEFAULT_WEIGHTS: { [key: string]: number } = {
   OTHER: 0,
   START_XO: 10000,
   SHARED_ARROW: 100000,
+  // Minimal effort footing: a move costs TRAVEL per panel the foot travels,
+  // plus SPEED times its speed squared (panels per second)
+  TRAVEL: 50,
+  SPEED: 2,
 }
 
 export const WEIGHT_SHORT_NAMES: { [id: string]: string } = {
