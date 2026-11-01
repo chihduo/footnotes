@@ -86,9 +86,9 @@ export function calculateRowStats(
       ) {
         techs.add(TechCategory.Doublesteps)
 
-        // Natural footing chooses slow doublesteps on purpose
+        // Natural and Minimal effort footing choose slow doublesteps on purpose
         const chosenDoublestep =
-          footing == "Natural" &&
+          footing != "Alternating" &&
           currentRow.second - initialRow.second >= NATURAL_SLOW_STEP
         if (
           !chosenDoublestep &&

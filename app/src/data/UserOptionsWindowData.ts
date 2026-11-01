@@ -262,13 +262,13 @@ export const USER_OPTIONS_WINDOW_DATA: UserOption[] = [
           {
             type: "item",
             label: "Footing",
-            id: "chart.parity.footing",
+            id: "chart.parity.footingStyle",
             input: {
               type: "dropdown",
-              values: ["Natural", "Alternating"],
+              values: ["Minimal effort", "Natural", "Alternating"],
             },
             tooltip:
-              "Natural lets a foot step twice in a row when steps are slow, and never puts both feet on one arrow. Alternating is SMEditor's original footing, which alternates feet whenever it can.",
+              "Minimal effort moves your feet as little as it can, and avoids long, fast moves. Natural lets a foot step twice in a row when steps are slow, and never puts both feet on one arrow. Alternating is SMEditor's original footing, which alternates feet whenever it can.",
           },
           {
             type: "item",

@@ -117,7 +117,10 @@ export class ParityCostCalculator {
 
     costs["JACK"] = this.calcJackCost(placementData, elapsedTime)
 
-    costs["DISTANCE"] = this.calcDistanceCost(placementData, elapsedTime)
+    costs["DISTANCE"] =
+      this.footing == "Minimal effort"
+        ? this.calcEffortCost(placementData, elapsedTime)
+        : this.calcDistanceCost(placementData, elapsedTime)
 
     costs["CROWDED_BRACKET"] = this.calcCrowdedBracketCost(
       placementData,
@@ -334,11 +337,11 @@ export class ParityCostCalculator {
     return 0
   }
 
-  // Natural footing lets a foot step twice in a row when steps are slow,
-  // where that's easier than crossing over or switching feet
+  // Natural and Minimal effort footing let a foot step twice in a row when
+  // steps are slow, where that's easier than crossing over or switching feet
   doublestepCost(elapsedTime: number) {
     const cost = this.WEIGHTS.DOUBLESTEP / clamp(elapsedTime * 4, 0.3, 1)
-    if (this.footing != "Natural" || elapsedTime <= NATURAL_FAST_STEP)
+    if (this.footing == "Alternating" || elapsedTime <= NATURAL_FAST_STEP)
       return cost
     if (elapsedTime >= NATURAL_SLOW_STEP) return NATURAL_SLOW_DOUBLESTEP
     return lerp(
@@ -349,11 +352,11 @@ export class ParityCostCalculator {
     )
   }
 
-  // In Natural footing, two feet never stand on one arrow: stepping on an
-  // arrow the other foot is already on doesn't press it again, so a repeated
-  // arrow is stepped by the foot that's already there
+  // Except in Alternating footing, two feet never stand on one arrow: stepping
+  // on an arrow the other foot is already on doesn't press it again, so a
+  // repeated arrow is stepped by the foot that's already there
   calcSharedArrowCost(state: ParityState) {
-    if (this.footing != "Natural") return 0
+    if (this.footing == "Alternating") return 0
     for (const left of LEFT_FOOT_PARTS) {
       const col = state.footColumns[left]
       if (col == -1) continue
@@ -560,32 +563,7 @@ export class ParityCostCalculator {
       const resultPosition =
         foot == Foot.LEFT_HEEL ? data.leftPos : data.rightPos
 
-      // If we're bracketing something, and the previous position + new position had an overlap,
-      // then we don't need to worry about it, we're not actually moving
-      // the foot very far
-      const isBracketing =
-        foot == Foot.LEFT_HEEL ? data.leftBracket : data.rightBracket
-      if (isBracketing) {
-        const initialHeel = data.initialState.footColumns[foot]
-        const initialToe =
-          data.initialState.footColumns[OTHER_PART_OF_FOOT[foot]]
-
-        const resultHeel = data.resultState.footColumns[foot]
-        let resultToe = data.resultState.footColumns[OTHER_PART_OF_FOOT[foot]]
-        if (resultToe == -1) resultToe = resultHeel
-
-        if (initialHeel != -1) {
-          if (initialHeel == resultHeel || initialHeel == resultToe) {
-            continue
-          }
-        }
-
-        if (initialToe != -1) {
-          if (initialToe == resultHeel || initialToe == resultToe) {
-            continue
-          }
-        }
-      }
+      if (this.isBracketInPlace(data, foot)) continue
 
       if (data.previousJumped && !data.jumped && elapsedTime < 0.25) {
         elapsedTime = Math.pow(elapsedTime, 1.5)
@@ -602,6 +580,67 @@ export class ParityCostCalculator {
       // }
 
       cost += dist
+    }
+    return cost
+  }
+
+  // If we're bracketing something, and the previous position + new position had an overlap,
+  // then we don't need to worry about it, we're not actually moving
+  // the foot very far
+  isBracketInPlace(data: PlacementData, foot: Foot) {
+    const isBracketing =
+      foot == Foot.LEFT_HEEL ? data.leftBracket : data.rightBracket
+    if (!isBracketing) return false
+
+    const initialHeel = data.initialState.footColumns[foot]
+    const initialToe = data.initialState.footColumns[OTHER_PART_OF_FOOT[foot]]
+
+    const resultHeel = data.resultState.footColumns[foot]
+    let resultToe = data.resultState.footColumns[OTHER_PART_OF_FOOT[foot]]
+    if (resultToe == -1) resultToe = resultHeel
+
+    if (initialHeel != -1) {
+      if (initialHeel == resultHeel || initialHeel == resultToe) {
+        return true
+      }
+    }
+
+    if (initialToe != -1) {
+      if (initialToe == resultHeel || initialToe == resultToe) {
+        return true
+      }
+    }
+    return false
+  }
+
+  // In Minimal effort footing, each move costs effort: TRAVEL for each panel
+  // the foot travels, plus SPEED times its speed squared, like the energy of
+  // the leg's swing. Feet move as little as they can, and long fast moves are
+  // the most expensive. A foot that didn't step in the previous row has had
+  // about twice the time since then to make its move.
+  calcEffortCost(data: PlacementData, elapsedTime: number) {
+    let cost = 0
+
+    for (const [heel, toe] of [LEFT_FOOT_PARTS, RIGHT_FOOT_PARTS]) {
+      if (!data.resultState.movedFeet.has(heel)) continue
+      if (this.isBracketInPlace(data, heel)) continue
+
+      const isLeft = heel == Foot.LEFT_HEEL
+      const distance = Math.sqrt(
+        this.layout.getDistanceSqPoints(
+          isLeft ? data.previousLeftPos : data.previousRightPos,
+          isLeft ? data.leftPos : data.rightPos
+        )
+      )
+      if (distance == 0) continue
+
+      const steppedBefore =
+        data.initialState.movedFeet.has(heel) ||
+        data.initialState.movedFeet.has(toe)
+      const time = steppedBefore ? elapsedTime : elapsedTime * 2
+      cost +=
+        this.WEIGHTS.TRAVEL * distance +
+        this.WEIGHTS.SPEED * (distance / time) ** 2
     }
     return cost
   }
