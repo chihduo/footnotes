@@ -109,6 +109,9 @@ export const DEFAULT_WEIGHTS: { [key: string]: number } = {
   OTHER: 0,
   START_XO: 10000,
   SHARED_ARROW: 100000,
+  // One foot pressing two arrows at once (a bracket) costs this much, so it
+  // only happens when the chart leaves no other way
+  BRACKET: 100000,
   // Minimal effort footing: a move costs TRAVEL per panel the foot travels,
   // plus SPEED times its speed squared (panels per second)
   TRAVEL: 50,
@@ -135,6 +138,7 @@ export const WEIGHT_SHORT_NAMES: { [id: string]: string } = {
   CROWDED_BRACKET: "CBK",
   OTHER: "OTH",
   SHARED_ARROW: "SHA",
+  BRACKET: "BRK",
   OVERRIDE: "OVR",
   TOTAL: "TOT",
 }
