@@ -16,6 +16,7 @@ Everything you need while practicing is on screen. The keyboard shortcuts below 
 - **Play** and **Pause**.
 - **Time** and **Beat:** click either one to type the position you want to jump to.
 - **Charts:** opens the chart list, so you can switch to another difficulty.
+- **Footing:** chooses how the bot picks your feet: **Minimal effort**, **Natural** or **Alternating**. See [How the bot chooses your feet](./footing).
 - **Exit practice:** switches to the full SMEditor chart editor.
 
 **Note layout**

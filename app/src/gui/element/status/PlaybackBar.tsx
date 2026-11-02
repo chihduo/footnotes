@@ -1,10 +1,13 @@
 import { App } from "../../../App"
 import { EditMode } from "../../../chart/ChartManager"
+import { FOOTING_STYLES } from "../../../chart/stats/parity/ParityDataTypes"
 import { Flags } from "../../../util/Flags"
 import { useOption } from "../../../util/Hooks"
 import { Keybinds } from "../../../util/Keybinds"
+import { Options } from "../../../util/Options"
 import { PracticeMode } from "../../../util/PracticeMode"
 import { ReactIcon } from "../../Icons"
+import { DropdownInput } from "../../inputs/DropdownInput"
 import { ChartListWindow } from "../../window/ChartList/ChartListWindow"
 import { WindowManager } from "../../window/WindowManager"
 import { TimeCounters } from "./TimeCounters"
@@ -15,6 +18,7 @@ export function PlaybackBar(props: {
   state: EditMode
 }) {
   const practice = useOption<boolean>("practice.enabled")
+  const footing = useOption<string>("chart.parity.footingStyle")
   return (
     <div className="playback-bar">
       <button
@@ -140,6 +144,17 @@ export function PlaybackBar(props: {
               Charts
             </button>
           )}
+          <div
+            className="playback-counter practice-footing"
+            ref={Keybinds.createReactKeybindTooltip`How the bot chooses your feet`}
+          >
+            <DropdownInput
+              value={footing}
+              values={FOOTING_STYLES}
+              onChange={value => (Options.chart.parity.footingStyle = value)}
+            />
+            <div className="playback-counter-label">Footing</div>
+          </div>
           <button
             tabIndex={-1}
             className="practice-button"
