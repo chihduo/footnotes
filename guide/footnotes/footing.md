@@ -63,13 +63,13 @@ That's 4.2 panels of travel instead of 6.2, for one extra step with the same foo
 
 ## The Footing setting
 
-The chart editor's **Preferences > Parity > Footing** setting chooses between three sets of rules:
+The **Footing** menu in the bottom bar chooses between three sets of rules while you practice. The chart editor has the same setting in **Preferences > Parity > Footing**.
 
 - **Minimal effort** (the default) uses all the rules above.
 - **Natural** uses the same rules, but counts movement much more lightly, so it alternates feet a little more and plans ahead less. It was the default before Minimal effort.
 - **Alternating** is SMEditor's original footing. It alternates feet whenever it can, crossing over, or switching feet on an arrow, to avoid stepping twice with the same foot, even in slow passages.
 
-To get to Preferences while practicing, press **Exit practice** first.
+The bot switches to the new footing straight away.
 
 ## When the footing looks wrong
 

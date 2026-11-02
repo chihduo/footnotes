@@ -32,7 +32,7 @@ The footing is a suggestion, so trust your body when a step feels wrong.
 2. **Dancing bot:** the pad with the two feet.
 3. **Targets:** arrows rise into these, just under the bot. Once an arrow passes the targets, it slides away under the pad.
 4. **Note layout:** the strip on the right shows the whole chart. Click or drag on it to jump to any part of the song.
-5. **Bottom bar:** skip to the start or end, play or pause, the current time and beat, **Charts** to switch difficulty, and **Exit practice**.
+5. **Bottom bar:** skip to the start or end, play or pause, the current time and beat, **Charts** to switch difficulty, **Footing** to choose how the bot picks your feet, and **Exit practice**.
 
 See [Controls](./controls) for all the buttons and keys.
 
