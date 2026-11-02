@@ -14,7 +14,7 @@ Rhythm games call this the chart's parity, and Footnotes works it out with SMEdi
 6. **Fast passages alternate.** When steps are 0.2 seconds apart or closer, stepping twice with one foot is hard, so the bot alternates, crossing over or turning your body when the chart needs it.
 7. **Face the screen.** The bot avoids turning your back to the screen.
 8. **Holds keep a foot in place.** A foot holding an arrow stays on it until the hold ends, and the other foot takes the other arrows.
-9. **Brackets.** Sometimes one foot presses two arrows next to each other at once, with the heel on one and the toes on the other.
+9. **No brackets.** A foot never presses two arrows at once, even two next to each other, so two arrows at the same time are always a jump with both feet. The only exceptions are charts that leave no other way: three arrows at once, or a jump while one foot is holding an arrow. Then one foot takes two arrows next to each other, with the heel on one and the toes on the other.
 
 ## How fast is slow?
 
@@ -69,6 +69,7 @@ The **Footing** menu in the bottom bar chooses between three sets of rules while
 - **Natural** uses the same rules, but counts movement much more lightly, so it alternates feet a little more and plans ahead less. It was the default before Minimal effort.
 - **Alternating** is SMEditor's original footing. It alternates feet whenever it can, crossing over, or switching feet on an arrow, to avoid stepping twice with the same foot, even in slow passages.
 
+All three follow the no-brackets rule, so even Alternating never presses two arrows with one foot unless the chart leaves no other way.
 The bot switches to the new footing straight away.
 
 ## When the footing looks wrong

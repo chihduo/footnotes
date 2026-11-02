@@ -129,6 +129,8 @@ export class ParityCostCalculator {
 
     costs["SHARED_ARROW"] = this.calcSharedArrowCost(resultState)
 
+    costs["BRACKET"] = this.calcBracketCost(resultState)
+
     let totalCost = 0
     for (const c in costs) {
       totalCost += costs[c]
@@ -364,6 +366,21 @@ export class ParityCostCalculator {
         return this.WEIGHTS.SHARED_ARROW
     }
     return 0
+  }
+
+  // One foot never presses two arrows at once (a bracket), unless the chart
+  // leaves no other way, like three arrows at once or a jump while the other
+  // foot holds an arrow. This counts a foot using its heel and toes in this
+  // row, including on arrows it's holding, but not one still standing where
+  // an earlier bracket left it.
+  calcBracketCost(state: ParityState) {
+    let cost = 0
+    for (const [heel, toe] of [LEFT_FOOT_PARTS, RIGHT_FOOT_PARTS]) {
+      if (state.action.includes(heel) && state.action.includes(toe)) {
+        cost += this.WEIGHTS.BRACKET
+      }
+    }
+    return cost
   }
 
   calcJumpCost(data: PlacementData, elapsedTime: number) {
