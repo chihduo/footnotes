@@ -112,6 +112,10 @@ export const DEFAULT_WEIGHTS: { [key: string]: number } = {
   // One foot pressing two arrows at once (a bracket) costs this much, so it
   // only happens when the chart leaves no other way
   BRACKET: 100000,
+  // Minimal effort footing: moving a foot straight across the pad (Up-Down or
+  // Left-Right) costs more than a same-foot step down to 0.1 s apart or any
+  // crossover, but less than turning your back to the screen (SPIN)
+  OPPOSITE_MOVE: 2000,
   // Minimal effort footing: a move costs TRAVEL per panel the foot travels,
   // plus SPEED times its speed squared (panels per second)
   TRAVEL: 50,
@@ -139,6 +143,7 @@ export const WEIGHT_SHORT_NAMES: { [id: string]: string } = {
   OTHER: "OTH",
   SHARED_ARROW: "SHA",
   BRACKET: "BRK",
+  OPPOSITE_MOVE: "OPP",
   OVERRIDE: "OVR",
   TOTAL: "TOT",
 }
