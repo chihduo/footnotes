@@ -131,6 +131,11 @@ export class ParityCostCalculator {
 
     costs["BRACKET"] = this.calcBracketCost(resultState)
 
+    costs["OPPOSITE_MOVE"] =
+      this.footing == "Minimal effort"
+        ? this.calcOppositeMoveCost(placementData)
+        : 0
+
     let totalCost = 0
     for (const c in costs) {
       totalCost += costs[c]
@@ -658,6 +663,27 @@ export class ParityCostCalculator {
       cost +=
         this.WEIGHTS.TRAVEL * distance +
         this.WEIGHTS.SPEED * (distance / time) ** 2
+    }
+    return cost
+  }
+
+  // In Minimal effort footing, a foot never moves straight across the pad,
+  // between Up and Down or Left and Right, two panels apart. It moves to a
+  // neighbouring arrow instead, even if that means stepping twice with the
+  // same foot, unless the chart leaves no other way.
+  calcOppositeMoveCost(data: PlacementData) {
+    let cost = 0
+
+    for (const heel of [Foot.LEFT_HEEL, Foot.RIGHT_HEEL]) {
+      if (!data.resultState.movedFeet.has(heel)) continue
+      if (this.isBracketInPlace(data, heel)) continue
+
+      const isLeft = heel == Foot.LEFT_HEEL
+      const distanceSq = this.layout.getDistanceSqPoints(
+        isLeft ? data.previousLeftPos : data.previousRightPos,
+        isLeft ? data.leftPos : data.rightPos
+      )
+      if (Math.abs(distanceSq - 4) < 1e-6) cost += this.WEIGHTS.OPPOSITE_MOVE
     }
     return cost
   }

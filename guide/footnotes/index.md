@@ -22,7 +22,7 @@ To practice your own songs, see [Loading songs](./loading-songs).
 - A foot that holds a panel for a hold note stays on it until the hold ends.
 - When the chart asks you to cross over or turn, the bot's feet cross and turn too.
 
-The bot plans the footing for the whole chart: it moves your feet as little as it can, alternates feet when that's comfortable, steps twice with the same foot when steps are slow, and never puts both feet on one arrow or one foot on two arrows.
+The bot plans the footing for the whole chart: it moves your feet as little as it can and never swings a foot across the pad, alternates feet when that's comfortable, steps twice with the same foot when steps are slow, and never puts both feet on one arrow or one foot on two arrows.
 [How the bot chooses your feet](./footing) explains the rules.
 The footing is a suggestion, so trust your body when a step feels wrong.
 
