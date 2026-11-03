@@ -2725,6 +2725,13 @@ input[type="checkbox"] {
   border-bottom: 0px solid var(--secondary-border);
 }
 
+/* In practice mode the few remaining controls sit in the middle of the top
+   bar. "safe" keeps them starting at the left, and scrollable, when they
+   don't fit, as on phones. */
+body.practice #playback-options {
+  justify-content: safe center;
+}
+
 #playback-options .playback-options-label {
   white-space: nowrap;
 }
