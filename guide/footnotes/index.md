@@ -28,7 +28,7 @@ The footing is a suggestion, so trust your body when a step feels wrong.
 
 ## The practice screen
 
-1. **Top bar:** playback rate, the assist tick and metronome, and scroll speed.
+1. **Top bar:** playback rate, the assist tick and metronome, scroll speed, foot highlights, and **Loop** to repeat a section.
 2. **Dancing bot:** the pad with the two feet.
 3. **Targets:** arrows rise into these, just under the bot. Once an arrow passes the targets, it slides away under the pad.
 4. **Note layout:** the strip on the right shows the whole chart. Click or drag on it to jump to any part of the song.

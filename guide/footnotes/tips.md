@@ -4,7 +4,7 @@
 
 - **Start slow.** Set the playback rate to 50% or 75%, and speed it back up as the steps start to feel natural.
 - **Watch before you dance.** Play a section once just to watch the bot's feet, then dance it.
-- **Practice one section at a time.** Click the note layout on the right, or press <kbd>Page Up</kbd>, to go back and repeat a hard part.
+- **Practice one section at a time.** Use **Loop** in the top bar to repeat a hard part: click it at the start of the part and again at its end. You can also click the note layout on the right, or press <kbd>Page Up</kbd>, to go back.
 - **Listen to the steps.** Turn on the clap (<kbd>F7</kbd>) to hear a tick on every arrow.
 - **Find a comfortable scroll speed.** Lower it if the arrows rush past, and raise it if they bunch up.
 - **Learn the patterns' names.** Crossovers, footswitches, jacks and brackets come up in many charts. The [parity checking](../parity#tech-notation) page explains them.

@@ -3,6 +3,7 @@ import { EditMode } from "../chart/ChartManager"
 import { EventHandler } from "./EventHandler"
 import { Flags } from "./Flags"
 import { Options } from "./Options"
+import { PracticeLoop } from "./PracticeLoop"
 
 interface PracticeSnapshot {
   mode: EditMode
@@ -52,6 +53,7 @@ export class PracticeMode {
     if (!Options.practice.enabled) return
     Options.practice.enabled = false
     document.body.classList.remove("practice")
+    PracticeLoop.clear()
     const snapshot = PracticeMode.snapshot
     PracticeMode.snapshot = undefined
     if (snapshot) {

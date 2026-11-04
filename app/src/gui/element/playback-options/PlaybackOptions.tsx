@@ -10,6 +10,7 @@ import { PlaybackOptionsGroup } from "./PlaybackOptionsGroup"
 import { PlaybackOptionsSeparator } from "./PlaybackOptionsSeparator"
 import { PlaybackOptionsToggle } from "./PlaybackOptionsToggle"
 import { PlusMinusSpinner } from "./PlusMinusSpinner"
+import { PracticeLoopButton } from "./PracticeLoopButton"
 
 export function PlaybackOptions() {
   const [initialRender, setInitialRender] = useState(false) // scuffed way to fix x/c mod sizes
@@ -144,6 +145,20 @@ export function PlaybackOptions() {
           onChange={value => (Options.chart.speed = value)}
         />
       </PlaybackOptionsGroup>
+      <PlaybackOptionsSeparator className="practice-only" />
+      <div className="practice-only po-practice-item">
+        <PlaybackOptionsCheckbox
+          addTooltip={tooltip`Toggle foot highlights ${"showFootHighlights"}`}
+          onChange={value => (Options.chart.parity.showHighlights = value)}
+          getValue={() => Options.chart.parity.showHighlights}
+          onEl={<ReactIcon id="FEET" width={18} />}
+          offEl={<ReactIcon id="X_FEET" width={18} />}
+        />
+      </div>
+      <PlaybackOptionsSeparator className="practice-only" />
+      <div className="practice-only po-practice-item">
+        <PracticeLoopButton />
+      </div>
       <PlaybackOptionsSeparator className="practice-hide" />
       <PlaybackOptionsGroup
         label="Speed Changes"
