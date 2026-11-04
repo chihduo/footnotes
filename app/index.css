@@ -2732,6 +2732,31 @@ body.practice #playback-options {
   justify-content: safe center;
 }
 
+/* Controls only shown in dance practice mode */
+body:not(.practice) .practice-only {
+  display: none !important;
+}
+
+#playback-options .po-practice-item {
+  display: flex;
+  align-items: center;
+}
+
+/* The practice Loop button: an icon and the section's times */
+#playback-options .po-loop {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+#playback-options .po-loop.active {
+  background: var(--editable-overlay-active);
+}
+
 #playback-options .playback-options-label {
   white-space: nowrap;
 }

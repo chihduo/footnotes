@@ -195,7 +195,8 @@ export class NoteContainer extends Container {
       if (
         Options.chart.parity.enabled &&
         Options.chart.parity.showHighlights &&
-        this.notefield.renderer.chartManager.getMode() == EditMode.Edit
+        (this.notefield.renderer.chartManager.getMode() == EditMode.Edit ||
+          Options.practice.enabled)
       ) {
         const color = getParityColor(note.parity?.foot)
         container.parity.alpha = note.parity ? color.alpha : 0
