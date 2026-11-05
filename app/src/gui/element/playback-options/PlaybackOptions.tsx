@@ -77,29 +77,40 @@ export function PlaybackOptions() {
           onChange={value => (Options.audio.rate = value / 100)}
         />
       </PlaybackOptionsGroup>
-      <div
-        style={{
-          gap: "0.25rem",
-          display: "flex",
-          alignItems: "center",
-          opacity: Flags.assist ? 1 : 0.5,
-          pointerEvents: Flags.assist ? "auto" : "none",
-        }}
-      >
-        <PlaybackOptionsCheckbox
-          addTooltip={tooltip`Toggle assist tick ${"assistTick"}`}
-          onChange={value => (Options.audio.assistTick = value)}
-          getValue={() => Options.audio.assistTick}
-          onEl={<ReactIcon id="CLAP" width={18} />}
-          offEl={<ReactIcon id="X_CLAP" width={18} />}
-        />
-        <PlaybackOptionsCheckbox
-          addTooltip={tooltip`Toggle metronome ${"metronome"}`}
-          onChange={value => (Options.audio.metronome = value)}
-          getValue={() => Options.audio.metronome}
-          onEl={<ReactIcon id="METRONOME" width={18} />}
-          offEl={<ReactIcon id="X_METRONOME" width={18} />}
-        />
+      <div style={{ gap: "0.25rem", display: "flex", alignItems: "center" }}>
+        <div
+          style={{
+            gap: "0.25rem",
+            display: "flex",
+            alignItems: "center",
+            opacity: Flags.assist ? 1 : 0.5,
+            pointerEvents: Flags.assist ? "auto" : "none",
+          }}
+        >
+          <PlaybackOptionsCheckbox
+            addTooltip={tooltip`Toggle assist tick ${"assistTick"}`}
+            onChange={value => (Options.audio.assistTick = value)}
+            getValue={() => Options.audio.assistTick}
+            onEl={<ReactIcon id="CLAP" width={18} />}
+            offEl={<ReactIcon id="X_CLAP" width={18} />}
+          />
+          <PlaybackOptionsCheckbox
+            addTooltip={tooltip`Toggle metronome ${"metronome"}`}
+            onChange={value => (Options.audio.metronome = value)}
+            getValue={() => Options.audio.metronome}
+            onEl={<ReactIcon id="METRONOME" width={18} />}
+            offEl={<ReactIcon id="X_METRONOME" width={18} />}
+          />
+        </div>
+        <div className="practice-only po-practice-item">
+          <PlaybackOptionsCheckbox
+            addTooltip={tooltip`Toggle foot highlights ${"showFootHighlights"}`}
+            onChange={value => (Options.chart.parity.showHighlights = value)}
+            getValue={() => Options.chart.parity.showHighlights}
+            onEl={<ReactIcon id="FEET" width={18} />}
+            offEl={<ReactIcon id="X_FEET" width={18} />}
+          />
+        </div>
       </div>
       <PlaybackOptionsSeparator />
       <PlaybackOptionsGroup
@@ -145,16 +156,6 @@ export function PlaybackOptions() {
           onChange={value => (Options.chart.speed = value)}
         />
       </PlaybackOptionsGroup>
-      <PlaybackOptionsSeparator className="practice-only" />
-      <div className="practice-only po-practice-item">
-        <PlaybackOptionsCheckbox
-          addTooltip={tooltip`Toggle foot highlights ${"showFootHighlights"}`}
-          onChange={value => (Options.chart.parity.showHighlights = value)}
-          getValue={() => Options.chart.parity.showHighlights}
-          onEl={<ReactIcon id="FEET" width={18} />}
-          offEl={<ReactIcon id="X_FEET" width={18} />}
-        />
-      </div>
       <PlaybackOptionsSeparator className="practice-only" />
       <div className="practice-only po-practice-item">
         <PracticeLoopButton />

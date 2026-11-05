@@ -63,7 +63,7 @@ Say your left foot is on Down and your right foot on Right, and then Up and Righ
 The bot moves only your left foot, from Down across the pad to Up, and your right foot stays on Right.
 Moving both feet instead, with the right foot to Up and the left foot to Right, would avoid crossing the pad but cross your legs over.
 
-The demo song's Beginner chart has **Left, Right, Down, Up, Down, Up, Left, Down**, half a second apart.
+Take **Left, Right, Down, Up, Down, Up, Left, Down**, half a second apart.
 Your right foot could take Up and your left foot Down, but then the last Down would mean swinging the right foot across the pad from Up to Down.
 The bot plans ahead: your right foot takes Down and your left foot takes Up, so the last Down is already under your right foot.
 That's 4.2 panels of travel instead of 6.2, for one extra step with the same foot: the left foot steps Up and then Left.

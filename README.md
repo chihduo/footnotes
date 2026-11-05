@@ -7,7 +7,7 @@
 <a href="https://chihduo.github.io/footnotes/"><img src=".github/readme/hero.svg" width="100%" alt="Footnotes. The notes, with your feet written in. Learn to dance any StepMania chart. A dancing bot shows which foot goes where, right above the arrows you're about to hit." /></a>
 
 <p>
-  <a href="https://chihduo.github.io/footnotes/app/?url=../demo/footnotes-demo.sm&chartType=dance-single&chartIndex=0&flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
+  <a href="https://chihduo.github.io/footnotes/app/?url=../demo/you.sm&chartType=dance-single&chartIndex=0&flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/button-songs.svg" height="44" alt="Load your own song" /></a>
 </p>
 
@@ -16,7 +16,7 @@
 Footnotes plays StepMania simfiles (`.sm` and `.ssc`) together with their music.
 
 <p>
-  <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-demo.svg" width="32%" alt="Try the demo: a one-minute practice song made for Footnotes. Pick a chart to start dancing: Beginner 1, Easy 3 or Medium 5." /></a>
+  <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-demo.svg" width="32%" alt="Try the demo: &quot;YOU&quot; by YURIA, with a Hard chart by Trick Master Mint, used with permission. Slow it down with the playback rate while you learn it. Hard 7." /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-link.svg" width="32%" alt="From a link: paste a link to a .sm or .ssc file. Its music file has to sit next to it." /></a>
   <a href="https://chihduo.github.io/footnotes/app/?flags=D"><img src=".github/readme/card-computer.svg" width="32%" alt="From your computer: import a song folder that holds a .sm or .ssc file and its music. It stays in your browser." /></a>
 </p>
@@ -81,7 +81,6 @@ Every push to `master` builds the site and publishes it to GitHub Pages (`.githu
 | `app/`                   | The app: SMEditor with dance practice mode               |
 | `guide/`                 | The guide (VitePress)                                    |
 | `public/demo/`           | The demo song                                            |
-| `tools/demo-song/`       | The script that generates the demo song                  |
 | `.github/readme/`        | The images in this README                                |
 | `tools/readme/`          | The script that generates them from the website's design |
 
@@ -92,4 +91,4 @@ After changing the website's look, regenerate them with `python3 tools/readme/ma
 
 Footnotes is a modified version of SMEditor and is distributed under the MIT License, like SMEditor. See [LICENSE](LICENSE).
 
-The demo song in `public/demo/` is generated from scratch by `tools/demo-song/make_demo_song.py` and is released into the public domain ([CC0](https://creativecommons.org/publicdomain/zero/1.0/)).
+The demo song in `public/demo/`, "YOU" by YURIA with a Hard chart by Trick Master Mint, is included with permission. It isn't covered by the MIT License and may not be redistributed.
