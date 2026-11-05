@@ -113,9 +113,10 @@ export const DEFAULT_WEIGHTS: { [key: string]: number } = {
   // only happens when the chart leaves no other way
   BRACKET: 100000,
   // Minimal effort footing: moving a foot straight across the pad (Up-Down or
-  // Left-Right) costs more than a same-foot step down to 0.1 s apart or any
-  // crossover, but less than turning your back to the screen (SPIN)
-  OPPOSITE_MOVE: 2000,
+  // Left-Right) costs this much extra. That's more than a slow same-foot step
+  // to a neighbouring arrow instead, but less than moving the other foot too
+  // and crossing over, or a fast same-foot step
+  OPPOSITE_MOVE: 60,
   // Minimal effort footing: a move costs TRAVEL per panel the foot travels,
   // plus SPEED times its speed squared (panels per second)
   TRAVEL: 50,
