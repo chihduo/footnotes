@@ -194,13 +194,13 @@ def paragraph(ts, lines, top):
     )
 
 
-DEMO_CHARTS = [("Beginner", 1, "#3fd6f5"), ("Easy", 3, "#6ad35f"), ("Medium", 5, "#ffd23f")]
+DEMO_CHARTS = [("Hard", 7, "#ff5a5a")]
 
 
 def demo_tiles(ts, y):
     """The demo card's chart tiles: a colored top edge, the meter and the difficulty."""
     gap = 8
-    width = (TEXT_WIDTH - 2 * gap) / 3
+    width = (TEXT_WIDTH - (len(DEMO_CHARTS) - 1) * gap) / len(DEMO_CHARTS)
     defs, body = "", ""
     for i, (label, meter, color) in enumerate(DEMO_CHARTS):
         x = PAD + i * (width + gap)
@@ -226,7 +226,8 @@ def make_song_cards(ts):
     """The three cards of the website's "Pick a song" section."""
     cards = [
         ("card-demo", "Try the demo",
-         "A one-minute practice song made for Footnotes. Pick a chart to start dancing.",
+         '"YOU" by YURIA, with a Hard chart by Trick Master Mint, used with permission. '
+         "Slow it down with the playback rate while you learn it.",
          "tiles", None),
         ("card-link", "From a link",
          "Paste a link to a .sm or .ssc file. Its music file has to sit next to it.",

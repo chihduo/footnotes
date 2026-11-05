@@ -5,9 +5,9 @@ You can try the demo song, load a song from a link, or open a song folder from y
 
 ## The demo song
 
-The [Footnotes home page](https://chihduo.github.io/footnotes/) has a one-minute demo song with Beginner, Easy and Medium charts.
-**Try the demo song** opens the Beginner chart, and the **Try the demo** card has a button for each chart.
-The song was made for Footnotes, so you can share it freely.
+The [Footnotes home page](https://chihduo.github.io/footnotes/) has a demo song: "YOU" by YURIA, with a Hard chart by Trick Master Mint.
+**Try the demo song**, or the **Hard** button in the **Try the demo** card, opens it.
+The song and chart are used with permission and aren't covered by Footnotes' license, so please don't redistribute them.
 
 ## From a link
 
