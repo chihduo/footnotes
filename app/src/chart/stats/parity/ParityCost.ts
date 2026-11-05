@@ -667,10 +667,11 @@ export class ParityCostCalculator {
     return cost
   }
 
-  // In Minimal effort footing, a foot never moves straight across the pad,
-  // between Up and Down or Left and Right, two panels apart. It moves to a
-  // neighbouring arrow instead, even if that means stepping twice with the
-  // same foot, unless the chart leaves no other way.
+  // In Minimal effort footing, a foot avoids moving straight across the pad,
+  // between Up and Down or Left and Right, two panels apart. In slow passages
+  // it steps twice with the same foot to a neighbouring arrow instead, but it
+  // still crosses the pad rather than move the other foot too and cross over,
+  // or step twice quickly with the same foot.
   calcOppositeMoveCost(data: PlacementData) {
     let cost = 0
 
