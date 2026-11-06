@@ -47,6 +47,7 @@ import { Keybinds } from "./util/Keybinds"
 import { Options } from "./util/Options"
 import { extname } from "./util/Path"
 import { fpsUpdate } from "./util/Performance"
+import { getPracticeStageZoom } from "./util/PracticeLayout"
 import { Themes } from "./util/Theme"
 import { isIFrame } from "./util/Util"
 
@@ -523,7 +524,10 @@ export class App {
     this.view.height = screenHeight * this.renderer.resolution
     this.view.style.width = `${screenWidth}px`
     this.view.style.height = `${screenHeight}px`
-    this.STAGE_HEIGHT = BASE_STAGE_HEIGHT / Options.general.uiScale
+    this.STAGE_HEIGHT =
+      BASE_STAGE_HEIGHT /
+      Options.general.uiScale /
+      getPracticeStageZoom(screenHeight)
     const zoomRatio = screenHeight / this.STAGE_HEIGHT
     this.stage.scale.set(zoomRatio)
     this.stage.position.set(screenWidth / 2, screenHeight / 2)
