@@ -5,9 +5,10 @@ You can try the demo song, load a song from a link, or open a song folder from y
 
 ## The demo song
 
-The [Footnotes home page](https://chihduo.github.io/footnotes/) has a demo song: "YOU" by YURIA, with a Hard chart by Trick Master Mint.
-**Try the demo song**, or the **Hard** button in the **Try the demo** card, opens it.
-The song and chart are used with permission and aren't covered by Footnotes' license, so please don't redistribute them.
+The [Footnotes home page](https://chihduo.github.io/footnotes/) has a demo song: "YOU" by YURIA, with five charts from **Beginner** (level 1) to **Challenge** (level 9).
+Trick Master Mint made the Beginner, Easy, Medium and Hard charts, and Shuffle Master Mint made the Challenge chart.
+**Try the demo song** opens the **Hard** chart. To start with another chart, press its button in the **Try the demo** card.
+The song and charts are used with permission and aren't covered by Footnotes' license, so please don't redistribute them.
 
 ## From a link
 

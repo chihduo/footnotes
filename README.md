@@ -7,7 +7,7 @@
 <a href="https://chihduo.github.io/footnotes/"><img src=".github/readme/hero.svg" width="100%" alt="Footnotes. The notes, with your feet written in. Learn to dance any StepMania chart. A dancing bot shows which foot goes where, right above the arrows you're about to hit." /></a>
 
 <p>
-  <a href="https://chihduo.github.io/footnotes/app/?url=../demo/you.sm&chartType=dance-single&chartIndex=0&flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
+  <a href="https://chihduo.github.io/footnotes/app/?url=../demo/you.sm&chartType=dance-single&chartIndex=3&flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/button-songs.svg" height="44" alt="Load your own song" /></a>
 </p>
 
@@ -16,7 +16,7 @@
 Footnotes plays StepMania simfiles (`.sm` and `.ssc`) together with their music.
 
 <p>
-  <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-demo.svg" width="32%" alt="Try the demo: &quot;YOU&quot; by YURIA, with a Hard chart by Trick Master Mint, used with permission. Slow it down with the playback rate while you learn it. Hard 7." /></a>
+  <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-demo.svg" width="32%" alt="Try the demo: &quot;YOU&quot; by YURIA, with charts by Trick Master Mint and Shuffle Master Mint, used with permission. Pick a chart to start dancing: Beginner 1, Easy 3, Medium 5, Hard 7 or Challenge 9." /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-link.svg" width="32%" alt="From a link: paste a link to a .sm or .ssc file. Its music file has to sit next to it." /></a>
   <a href="https://chihduo.github.io/footnotes/app/?flags=D"><img src=".github/readme/card-computer.svg" width="32%" alt="From your computer: import a song folder that holds a .sm or .ssc file and its music. It stays in your browser." /></a>
 </p>
@@ -31,9 +31,9 @@ Footnotes plays StepMania simfiles (`.sm` and `.ssc`) together with their music.
 
 ## See it in action
 
-<a href="https://chihduo.github.io/footnotes/"><img src=".github/readme/demo.gif" width="100%" alt="Footnotes playing the demo song's Medium chart. The dancing bot steps on the pad while arrows rise into the targets below it." /></a>
+<a href="https://chihduo.github.io/footnotes/"><img src=".github/readme/demo.gif" width="100%" alt="Footnotes playing a Medium chart. The dancing bot steps on the pad while arrows rise into the targets below it." /></a>
 
-The demo song's Medium chart: the bot crosses its feet over, and the arrows below show what's coming next.
+A Medium chart: the bot crosses its feet over, and the arrows below show what's coming next.
 
 ## Controls
 
@@ -91,4 +91,4 @@ After changing the website's look, regenerate them with `python3 tools/readme/ma
 
 Footnotes is a modified version of SMEditor and is distributed under the MIT License, like SMEditor. See [LICENSE](LICENSE).
 
-The demo song in `public/demo/`, "YOU" by YURIA with a Hard chart by Trick Master Mint, is included with permission. It isn't covered by the MIT License and may not be redistributed.
+The demo song in `public/demo/`, "YOU" by YURIA with charts by Trick Master Mint and Shuffle Master Mint, is included with permission. It isn't covered by the MIT License and may not be redistributed.
