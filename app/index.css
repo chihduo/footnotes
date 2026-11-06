@@ -1313,6 +1313,9 @@ input.right {
 #waterfall {
   position: relative;
   top: 0;
+  /* Notifications slide in from past the right edge; don't let them widen the
+     page while they do, which phones would zoom out for */
+  overflow-x: clip;
 }
 
 #waterfall-container {
@@ -2730,6 +2733,22 @@ input[type="checkbox"] {
    don't fit, as on phones. */
 body.practice #playback-options {
   justify-content: safe center;
+}
+
+/* On narrow screens, such as phones held upright, the practice top bar wraps
+   onto two rows so every control is on screen */
+@media (max-width: 720px) {
+  body.practice #playback-options {
+    flex-wrap: wrap;
+    height: auto;
+    row-gap: 0.25rem;
+    column-gap: 1rem;
+    padding: 0.375rem 0.6rem;
+  }
+
+  body.practice #playback-options .po-separator {
+    display: none;
+  }
 }
 
 /* Controls only shown in dance practice mode */

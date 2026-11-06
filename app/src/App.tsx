@@ -453,7 +453,7 @@ export class App {
 
     setInterval(() => {
       if (this.capturing) return
-      const screenWidth = window.innerWidth
+      const screenWidth = this.getCanvasWidth()
       const screenHeight = this.getCanvasHeight()
       if (this.lastHeight != screenHeight || this.lastWidth != screenWidth) {
         this.lastHeight = screenHeight
@@ -531,7 +531,7 @@ export class App {
   }
 
   updateSize() {
-    const screenWidth = window.innerWidth
+    const screenWidth = this.getCanvasWidth()
     const screenHeight = this.getCanvasHeight()
     this.lastHeight = screenHeight
     this.lastWidth = screenWidth
@@ -539,9 +539,17 @@ export class App {
     EventHandler.emit("resize")
   }
 
+  // The screen's size, from the root element rather than window.innerWidth and
+  // innerHeight. On phones, anything that sticks out past the screen's edge,
+  // even briefly, widens the window's size to include it. A canvas sized from
+  // that would keep the page too wide, with the stage off center.
+  getCanvasWidth() {
+    return document.documentElement.clientWidth || window.innerWidth
+  }
+
   getCanvasHeight() {
     return (
-      window.innerHeight -
+      (document.documentElement.clientHeight || window.innerHeight) -
       (document.getElementById("menubar")?.clientHeight ?? 0) -
       (document.getElementById("playback-options")?.clientHeight ?? 0)
     )
