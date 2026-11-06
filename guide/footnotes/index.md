@@ -34,6 +34,8 @@ The footing is a suggestion, so trust your body when a step feels wrong.
 4. **Note layout:** the strip on the right shows the whole chart. Click or drag on it to jump to any part of the song.
 5. **Bottom bar:** skip to the start or end, play or pause, the current time and beat, **Charts** to switch difficulty, **Footing** to choose how the bot picks your feet, and **Exit practice**.
 
+On a phone held sideways, the screen is too short to stack the bot above the targets, so the bot goes on the left with the targets beside it, both shown larger.
+
 See [Controls](./controls) for all the buttons and keys.
 
 ## Leaving practice mode

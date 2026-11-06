@@ -46,6 +46,8 @@ export class PracticeMode {
       chartManager.setMode(EditMode.View)
     Options.practice.enabled = true
     document.body.classList.add("practice")
+    // Short screens zoom the stage in during practice mode
+    app.updateSize()
     EventHandler.emit("practiceModeChanged")
   }
 
@@ -70,6 +72,7 @@ export class PracticeMode {
       )
         chartManager.setMode(snapshot.mode)
     }
+    app.updateSize()
     EventHandler.emit("practiceModeChanged")
   }
 

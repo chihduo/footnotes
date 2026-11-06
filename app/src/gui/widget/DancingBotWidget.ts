@@ -237,7 +237,12 @@ export class DancingBotWidget extends Widget {
     // In dance practice mode, the bot is enlarged and placed above the notefield
     const placement =
       Options.practice.enabled && gameTypeId
-        ? getPracticeBotPlacement(app.STAGE_WIDTH, app.STAGE_HEIGHT, gameTypeId)
+        ? getPracticeBotPlacement(
+            app.STAGE_WIDTH,
+            app.STAGE_HEIGHT,
+            gameTypeId,
+            app.stage.scale.y
+          )
         : undefined
     if (placement) {
       this.scale.set(placement.scale)

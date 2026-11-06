@@ -11,7 +11,10 @@ import { PopupManager } from "../gui/popup/PopupManager"
 import { Flags } from "../util/Flags"
 import { Options } from "../util/Options"
 import { isRightClick } from "../util/PixiUtil"
-import { getPracticeReceptorY } from "../util/PracticeLayout"
+import {
+  getPracticeNotefieldX,
+  getPracticeReceptorY,
+} from "../util/PracticeLayout"
 import { bsearch } from "../util/Util"
 import { ChartManager, EditMode, EditTimingMode } from "./ChartManager"
 import { BarlineContainer } from "./component/edit/BarlineContainer"
@@ -331,7 +334,16 @@ export class ChartRenderer extends Container<ChartRendererComponent> {
     this.cachedBeat = this.chartManager.beat
     this.cachedTime = this.chartManager.time
 
-    this.x = Options.practice.enabled ? 0 : Options.chart.receptorXPos
+    const app = this.chartManager.app
+    this.x = Options.practice.enabled
+      ? getPracticeNotefieldX(
+          app.STAGE_WIDTH,
+          app.STAGE_HEIGHT,
+          this.chart.gameType.id,
+          Options.chart.zoom,
+          app.stage.scale.y
+        )
+      : Options.chart.receptorXPos
 
     this.speedMult = Options.chart.doSpeedChanges
       ? this.getCurrentSpeedMult()
@@ -614,7 +626,8 @@ export class ChartRenderer extends Container<ChartRendererComponent> {
         app.STAGE_WIDTH,
         app.STAGE_HEIGHT,
         this.chart.gameType.id,
-        Options.chart.zoom
+        Options.chart.zoom,
+        app.stage.scale.y
       )
       if (practiceY !== undefined) return practiceY / Options.chart.zoom
     }
