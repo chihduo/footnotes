@@ -424,6 +424,14 @@ button:disabled {
   padding: 0 1.25rem;
   height: 0 !important;
 }
+
+/* Windows on small screens, such as phones, keep less space around their
+   content */
+@media (max-width: 540px), (max-height: 540px) {
+  .window-view {
+    padding: 0.75rem;
+  }
+}
 .open-container {
   display: grid;
   grid-template-rows: 2fr auto 5fr;
@@ -773,6 +781,39 @@ textarea {
   width: 100%;
   height: 100%;
   overflow: auto;
+}
+
+/* In a narrow window, such as on a phone held upright, the chart list sits
+   above the chart's details instead of beside them, and they scroll together */
+.chart-list-window {
+  container-type: inline-size;
+}
+
+@container (max-width: 400px) {
+  .chart-view-scroller {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chart-view-scroller .chart-list,
+  .chart-view-scroller .chart-info,
+  .chart-view-scroller .chart-info-scroller {
+    height: auto;
+    flex: none;
+    overflow: visible;
+  }
+}
+
+/* On small screens the chart's details scroll as a whole, buttons included,
+   so a short window still shows the details */
+@media (max-width: 540px), (max-height: 540px) {
+  .chart-view-scroller .chart-info {
+    overflow: auto;
+  }
+
+  .chart-view-scroller .chart-info-scroller {
+    flex: none;
+  }
 }
 
 .chart-list {

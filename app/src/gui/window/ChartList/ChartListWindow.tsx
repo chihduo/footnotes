@@ -86,7 +86,7 @@ export function ChartListWindowContent() {
   }, [])
 
   return (
-    <div className="flex-column-full">
+    <div className="flex-column-full chart-list-window">
       <div className="chart-view-type-wrapper">
         <div className="chart-view-type-label">Game Type:</div>
         <DropdownInput
