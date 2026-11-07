@@ -8,8 +8,7 @@ import { Options } from "../../../util/Options"
 import { PracticeMode } from "../../../util/PracticeMode"
 import { ReactIcon } from "../../Icons"
 import { DropdownInput } from "../../inputs/DropdownInput"
-import { ChartListWindow } from "../../window/ChartList/ChartListWindow"
-import { WindowManager } from "../../window/WindowManager"
+import { PracticeChartButton } from "./PracticeChartButton"
 import { TimeCounters } from "./TimeCounters"
 
 export function PlaybackBar(props: {
@@ -131,19 +130,7 @@ export function PlaybackBar(props: {
       {practice && (
         <>
           <div className="playback-separator" />
-          {Flags.openWindows && (
-            <button
-              tabIndex={-1}
-              className="practice-button"
-              ref={Keybinds.createReactKeybindTooltip`Choose a chart ${"openChart"}`}
-              onClick={e => {
-                WindowManager.openWindow(ChartListWindow())
-                e.currentTarget.blur()
-              }}
-            >
-              Charts
-            </button>
-          )}
+          {Flags.openWindows && <PracticeChartButton app={props.app} />}
           <div
             className="playback-counter practice-footing"
             ref={Keybinds.createReactKeybindTooltip`How the bot chooses your feet`}

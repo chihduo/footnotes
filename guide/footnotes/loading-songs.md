@@ -37,8 +37,9 @@ Uploaded songs stay in your browser, so you only upload a song once. The next ti
 Songs usually have several charts, from Beginner to Challenge.
 The home page lists them all when you load a song from a link.
 
-While practicing, press **Charts** in the bottom bar, or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> (<kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> on a Mac), to open the chart list.
-Pick a game type at the top, then click a chart to switch to it.
+While practicing, the **Chart** button in the bottom bar shows the current chart.
+Press it, or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> (<kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> on a Mac), to open the chart list.
+Pick a game type at the top, then click a chart to switch to it. Press **Chart** again to close the list.
 
 The dancing bot works with **dance single**, **dance double**, **pump single** and **pump double** charts.
 
