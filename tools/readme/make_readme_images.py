@@ -194,31 +194,48 @@ def paragraph(ts, lines, top):
     )
 
 
-DEMO_CHARTS = [("Hard", 7, "#ff5a5a")]
+DEMO_CHARTS = [
+    ("Beginner", 1, "#3fd6f5"),
+    ("Easy", 3, "#6ad35f"),
+    ("Medium", 5, "#ffd23f"),
+    ("Hard", 7, "#ff5a5a"),
+    ("Challenge", 9, "#c27bff"),
+]
+TILES_PER_ROW = 3
+TILE_GAP = 8
+TILE_ROWS = -(-len(DEMO_CHARTS) // TILES_PER_ROW)
+TILES_HEIGHT = TILE_ROWS * 64 + (TILE_ROWS - 1) * TILE_GAP
 
 
 def demo_tiles(ts, y):
-    """The demo card's chart tiles: a colored top edge, the meter and the difficulty."""
-    gap = 8
-    width = (TEXT_WIDTH - (len(DEMO_CHARTS) - 1) * gap) / len(DEMO_CHARTS)
+    """The demo card's chart tiles: a colored top edge, the meter and the difficulty.
+
+    Like the website's card on a desktop screen, they sit in rows of three, with a shorter last
+    row centered.
+    """
+    width = (TEXT_WIDTH - (TILES_PER_ROW - 1) * TILE_GAP) / TILES_PER_ROW
     defs, body = "", ""
     for i, (label, meter, color) in enumerate(DEMO_CHARTS):
-        x = PAD + i * (width + gap)
+        row, column = divmod(i, TILES_PER_ROW)
+        in_row = min(TILES_PER_ROW, len(DEMO_CHARTS) - row * TILES_PER_ROW)
+        row_width = in_row * width + (in_row - 1) * TILE_GAP
+        x = PAD + (TEXT_WIDTH - row_width) / 2 + column * (width + TILE_GAP)
+        top = y + row * (64 + TILE_GAP)
         defs += (
-            f'<clipPath id="tile-{i}"><rect x="{num(x)}" y="{y}" width="{num(width)}" '
+            f'<clipPath id="tile-{i}"><rect x="{num(x)}" y="{top}" width="{num(width)}" '
             'height="64" rx="12"/></clipPath>'
         )
         body += (
             f'<g clip-path="url(#tile-{i})">'
-            f'<rect x="{num(x)}" y="{y}" width="{num(width)}" height="64" fill="{SURFACE}"/>'
-            f'<rect x="{num(x)}" y="{y}" width="{num(width)}" height="3" fill="{color}"/></g>'
-            f'<rect x="{num(x + 0.5)}" y="{y + 0.5}" width="{num(width - 1)}" height="63" '
+            f'<rect x="{num(x)}" y="{top}" width="{num(width)}" height="64" fill="{SURFACE}"/>'
+            f'<rect x="{num(x)}" y="{top}" width="{num(width)}" height="3" fill="{color}"/></g>'
+            f'<rect x="{num(x + 0.5)}" y="{top + 0.5}" width="{num(width - 1)}" height="63" '
             f'rx="11.5" fill="none" {BORDER}/>'
         )
         meter_width = ts.width(str(meter), 800, 22)
-        body += ts.text(str(meter), 800, 22, x + (width - meter_width) / 2, y + 30, color)
+        body += ts.text(str(meter), 800, 22, x + (width - meter_width) / 2, top + 30, color)
         label_width = ts.width(label, 700, 15)
-        body += ts.text(label, 700, 15, x + (width - label_width) / 2, y + 51, TEXT)
+        body += ts.text(label, 700, 15, x + (width - label_width) / 2, top + 51, TEXT)
     return defs, body
 
 
@@ -226,8 +243,8 @@ def make_song_cards(ts):
     """The three cards of the website's "Pick a song" section."""
     cards = [
         ("card-demo", "Try the demo",
-         '"YOU" by YURIA, with a Hard chart by Trick Master Mint, used with permission. '
-         "Slow it down with the playback rate while you learn it.",
+         '"YOU" by YURIA, with charts by Trick Master Mint and Shuffle Master Mint, '
+         "used with permission. Pick a chart to start dancing.",
          "tiles", None),
         ("card-link", "From a link",
          "Paste a link to a .sm or .ssc file. Its music file has to sit next to it.",
@@ -236,7 +253,7 @@ def make_song_cards(ts):
          "Import a song folder that holds a .sm or .ssc file and its music. It stays in your browser.",
          "button", "Open a song folder"),
     ]
-    controls_height = {"tiles": 64, "input": 96, "button": 44}
+    controls_height = {"tiles": TILES_HEIGHT, "input": 96, "button": 44}
     wrapped = [ts.wrap(c[2], 400, 17, TEXT_WIDTH) for c in cards]
     height = round(max(
         PAD + 31 + 12 + len(lines) * LINE + 12 + controls_height[c[3]] + PAD
@@ -250,7 +267,7 @@ def make_song_cards(ts):
         body += paragraph(ts, lines, 65)
         bottom = height - PAD
         if kind == "tiles":
-            defs, tiles = demo_tiles(ts, bottom - 64)
+            defs, tiles = demo_tiles(ts, bottom - TILES_HEIGHT)
             body += tiles
         else:
             if kind == "input":

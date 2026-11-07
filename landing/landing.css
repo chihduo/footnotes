@@ -635,10 +635,30 @@ h2 {
 
 /* Demo charts: one tile per chart, linking straight to practice mode */
 
+/* Rows of two, three or all five tiles, as the card's width allows, with a
+   shorter last row centered */
 .demo-charts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
+}
+
+.demo-charts > .demo-chart {
+  flex: 0 0 calc((100% - 8px) / 2);
+}
+
+@container (min-width: 250px) {
+  .demo-charts > .demo-chart {
+    flex-basis: calc((100% - 16px) / 3);
+  }
+}
+
+@container (min-width: 480px) {
+  .demo-charts > .demo-chart {
+    flex-basis: calc((100% - 32px) / 5);
+  }
 }
 
 .demo-chart {
