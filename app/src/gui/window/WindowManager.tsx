@@ -1,5 +1,12 @@
-import { createContext, CSSProperties, ReactNode, useState } from "react"
+import {
+  createContext,
+  CSSProperties,
+  ReactNode,
+  useEffect,
+  useState,
+} from "react"
 import { App } from "../../App"
+import { EventHandler } from "../../util/EventHandler"
 import { Window } from "./Window"
 
 export interface WindowData {
@@ -90,6 +97,11 @@ export function WindowManagerComponent({ app }: { app: App | null }) {
   function isBlocked() {
     return windows.some(window => window.blocking)
   }
+
+  // Lets buttons that open a window show whether it's open
+  useEffect(() => {
+    EventHandler.emit("windowsChanged")
+  }, [windows])
 
   if (!app) return <></>
 
