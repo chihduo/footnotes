@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Songs to practice with Footnotes. Pick a chart, and a dancing bot shows which foot goes where."
+    />
+    <meta name="theme-color" content="#121316" />
+    <link rel="icon" type="image/svg+xml" href="/assets/icon/footnotes.svg" />
+    <link rel="stylesheet" href="../index.css" />
+    <link rel="stylesheet" href="../landing/landing.css" />
+    <script type="module" src="../landing/songs.ts"></script>
+    <title>Songs · Footnotes</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-row">
+        <a class="brand" href="../">
+          <img src="/assets/icon/footnotes.svg" alt="" width="32" height="32" />
+          <span>Footnotes</span>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <a href="./" aria-current="page">Songs</a>
+          <a href="../guide/footnotes/">Guide</a>
+          <a href="../app/">Chart editor</a>
+          <a href="https://github.com/chihduo/footnotes">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="songs-page">
+        <div class="container">
+          <h1 class="page-title">Songs</h1>
+          <p class="section-lede">
+            Pick a chart to start practicing. The dancing bot shows which foot
+            goes where.
+          </p>
+          <div class="song-search">
+            <label class="visually-hidden" for="song-search"
+              >Search the songs</label
+            >
+            <input
+              id="song-search"
+              type="search"
+              placeholder="Search by title or artist"
+              autocomplete="off"
+            />
+          </div>
+          <p class="status" id="songs-status" role="status">
+            Loading the songs…
+          </p>
+          <div id="packs"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-row">
+        <p>
+          Footnotes is built on
+          <a href="https://github.com/tillvit/smeditor">SMEditor</a> by tillvit
+          and released under the MIT License.
+        </p>
+        <nav aria-label="Footer">
+          <a href="../guide/footnotes/">Guide</a>
+          <a href="../app/">Chart editor</a>
+          <a href="https://github.com/chihduo/footnotes">GitHub</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

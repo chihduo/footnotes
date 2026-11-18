@@ -1,5 +1,16 @@
 import { defineConfig } from "vitepress"
 
+// The rest of the Footnotes site. The guide's pages sit at different depths
+// under its base, so links to the site are full addresses, opened in the same
+// tab without the external link icon
+const SITE = "https://chihduo.github.io/footnotes/"
+const siteLink = (text: string, path: string) => ({
+  text,
+  link: SITE + path,
+  target: "_self",
+  noIcon: true,
+})
+
 export default defineConfig({
   title: "Footnotes Guide",
   description:
@@ -22,8 +33,9 @@ export default defineConfig({
       provider: "local",
     },
     nav: [
-      { text: "Home", link: "../" },
-      { text: "Open Footnotes", link: "../app/?flags=D" },
+      siteLink("Home", ""),
+      siteLink("Songs", "songs/"),
+      siteLink("Open Footnotes", "app/?flags=D"),
     ],
     socialLinks: [
       { icon: "github", link: "https://github.com/chihduo/footnotes" },
