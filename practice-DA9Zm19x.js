@@ -1,0 +1,1 @@
+const t="/footnotes/";function c(r,a,s){const e=new URL(t+"app/",location.origin);return e.searchParams.set("url",r),a!==void 0&&e.searchParams.set("chartType",a),s!==void 0&&e.searchParams.set("chartIndex",String(s)),e.searchParams.set("flags","D"),e.href}function n(r){const a=r.replace(/-/g," ");return a.charAt(0).toUpperCase()+a.slice(1)}export{n as g,c as p};
