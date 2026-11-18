@@ -1515,12 +1515,24 @@ body.practice .practice-hide {
   display: none !important;
 }
 
-#status-widget button.practice-button {
+#status-widget .practice-button {
   width: auto;
   padding: 0 1rem;
   white-space: nowrap;
   color: var(--text-color);
   font-size: 0.875rem;
+}
+
+/* Links in the practice bar, like Songs, look like its buttons */
+#status-widget a.practice-button {
+  display: flex;
+  align-items: center;
+  height: 3rem;
+  text-decoration: none;
+}
+
+#status-widget a.practice-button:hover {
+  background-color: var(--editable-overlay-hover);
 }
 
 /* In practice mode the status bar is only the playback bar, so menus in it
@@ -1595,19 +1607,35 @@ body.practice #status-widget:has(.practice-chart.active) .playback-bar {
     var(--editor-bg);
 }
 
-/* On narrow screens, such as phones, the practice bar wraps onto two rows
-   instead of running off the screen */
-@media (max-width: 720px) {
-  body.practice #status-widget {
-    height: auto;
-    width: max-content;
-    max-width: calc(100vw - 1rem);
+/* When the practice bar doesn't fit, as on phones, it wraps onto more rows
+   instead of running off the screen. The practice layout keeps the pad clear
+   of it */
+body.practice #status-widget {
+  height: auto;
+  width: max-content;
+  max-width: calc(100vw - 1rem);
+}
+
+body.practice #status-widget .playback-bar {
+  flex-wrap: wrap;
+  justify-content: center;
+  height: auto;
+}
+
+/* On phones, upright or sideways, the practice buttons are a little narrower,
+   so the bar takes fewer rows: upright, Songs, Chart, Footing and Exit
+   practice fit on one row under the playback controls */
+@media (max-width: 480px), (max-height: 480px) {
+  body.practice #status-widget .practice-button {
+    padding: 0 0.625rem;
   }
 
-  body.practice #status-widget .playback-bar {
-    flex-wrap: wrap;
-    justify-content: center;
-    height: auto;
+  body.practice #status-widget button.practice-chart {
+    padding: 0 0.5rem;
+  }
+
+  body.practice #status-widget .playback-counter.practice-footing {
+    padding: 0 0.25rem;
   }
 }
 

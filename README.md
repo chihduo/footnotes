@@ -9,6 +9,7 @@
 <p>
   <a href="https://chihduo.github.io/footnotes/app/?url=../demo/you.sm&chartType=dance-single&chartIndex=3&flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/button-songs.svg" height="44" alt="Load your own song" /></a>
+  <a href="https://chihduo.github.io/footnotes/songs/"><img src=".github/readme/button-more-songs.svg" height="44" alt="More songs…" /></a>
 </p>
 
 ## Pick a song

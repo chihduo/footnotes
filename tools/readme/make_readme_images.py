@@ -454,6 +454,7 @@ def main():
     files = {"hero": make_hero(ts)}
     files["button-demo"] = make_button(ts, "Try the demo song", True)
     files["button-songs"] = make_button(ts, "Load your own song", False)
+    files["button-more-songs"] = make_button(ts, "More songs…", False)
     files["button-controls"] = make_button(ts, "All controls", False)
     files.update(make_song_cards(ts))
     files.update(make_step_cards(ts))
