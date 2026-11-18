@@ -1,7 +1,7 @@
 # Loading songs
 
 Footnotes plays StepMania simfiles: a `.sm` or `.ssc` file together with the song's music, usually an `.ogg` or `.mp3` file in the same folder.
-You can try the demo song, load a song from a link, or open a song folder from your computer.
+You can try the demo song, pick one on the Songs page, load a song from a link, or open a song folder from your computer.
 
 ## The demo song
 
@@ -9,6 +9,18 @@ The [Footnotes home page](https://chihduo.github.io/footnotes/) has a demo song:
 Trick Master Mint made the Beginner, Easy, Medium and Hard charts, and Shuffle Master Mint made the Challenge chart.
 **Try the demo song** opens the **Hard** chart. To start with another chart, press its button in the **Try the demo** card.
 The song and charts are used with permission and aren't covered by Footnotes' license, so please don't redistribute them.
+
+## The Songs page
+
+The [Songs page](https://chihduo.github.io/footnotes/songs/) lists the songs of the song packs hosted for Footnotes.
+For now that's **Mintmania**: 52 songs with 257 charts, most of them by Trick Master Mint.
+
+Each song has a button for each chart, with its level and difficulty. Press one to start practicing that chart.
+To find a song, type part of its title or artist in the search box.
+Two songs also have charts for **double**, which uses both pads, listed after their single charts.
+
+The packs are hosted in their own repository, [chihduo/footnotes-packs](https://github.com/chihduo/footnotes-packs).
+Like the demo song, their songs and charts aren't covered by Footnotes' license, so please don't redistribute them.
 
 ## From a link
 

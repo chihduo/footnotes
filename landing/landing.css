@@ -130,6 +130,7 @@ video {
 .site-nav a {
   color: var(--muted);
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .site-nav a:hover {
@@ -144,6 +145,15 @@ video {
   .site-nav {
     gap: 16px;
     font-size: 15px;
+  }
+}
+
+/* The smallest phones, such as an iPhone SE at 320px, still fit every link on
+   one line */
+@media (max-width: 360px) {
+  .site-nav {
+    gap: 12px;
+    font-size: 14px;
   }
 }
 
@@ -598,6 +608,30 @@ h2 {
   align-self: flex-start;
 }
 
+/* Under the song cards, a strip that leads to the Songs page */
+.songs-teaser {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  margin-top: 16px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-raised);
+}
+
+.songs-teaser h3 {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.songs-teaser p {
+  margin-top: 4px;
+  color: var(--muted);
+}
+
 .link-form {
   display: flex;
   flex-wrap: wrap;
@@ -799,6 +833,188 @@ h2 {
 
 .diff-challenge {
   --diff: #c27bff;
+}
+
+/* Songs page: each pack's songs, with a button for each chart */
+
+.songs-page {
+  padding: 48px 0 64px;
+}
+
+.page-title {
+  font-size: clamp(40px, 7vw, 56px);
+}
+
+.song-search {
+  margin-top: 24px;
+}
+
+.song-search input {
+  width: 100%;
+  max-width: 420px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #0f1013;
+  color: var(--text);
+  font: inherit;
+}
+
+.songs-page > .container > .status {
+  margin-top: 16px;
+}
+
+.pack {
+  margin-top: 36px;
+}
+
+.pack[hidden],
+.song[hidden] {
+  display: none;
+}
+
+.pack-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+}
+
+.pack-name {
+  font-size: 28px;
+}
+
+.pack-count {
+  color: var(--muted);
+}
+
+.pack-count a {
+  color: var(--text);
+}
+
+.song-list {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The banner on the left, then the title over the chart buttons */
+.song {
+  display: grid;
+  grid-template-columns: 192px minmax(0, 1fr);
+  grid-template-areas:
+    "banner info"
+    "banner charts";
+  align-items: start;
+  gap: 8px 16px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-raised);
+}
+
+.song-banner {
+  grid-area: banner;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 5;
+  border-radius: 8px;
+  background: var(--surface);
+  object-fit: cover;
+}
+
+.song-info {
+  grid-area: info;
+  min-width: 0;
+}
+
+.song-title {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.song-subtitle {
+  color: var(--muted);
+}
+
+.song-meta {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.song-charts {
+  grid-area: charts;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.song-chart-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.song-chart-type {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.song-chart {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 12px 4px 9px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--diff, #a0a4ad);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.song-chart:hover {
+  background: var(--surface-hover);
+}
+
+.song-chart .meter {
+  min-width: 1.1em;
+  color: var(--diff, #a0a4ad);
+  font-size: 17px;
+  font-weight: 800;
+  text-align: right;
+}
+
+/* On phones the chart buttons get the row's full width, under a smaller
+   banner */
+@media (max-width: 600px) {
+  .song {
+    grid-template-columns: 112px minmax(0, 1fr);
+    grid-template-areas:
+      "banner info"
+      "charts charts";
+    gap: 10px 12px;
+    padding: 10px;
+  }
+
+  .song-title {
+    font-size: 16px;
+  }
+
+  .song-meta {
+    font-size: 14px;
+  }
 }
 
 /* How it works */

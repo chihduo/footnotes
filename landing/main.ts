@@ -2,7 +2,8 @@
 // open the chosen chart in dance practice mode. The demo song's charts are
 // plain links in the page, so they work without this script.
 
-const BASE = import.meta.env.BASE_URL
+import { gameTypeName, practiceLink } from "./practice"
+
 const LOAD_TIMEOUT = 10000
 
 const status = document.getElementById("status") as HTMLParagraphElement
@@ -24,21 +25,6 @@ function setStatus(message: string, isError = false, fallbackUrl?: string) {
     link.textContent = "Open it in the app anyway"
     status.append(" ", link, ".")
   }
-}
-
-function practiceLink(songUrl: string, gameType?: string, chartIndex?: number) {
-  const url = new URL(BASE + "app/", location.origin)
-  url.searchParams.set("url", songUrl)
-  if (gameType !== undefined) url.searchParams.set("chartType", gameType)
-  if (chartIndex !== undefined)
-    url.searchParams.set("chartIndex", String(chartIndex))
-  url.searchParams.set("flags", "D")
-  return url.href
-}
-
-function gameTypeName(id: string) {
-  const name = id.replace(/-/g, " ")
-  return name.charAt(0).toUpperCase() + name.slice(1)
 }
 
 async function fetchText(url: string) {

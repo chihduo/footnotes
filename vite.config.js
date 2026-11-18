@@ -65,6 +65,7 @@ export default defineConfig(() => {
         plugins: [dynamicImportVariables({warnOnError: true})],
         input: {
           main: resolve(__dirname, 'index.html'),
+          songs: resolve(__dirname, 'songs/index.html'),
           app: resolve(__dirname, 'app/index.html'),
           embed: resolve(__dirname, 'embed/index.html'),
         },

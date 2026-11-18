@@ -12,7 +12,7 @@ Copy its feet while you read the arrows, and slow the song down until the patter
 2. Press <kbd>Space</kbd> or the play button to start the song, and watch the bot.
 3. If it's too fast to follow, lower **Playback** in the top bar to slow the song down, and use **Loop** to repeat a hard part.
 
-To practice your own songs, see [Loading songs](./loading-songs).
+For more songs, open the [Songs page](https://chihduo.github.io/footnotes/songs/). To practice your own songs, see [Loading songs](./loading-songs).
 
 ## Reading the bot
 

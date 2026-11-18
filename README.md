@@ -21,6 +21,8 @@ Footnotes plays StepMania simfiles (`.sm` and `.ssc`) together with their music.
   <a href="https://chihduo.github.io/footnotes/app/?flags=D"><img src=".github/readme/card-computer.svg" width="32%" alt="From your computer: import a song folder that holds a .sm or .ssc file and its music. It stays in your browser." /></a>
 </p>
 
+For more songs, the [Songs page](https://chihduo.github.io/footnotes/songs/) has the 52 songs of the Mintmania pack, with 257 charts, ready to practice.
+
 ## How it works
 
 <p>
@@ -75,14 +77,17 @@ Practice mode is toggled with <kbd>Shift</kbd>+<kbd>H</kbd> or **View > Dance pr
 
 Every push to `master` builds the site and publishes it to GitHub Pages (`.github/workflows/bundle.yml`).
 
-| Path                     | Contents                                                 |
-| ------------------------ | -------------------------------------------------------- |
-| `index.html`, `landing/` | The Footnotes website: home page and song picker         |
-| `app/`                   | The app: SMEditor with dance practice mode               |
-| `guide/`                 | The guide (VitePress)                                    |
-| `public/demo/`           | The demo song                                            |
-| `.github/readme/`        | The images in this README                                |
-| `tools/readme/`          | The script that generates them from the website's design |
+The Songs page reads its song packs from https://chihduo.github.io/footnotes-packs/, published from [chihduo/footnotes-packs](https://github.com/chihduo/footnotes-packs).
+To try a local copy, serve it and start the dev server with `VITE_PACKS_URL` set to its address, such as `VITE_PACKS_URL=http://127.0.0.1:8765/ npm run dev`.
+
+| Path                               | Contents                                                     |
+| ---------------------------------- | ------------------------------------------------------------ |
+| `index.html`, `songs/`, `landing/` | The Footnotes website: home page, song picker and Songs page |
+| `app/`                             | The app: SMEditor with dance practice mode                   |
+| `guide/`                           | The guide (VitePress)                                        |
+| `public/demo/`                     | The demo song                                                |
+| `.github/readme/`                  | The images in this README                                    |
+| `tools/readme/`                    | The script that generates them from the website's design     |
 
 The README images are SVGs with their text converted to outlines, so they look the same as the website on GitHub.
 After changing the website's look, regenerate them with `python3 tools/readme/make_readme_images.py` (it needs `fonttools`, `brotli`, `uharfbuzz` and `ffmpeg`).
@@ -92,3 +97,5 @@ After changing the website's look, regenerate them with `python3 tools/readme/ma
 Footnotes is a modified version of SMEditor and is distributed under the MIT License, like SMEditor. See [LICENSE](LICENSE).
 
 The demo song in `public/demo/`, "YOU" by YURIA with charts by Trick Master Mint and Shuffle Master Mint, is included with permission. It isn't covered by the MIT License and may not be redistributed.
+
+The song packs on the Songs page are hosted separately, in [chihduo/footnotes-packs](https://github.com/chihduo/footnotes-packs), and aren't covered by the MIT License either.
