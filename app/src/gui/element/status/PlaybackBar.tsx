@@ -130,6 +130,14 @@ export function PlaybackBar(props: {
       {practice && (
         <>
           <div className="playback-separator" />
+          <a
+            tabIndex={-1}
+            className="practice-button practice-songs"
+            href={import.meta.env.BASE_URL + "songs/"}
+            ref={Keybinds.createReactKeybindTooltip`Pick another song`}
+          >
+            Songs
+          </a>
           {Flags.openWindows && <PracticeChartButton app={props.app} />}
           <div
             className="playback-counter practice-footing"

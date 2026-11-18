@@ -3,6 +3,7 @@ import { App } from "../../../App"
 import { EditMode, EditTimingMode } from "../../../chart/ChartManager"
 import { EventHandler } from "../../../util/EventHandler"
 import { Flags } from "../../../util/Flags"
+import { setPracticeBottomBarRoom } from "../../../util/PracticeLayout"
 import { EditBar } from "./EditBar"
 import { PlaybackBar } from "./PlaybackBar"
 
@@ -16,6 +17,27 @@ export function StatusBar(props: { app: App }) {
   const fadeTimeout = useRef<NodeJS.Timeout>(null)
   const viewRef = useRef<HTMLDivElement>(null)
   const [loadedSM, setLoadedSM] = useState(false)
+
+  // Dance practice mode keeps the pad clear of the bar, which wraps onto more
+  // rows when it doesn't fit, as on phones. It takes the space from the bar's
+  // top to the bottom of the screen, where the stage ends, plus a small gap
+  useEffect(() => {
+    const view = viewRef.current
+    if (!view) return
+    const observer = new ResizeObserver(() => {
+      if (view.offsetHeight == 0) return
+      const rem = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      )
+      setPracticeBottomBarRoom(
+        document.documentElement.clientHeight -
+          view.getBoundingClientRect().top +
+          rem / 2
+      )
+    })
+    observer.observe(view)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     const playStateChanged = () => {

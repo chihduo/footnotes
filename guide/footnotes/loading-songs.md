@@ -14,6 +14,7 @@ The song and charts are used with permission and aren't covered by Footnotes' li
 
 The [Songs page](https://chihduo.github.io/footnotes/songs/) lists the songs of the song packs hosted for Footnotes.
 For now that's **Mintmania**: 52 songs with 257 charts, most of them by Trick Master Mint.
+Open it with **More songs…** on the home page, or with **Songs** in the bottom bar while you practice.
 
 Each song has a button for each chart, with its level and difficulty. Press one to start practicing that chart.
 To find a song, type part of its title or artist in the search box.

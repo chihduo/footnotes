@@ -19,8 +19,19 @@ const MAX_STAGE_ZOOM = 1.8
 // arrows instead of above them
 const SIDE_MIN_ASPECT = 1.6
 const SIDE_GAP = 48
-// Room for the bottom bar, which floats over the bottom of the stage, in rem
+// Room for the bottom bar, which floats over the bottom of the stage, in rem,
+// until the bar reports its actual size: one row of buttons, its distance
+// from the bottom edge, and a small gap
 const BOTTOM_BAR_REM = 5.5
+
+// The room the bottom bar takes at the bottom of the screen, in CSS pixels.
+// The bar wraps onto more rows on narrow screens, so it reports this whenever
+// its size changes
+let bottomBarRoom: number | null = null
+
+export function setPracticeBottomBarRoom(pixels: number) {
+  bottomBarRoom = pixels
+}
 
 interface PadBounds {
   minX: number
@@ -102,7 +113,8 @@ function getSideLayout(
   const padHeight = bounds.maxY - bounds.minY
   const top = -stageHeight / 2 + TOP_MARGIN
   const bottomBar =
-    (BOTTOM_BAR_REM * 16 * Options.general.uiScale) / pixelsPerUnit
+    (bottomBarRoom ?? BOTTOM_BAR_REM * 16 * Options.general.uiScale) /
+    pixelsPerUnit
   const notefieldWidth = columns * COLUMN_WIDTH * zoom
   const scale = Math.min(
     (stageHeight - TOP_MARGIN - bottomBar) / padHeight,
