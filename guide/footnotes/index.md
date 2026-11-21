@@ -3,7 +3,7 @@
 Footnotes helps you learn how to dance a StepMania chart.
 A dancing bot stands on a dance pad at the top of the screen and steps exactly when you should, right above the arrows you're about to hit.
 Copy its feet while you read the arrows, and slow the song down until the pattern feels natural.
-The 3D dancer shows the same steps from behind. Watch the hips shift over the supporting leg before a crossover and the knees bend before a jump. The colored shoes match the overhead pad. You can drag the dancer beside the part of the chart you are watching.
+The 3D dancer starts with a view of the same steps from behind. Watch the hips shift over the supporting leg before a crossover and the knees bend before a jump. The colored shoes match the overhead pad. Scroll over the dancer to look closer, drag the model to see another angle, or drag the title bar to place it beside the chart.
 
 ![The Footnotes practice screen](../assets/footnotes/practice.png)
 

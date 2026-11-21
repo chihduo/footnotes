@@ -48,9 +48,7 @@ export function getPracticeDancerRoom(width: number, height: number) {
   )
   const panelWidth = Math.max(
     1,
-    Math.floor(
-      Math.min(320, width * (width < 620 ? 0.42 : 0.28), usableHeight * 0.84)
-    )
+    Math.floor(Math.min(448, width * 0.42, usableHeight * 0.84))
   )
   const panelHeight = Math.max(
     1,

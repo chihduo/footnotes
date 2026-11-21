@@ -12,7 +12,7 @@
   box-shadow: 0 0.25rem 1rem #0004;
   user-select: none;
   touch-action: none;
-  cursor: grab;
+  container-type: inline-size;
 }
 #practice-dancer[hidden] {
   display: none;
@@ -37,8 +37,22 @@
   flex: 1;
   gap: 0.45rem;
   align-self: stretch;
+  cursor: grab;
   font-size: 0.85rem;
   font-weight: 650;
+}
+.dancer-camera-hint {
+  display: none;
+  margin-left: auto;
+  padding-right: 0.4rem;
+  font-size: 0.73rem;
+  font-weight: 400;
+  color: #b1c1ca;
+}
+@container (min-width: 20rem) {
+  .dancer-camera-hint {
+    display: inline;
+  }
 }
 .dancer-grip-dots {
   width: 0.53rem;
@@ -62,6 +76,7 @@
   background: #ffffff20;
 }
 .dancer-grip:focus-visible,
+.dancer-viewport:focus-visible,
 .dancer-reset:focus-visible {
   outline: 2px solid #92dacc;
   outline-offset: -2px;

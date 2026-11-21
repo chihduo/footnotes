@@ -172,6 +172,7 @@ export class DefaultOptions {
     botHeight: 0.38,
     showDancer: true,
     dancerPosition: [] as number[],
+    dancerCamera: [] as number[],
   }
   static performance = {
     lowDetailHolds: false,

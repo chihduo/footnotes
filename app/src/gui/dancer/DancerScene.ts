@@ -18,11 +18,13 @@ import {
   Vector3,
   WebGLRenderer,
 } from "three"
+import { OrbitControls } from "three/addons/controls/OrbitControls.js"
 import { SVGRenderer } from "three/addons/renderers/SVGRenderer.js"
 import { Foot } from "../../chart/stats/parity/ParityDataTypes"
 import type { StageLayout } from "../../chart/stats/parity/StageLayouts"
 import { getParityColor } from "../../util/Color"
 import { clamp, lerp } from "../../util/Math"
+import { Options } from "../../util/Options"
 import { PANEL_SPACING, type DancerPose, type FootPose } from "./DancerMotion"
 
 const up = new Vector3(0, 1, 0)
@@ -151,6 +153,7 @@ export class DancerScene {
   private renderer: WebGLRenderer | SVGRenderer
   private scene = new Scene()
   private camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 14)
+  private controls: OrbitControls<OrthographicCamera>
   private body = new Group()
   private pad = new Group()
   private hips = new Group()
@@ -193,7 +196,23 @@ export class DancerScene {
     rim.position.set(2, 3, -3)
     this.scene.add(key, rim)
     this.camera.position.set(0.82, 2.55, 3.25)
-    this.camera.lookAt(0, 0.65, 0)
+    this.controls = new OrbitControls(this.camera, mount)
+    this.controls.target.y = 0.65
+    this.controls.enablePan = false
+    this.controls.minPolarAngle = Math.PI / 12
+    this.controls.maxPolarAngle = Math.PI / 2 - 0.06
+    this.controls.minZoom = 0.6
+    this.controls.maxZoom = 3
+    this.controls.zoomSpeed = 2.4
+    this.controls.rotateSpeed = 0.7
+    this.controls.cursorStyle = "grab"
+    this.controls.update()
+    this.controls.saveState()
+    this.restoreCameraPreference()
+    this.controls.addEventListener("change", this.render)
+    this.controls.addEventListener("end", this.rememberCamera)
+    mount.addEventListener("dblclick", this.resetCamera)
+    mount.addEventListener("keydown", this.cameraKey)
 
     profile(
       this.hips,
@@ -241,6 +260,75 @@ export class DancerScene {
     oval(this.head, this.hair, 0, 0.047, 0.013, 0.101, 0.095, 0.102)
     oval(this.head, this.hair, 0, -0.002, 0.068, 0.081, 0.079, 0.048)
     this.setColors()
+  }
+
+  private restoreCameraPreference() {
+    const saved = Options.practice.dancerCamera
+    if (
+      !Array.isArray(saved) ||
+      saved.length !== 3 ||
+      !saved.every(Number.isFinite)
+    )
+      return
+    const [azimuth, polar, zoom] = saved
+    const controls = this.controls
+    this.camera.position
+      .setFromSphericalCoords(
+        controls.getDistance(),
+        clamp(polar, controls.minPolarAngle, controls.maxPolarAngle),
+        azimuth
+      )
+      .add(controls.target)
+    this.camera.zoom = clamp(zoom, controls.minZoom, controls.maxZoom)
+    this.camera.updateProjectionMatrix()
+    controls.update()
+  }
+
+  private rememberCamera = () => {
+    Options.practice.dancerCamera = [
+      this.controls.getAzimuthalAngle(),
+      this.controls.getPolarAngle(),
+      this.camera.zoom,
+    ]
+  }
+
+  private resetCamera = () => {
+    this.controls.reset()
+    Options.practice.dancerCamera = []
+  }
+
+  private cameraKey = (event: KeyboardEvent) => {
+    if (event.altKey || event.ctrlKey || event.metaKey) return
+    const turn = Math.PI / 12
+    switch (event.key) {
+      case "ArrowLeft":
+        this.controls.rotateLeft(turn)
+        break
+      case "ArrowRight":
+        this.controls.rotateLeft(-turn)
+        break
+      case "ArrowUp":
+        this.controls.rotateUp(turn)
+        break
+      case "ArrowDown":
+        this.controls.rotateUp(-turn)
+        break
+      case "+":
+      case "=":
+        this.controls.dollyIn(1 / 1.2)
+        break
+      case "-":
+        this.controls.dollyOut(1 / 1.2)
+        break
+      case "Home":
+        this.resetCamera()
+        break
+      default:
+        return
+    }
+    event.preventDefault()
+    event.stopPropagation()
+    if (event.key !== "Home") this.rememberCamera()
   }
 
   private buildLeg(index: number) {
@@ -405,6 +493,19 @@ export class DancerScene {
       }
       this.poseArm(i, foot, feet[1 - i], yaw, pose.compression)
     }
+    this.render()
+  }
+
+  private render = () => {
+    // Keep the pad steady in the overview and follow the dancer across it in a close-up.
+    const follow = clamp(this.camera.zoom - 1, 0, 1)
+    const x = this.hips.position.x * follow
+    const z = this.hips.position.z * follow
+    const target = this.controls.target
+    this.camera.position.x += x - target.x
+    this.camera.position.z += z - target.z
+    target.x = x
+    target.z = z
     this.renderer.render(this.scene, this.camera)
   }
 
@@ -454,6 +555,11 @@ export class DancerScene {
   }
 
   dispose() {
+    this.mount.removeEventListener("dblclick", this.resetCamera)
+    this.mount.removeEventListener("keydown", this.cameraKey)
+    this.controls.removeEventListener("change", this.render)
+    this.controls.removeEventListener("end", this.rememberCamera)
+    this.controls.dispose()
     this.disposeMeshes(this.scene)
     if (this.renderer instanceof WebGLRenderer) {
       this.renderer.dispose()

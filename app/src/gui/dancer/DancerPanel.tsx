@@ -58,14 +58,13 @@ function positionPanel(
     move(0, 0)
   }
   function down(e: PointerEvent) {
-    if (!e.isPrimary || e.button !== 0 || reset.contains(e.target as Node))
-      return
+    if (!e.isPrimary || e.button !== 0) return
     pointer = {
       id: e.pointerId,
       offsetX: e.clientX - x,
       offsetY: e.clientY - y,
     }
-    panel.setPointerCapture(e.pointerId)
+    handle.setPointerCapture(e.pointerId)
     panel.classList.add("dragging")
     handle.focus({ preventScroll: true })
     e.preventDefault()
@@ -78,8 +77,8 @@ function positionPanel(
     if (e.pointerId !== pointer?.id) return
     pointer = undefined
     panel.classList.remove("dragging")
-    if (panel.hasPointerCapture(e.pointerId))
-      panel.releasePointerCapture(e.pointerId)
+    if (handle.hasPointerCapture(e.pointerId))
+      handle.releasePointerCapture(e.pointerId)
     remember()
     handle.blur()
   }
@@ -113,22 +112,22 @@ function positionPanel(
   const bar = document.getElementById("status-widget")
   if (bar) observer.observe(bar)
   EventHandler.on("resize", layout)
-  panel.addEventListener("pointerdown", down)
-  panel.addEventListener("pointermove", drag)
-  panel.addEventListener("pointerup", finish)
-  panel.addEventListener("pointercancel", finish)
-  panel.addEventListener("lostpointercapture", finish)
+  handle.addEventListener("pointerdown", down)
+  handle.addEventListener("pointermove", drag)
+  handle.addEventListener("pointerup", finish)
+  handle.addEventListener("pointercancel", finish)
+  handle.addEventListener("lostpointercapture", finish)
   handle.addEventListener("keydown", key)
   reset.addEventListener("click", restore)
   layout()
   return () => {
     observer.disconnect()
     EventHandler.off("resize", layout)
-    panel.removeEventListener("pointerdown", down)
-    panel.removeEventListener("pointermove", drag)
-    panel.removeEventListener("pointerup", finish)
-    panel.removeEventListener("pointercancel", finish)
-    panel.removeEventListener("lostpointercapture", finish)
+    handle.removeEventListener("pointerdown", down)
+    handle.removeEventListener("pointermove", drag)
+    handle.removeEventListener("pointerup", finish)
+    handle.removeEventListener("pointercancel", finish)
+    handle.removeEventListener("lostpointercapture", finish)
     handle.removeEventListener("keydown", key)
     reset.removeEventListener("click", restore)
   }
@@ -232,6 +231,9 @@ export default function DancerPanel({ app }: { app: App }) {
         >
           <span className="dancer-grip-dots" aria-hidden="true"></span>
           3D dancer
+          <span className="dancer-camera-hint" aria-hidden="true">
+            Drag model to rotate · Scroll to zoom
+          </span>
         </div>
         <button
           ref={reset}
@@ -243,7 +245,15 @@ export default function DancerPanel({ app }: { app: App }) {
           ↺
         </button>
       </header>
-      <div className="dancer-viewport" ref={viewport}></div>
+      <div
+        className="dancer-viewport"
+        ref={viewport}
+        role="group"
+        tabIndex={0}
+        aria-label="Dancer camera. Use arrow keys to rotate, plus and minus to zoom, and Home to reset the view."
+        title="Drag to rotate. Scroll or pinch to zoom. Double-click to reset the view."
+        onMouseDown={event => event.preventDefault()}
+      ></div>
       <div className="dancer-cue" ref={caption}>
         Ready
       </div>
