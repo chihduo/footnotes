@@ -1,0 +1,97 @@
+#practice-dancer {
+  position: fixed;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid #546273;
+  border-radius: 0.6rem;
+  background: radial-gradient(ellipse at 49% 50%, #344451, #202832 83%);
+  color: #ecf2f3;
+  box-shadow: 0 0.25rem 1rem #0004;
+  user-select: none;
+  touch-action: none;
+  cursor: grab;
+}
+#practice-dancer[hidden] {
+  display: none;
+}
+#practice-dancer.dragging,
+#practice-dancer.dragging * {
+  cursor: grabbing;
+}
+.dancer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 1.75rem;
+  padding: 0 0.3rem 0 0.55rem;
+  color: #d5e0e5;
+  background: #1d2730;
+  border-bottom: 1px solid #ffffff16;
+}
+.dancer-grip {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 0.45rem;
+  align-self: stretch;
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+.dancer-grip-dots {
+  width: 0.53rem;
+  height: 0.84rem;
+  background: radial-gradient(circle, #9badb5 1px, transparent 1.4px) 0 0 /
+    0.265rem 0.28rem;
+}
+#practice-dancer .dancer-reset {
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  width: 1.65rem;
+  height: 1.65rem;
+  border: 0;
+  border-radius: 0.2rem;
+  background: transparent;
+  color: #ced9df;
+  cursor: pointer;
+}
+#practice-dancer .dancer-reset:hover {
+  background: #ffffff20;
+}
+.dancer-grip:focus-visible,
+.dancer-reset:focus-visible {
+  outline: 2px solid #92dacc;
+  outline-offset: -2px;
+}
+.dancer-viewport {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+}
+.dancer-viewport canvas,
+.dancer-viewport svg {
+  display: block;
+}
+.dancer-cue {
+  text-align: center;
+  font-size: clamp(0.72rem, 1.25vw, 0.92rem);
+  line-height: 1.2;
+  min-height: 1.25em;
+  padding: 0.22rem;
+  background: #1d2730;
+  color: #e2edeb;
+}
+
+.dancer-coaching {
+  min-height: 1.3em;
+  padding: 0 0.25rem 0.22rem;
+  background: #1d2730;
+  color: #a6cdc6;
+  font-size: clamp(0.68rem, 1vw, 0.82rem);
+  line-height: 1.15;
+  text-align: center;
+}

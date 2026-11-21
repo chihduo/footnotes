@@ -19,6 +19,7 @@ export function PlaybackOptions() {
   const chartLoaded = useRef(false)
   // Dance practice mode keeps only playback rate, assist tick and speed visible
   const practice = useOption<boolean>("practice.enabled")
+  const showDancer = useOption<boolean>("practice.showDancer")
 
   if (!Flags.playbackOptions) return <></>
 
@@ -159,6 +160,18 @@ export function PlaybackOptions() {
       <PlaybackOptionsSeparator className="practice-only" />
       <div className="practice-only po-practice-item">
         <PracticeLoopButton />
+        <button
+          type="button"
+          className="po-dancer-toggle"
+          aria-pressed={showDancer}
+          title="Show the full-body dancer alongside the foot view"
+          onClick={e => {
+            Options.practice.showDancer = !showDancer
+            e.currentTarget.blur()
+          }}
+        >
+          3D dancer
+        </button>
       </div>
       <PlaybackOptionsSeparator className="practice-hide" />
       <PlaybackOptionsGroup

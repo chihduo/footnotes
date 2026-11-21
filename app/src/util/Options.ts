@@ -170,6 +170,8 @@ export class DefaultOptions {
   static practice = {
     enabled: false,
     botHeight: 0.38,
+    showDancer: true,
+    dancerPosition: [] as number[],
   }
   static performance = {
     lowDetailHolds: false,

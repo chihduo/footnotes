@@ -62,7 +62,7 @@ const FOOT_COLOR_OPTIONS = [
 
 export class DancingBotWidget extends Widget {
   panels: StagePanel[] = []
-  currentRow = -1
+  currentRow = 0
   lastBeat = 0
   lastSecond = 0
   // Pivot used when the bot sits in the bottom right corner
@@ -196,6 +196,9 @@ export class DancingBotWidget extends Widget {
 
     this.addChild(this.leftFoot, this.rightFoot)
     this.lastBeat = -1
+    this.currentRow = 0
+    this.reindex()
+    this.dirty = true
     this.cornerPivot = { x: maxX + PANEL_SIZE / 2, y: maxY + PANEL_SIZE / 2 }
     this.pivot.set(this.cornerPivot.x, this.cornerPivot.y)
 
@@ -216,15 +219,12 @@ export class DancingBotWidget extends Widget {
     const parity = this.manager.app.chartManager.loadedChart?.stats.parity
     if (!parity || !this.manager.app.chartManager.chartView) return
     const visualBeat = this.manager.app.chartManager.chartView.getVisualBeat()
-    let currentIndex = bsearch(parity.rowTimestamps, visualBeat, a => a.beat)
-    while (parity.rowTimestamps[currentIndex]?.beat < visualBeat) {
-      currentIndex++
-    }
-    if (currentIndex == 0 && visualBeat < parity.rowTimestamps[0].beat) {
-      this.currentRow = -1
-      return
-    }
-    this.currentRow = currentIndex
+    const index = bsearch(parity.rowTimestamps, visualBeat, a => a.beat)
+    // State zero is the neutral stance before the first playable row.
+    this.currentRow =
+      index >= 0 && parity.rowTimestamps[index].beat <= visualBeat
+        ? index + 1
+        : 0
     this.dirty = true
   }
 
@@ -261,6 +261,7 @@ export class DancingBotWidget extends Widget {
 
     if (
       !bestPath ||
+      bestPath.length < 2 ||
       !this.manager.app.chartManager.chartView ||
       !this.layout ||
       !Options.chart.parity.enabled ||
@@ -291,7 +292,10 @@ export class DancingBotWidget extends Widget {
     if (visualBeat < this.lastBeat) {
       this.reindex()
     } else {
-      while (bestPath[this.currentRow + 1]?.beat <= visualBeat) {
+      while (
+        this.currentRow < bestPath.length - 2 &&
+        bestPath[this.currentRow + 1].beat <= visualBeat
+      ) {
         this.currentRow++
         const row = bestPath[this.currentRow]
         row.action.forEach((col, i) => {
@@ -305,13 +309,9 @@ export class DancingBotWidget extends Widget {
     this.lastSecond = visualSecond
 
     if (this.leftFoot && this.rightFoot) {
-      // The last state marks the end of the chart, so stay on the last row
-      const oldIndex =
-        this.currentRow == bestPath.length - 1
-          ? this.currentRow - 1
-          : this.currentRow
+      const oldIndex = this.currentRow
       const oldState = bestPath[oldIndex]
-      const newState = bestPath[this.currentRow + 1] ?? bestPath.at(-2)
+      const newState = bestPath[Math.min(oldIndex + 1, bestPath.length - 2)]
       let leftVisible = true
       let rightVisible = true
 

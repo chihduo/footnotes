@@ -7,7 +7,7 @@ import {
   Ticker,
   UPDATE_PRIORITY,
 } from "pixi.js"
-import { StrictMode, useEffect, useRef, useState } from "react"
+import { lazy, StrictMode, Suspense, useEffect, useRef, useState } from "react"
 import { createRoot } from "react-dom/client"
 import semver from "semver"
 import tippy from "tippy.js"
@@ -42,6 +42,7 @@ import { CustomScripts } from "./util/custom-script/CustomScripts"
 import { EventHandler } from "./util/EventHandler"
 import { FileHandler } from "./util/file-handler/FileHandler"
 import { Flags, loadFlags } from "./util/Flags"
+import { useOption } from "./util/Hooks"
 import { PracticeMode } from "./util/PracticeMode"
 import { Keybinds } from "./util/Keybinds"
 import { Options } from "./util/Options"
@@ -609,6 +610,18 @@ export class App {
   }
 }
 
+const DancerPanel = lazy(() => import("./gui/dancer/DancerPanel"))
+
+function PracticeDancer({ app }: { app: App }) {
+  const practice = useOption<boolean>("practice.enabled")
+  const show = useOption<boolean>("practice.showDancer")
+  return practice && show ? (
+    <Suspense fallback={null}>
+      <DancerPanel app={app} />
+    </Suspense>
+  ) : null
+}
+
 function SMEditorApp() {
   const pixiCanvas = useRef<HTMLCanvasElement>(null)
   const [app, setApp] = useState<App | null>(null)
@@ -631,6 +644,7 @@ function SMEditorApp() {
           <div id="waterfall-container"></div>
         </div>
         <canvas ref={pixiCanvas} id="pixi"></canvas>
+        {app && <PracticeDancer app={app} />}
         {app && <StatusBar app={app} />}
       </div>
       <div id="context-menu"></div>

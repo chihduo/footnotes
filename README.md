@@ -26,6 +26,10 @@ For more songs, the [Songs page](https://chihduo.github.io/footnotes/songs/) has
 
 ## How it works
 
+Practice opens with two synchronized views on Dance and Pump single and double charts. The overhead pad shows the chosen footing. A draggable 3D dancer demonstrates weight shifts, knee bends, turns, and landings for that footing. Drag the dancer with a mouse or touch, use its reset arrow to return it to the starting position, or toggle **3D dancer** in the top bar.
+
+To try the dancer in this checkout, run `npm ci` and `npm run dev`, then [open the local Medium practice chart](http://127.0.0.1:5173/footnotes/app/?url=../demo/you.sm&chartType=dance-single&chartIndex=2&flags=D). Beat 144 has a left-foot crossover.
+
 <p>
   <img src=".github/readme/step-bot.svg" width="32%" alt="Watch the bot: the pad at the top shows where each foot goes. Blue is your left foot, orange is your right." />
   <img src=".github/readme/step-arrows.svg" width="32%" alt="Read the arrows: arrows rise into the targets just under the bot. Step as they reach them, and they slide away under the pad." />
@@ -73,6 +77,7 @@ Practice mode is toggled with <kbd>Shift</kbd>+<kbd>H</kbd> or **View > Dance pr
 | ------------------- | --------------------------------------------------------- |
 | `npm run dev`       | Starts a dev server at `http://127.0.0.1:5173/footnotes/` |
 | `npm run build`     | Builds the site, app and guide into `dist/`               |
+| `npm run test:dancer` | Checks timed contacts, holds, jumps, handoffs and seeking |
 | `npm run guide:dev` | Starts the guide's dev server                             |
 | `npm run app:dev`   | Runs the desktop app against the dev server               |
 

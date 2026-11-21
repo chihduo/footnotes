@@ -10,6 +10,7 @@ Everything you need while practicing is on screen. The keyboard shortcuts below 
 - **Clap and metronome:** the clap plays a tick on every step, and the metronome ticks on every beat.
 - **Speedmod:** how fast the arrows scroll. **X** scales the scroll speed with the song's tempo, and **C** keeps it constant.
 - **Foot highlights:** the feet button colors each arrow blue or orange for the foot that steps it. It's the same setting as the chart editor's foot highlights.
+- **3D dancer** shows a full-body practice partner alongside the overhead feet. Drag the dancer with a mouse, pen or finger to move it. The app remembers its position. Press the curved arrow in the panel to reset it. With the panel heading focused, use the arrow keys to move it or Home to reset it.
 - **Loop:** repeats a section. Click it once to mark the start at the current position, move to the end of the section and click it again, and playback repeats that part until you click it a third time. The button shows the section's start and end times.
 
 **Bottom bar**

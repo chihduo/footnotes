@@ -2,6 +2,7 @@ import { ParticleContainer, RenderTexture, Sprite, Texture } from "pixi.js"
 import { QUANT_COLORS } from "../../../chart/component/edit/SnapContainer"
 import { isHoldNote, NotedataEntry } from "../../../chart/sm/NoteTypes"
 import { Options } from "../../../util/Options"
+import { setPracticeNoteLayoutRoom } from "../../../util/PracticeLayout"
 import { destroyChildIf } from "../../../util/PixiUtil"
 import { WidgetManager } from "../WidgetManager"
 import { BaseTimelineWidget } from "./BaseTimelineWidget"
@@ -71,6 +72,7 @@ export class NoteLayoutWidget extends BaseTimelineWidget {
     const height = this.manager.app.STAGE_HEIGHT - this.verticalMargin
     this.barTexture.resize(numCols * 6, height)
     this.backingWidth = numCols * 6 + 8
+    setPracticeNoteLayoutRoom(BaseTimelineWidget.xMargin + this.backingWidth)
 
     if (Options.chart.layoutFollowPosition) {
       this.barContainer.y = -height / 2
