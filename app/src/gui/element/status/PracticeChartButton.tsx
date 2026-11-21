@@ -2,11 +2,11 @@ import { useEffect, useState } from "react"
 import { App } from "../../../App"
 import { EventHandler } from "../../../util/EventHandler"
 import { Keybinds } from "../../../util/Keybinds"
-import { ChartListWindow } from "../../window/ChartList/ChartListWindow"
+import {
+  CHART_LIST_ID,
+  ChartListWindow,
+} from "../../window/ChartList/ChartListWindow"
 import { WindowManager } from "../../window/WindowManager"
-
-// The id of ChartListWindow
-const CHART_LIST = "chart_list"
 
 // The practice chart button: the current chart over a "Chart" caption, like
 // the footing menu beside it. It opens the chart list, or closes it if it's
@@ -27,15 +27,17 @@ export function PracticeChartButton(props: { app: App }) {
   }, [])
 
   const chart = props.app.chartManager.loadedChart
-  const open = WindowManager.isWindowOpen(CHART_LIST)
+  const open = WindowManager.isWindowOpen(CHART_LIST_ID)
   return (
     <button
       tabIndex={-1}
+      aria-controls={CHART_LIST_ID}
+      aria-expanded={open}
       className={`practice-button practice-chart ${open ? "active" : ""}`}
       ref={Keybinds.createReactKeybindTooltip`Choose a chart ${"openChart"}`}
       onClick={e => {
-        if (WindowManager.isWindowOpen(CHART_LIST))
-          WindowManager.closeWindow(CHART_LIST)
+        if (WindowManager.isWindowOpen(CHART_LIST_ID))
+          WindowManager.closeWindow(CHART_LIST_ID)
         else WindowManager.openWindow(ChartListWindow())
         e.currentTarget.blur()
       }}

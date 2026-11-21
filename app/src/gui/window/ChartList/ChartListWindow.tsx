@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import {
   GameType,
   GameTypeRegistry,
@@ -10,8 +10,11 @@ import { WindowContext, WindowData } from "../WindowManager"
 import { ChartListDetails } from "./ChartListDetails"
 import { ChartListItem } from "./ChartListItem"
 
+export const CHART_LIST_ID = "chart_list"
+
 export function ChartListWindowContent() {
   const windowData = useContext(WindowContext)
+  const content = useRef<HTMLDivElement>(null)
   const [gameType, setGameType] = useState<GameType>(
     GameTypeRegistry.getPriority()[0]
   )
@@ -85,8 +88,41 @@ export function ChartListWindowContent() {
     }
   }, [])
 
+  useEffect(() => {
+    const frame = content.current?.closest(".window")
+    if (!frame || !windowData) return
+    let pressedOutside = false
+    const recordPress = (event: PointerEvent) => {
+      pressedOutside = !event.composedPath().includes(frame)
+    }
+    const dismiss = (event: MouseEvent) => {
+      // Ignore the gesture that opened the window and drags begun on its title bar.
+      if (event.detail && !pressedOutside) return
+      if (event.composedPath().includes(frame)) return
+      // The Chart button handles its own toggle on this same click.
+      if (
+        event.target instanceof Element &&
+        event.target.closest(`[aria-controls~="${CHART_LIST_ID}"]`)
+      )
+        return
+      const active = document.activeElement
+      if (active instanceof HTMLElement && frame.contains(active)) active.blur()
+      windowData.close()
+    }
+    document.addEventListener("pointerdown", recordPress, true)
+    document.addEventListener("click", dismiss, true)
+    return () => {
+      document.removeEventListener("pointerdown", recordPress, true)
+      document.removeEventListener("click", dismiss, true)
+    }
+  }, [])
+
   return (
-    <div className="flex-column-full chart-list-window">
+    <div
+      id={CHART_LIST_ID}
+      ref={content}
+      className="flex-column-full chart-list-window"
+    >
       <div className="chart-view-type-wrapper">
         <div className="chart-view-type-label">Game Type:</div>
         <DropdownInput
@@ -149,7 +185,7 @@ export function ChartListWindow(): WindowData {
     title: "Chart List",
     width: 500,
     height: 400,
-    id: "chart_list",
+    id: CHART_LIST_ID,
     content: <ChartListWindowContent />,
   }
 }

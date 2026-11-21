@@ -145,8 +145,8 @@ export class DefaultOptions {
     } as Record<string, string>,
   }
   static audio = {
-    assistTick: false,
-    metronome: false,
+    assistTick: true,
+    metronome: true,
     rate: 1,
     masterVolume: 1,
     songVolume: 0.2,
