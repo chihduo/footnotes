@@ -117,23 +117,63 @@
   display: block;
 }
 .dancer-cue {
+  flex: none;
+  box-sizing: content-box;
+  overflow-y: auto;
   text-align: center;
   font-size: clamp(0.72rem, 1.25vw, 0.92rem);
   line-height: 1.2;
-  min-height: 1.25em;
+  height: 1.25em;
   padding: 0.22rem;
   background: #1d2730;
   color: #e2edeb;
 }
 
-.dancer-coaching {
-  min-height: 1.3em;
+.dancer-feedback {
+  flex: none;
+  display: grid;
+  justify-items: center;
   padding: 0 1rem 0.22rem;
   background: #1d2730;
+}
+.dancer-coaching {
+  width: 100%;
+  height: 1.3em;
+  overflow-y: auto;
   color: #a6cdc6;
   font-size: clamp(0.68rem, 1vw, 0.82rem);
   line-height: 1.15;
   text-align: center;
+}
+.dancer-coaching.over-pace,
+#practice-dancer .dancer-fast-steps {
+  color: #ffcf92;
+}
+#practice-dancer .dancer-fast-steps {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 0.74rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+#practice-dancer .dancer-fast-steps[hidden] {
+  display: none;
+}
+
+/* Wrapping a new foot cue must never resize the camera during playback. */
+@container (max-width: 19rem) {
+  .dancer-cue {
+    height: 2.4em;
+  }
+  .dancer-coaching {
+    height: 2.3em;
+  }
+}
+@container (max-width: 12rem) {
+  .dancer-feedback:has(.dancer-fast-steps:not([hidden])) .dancer-coaching {
+    height: 3.45em;
+  }
 }
 
 .dancer-resize {

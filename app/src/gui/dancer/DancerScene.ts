@@ -23,7 +23,7 @@ import { SVGRenderer } from "three/addons/renderers/SVGRenderer.js"
 import { Foot } from "../../chart/stats/parity/ParityDataTypes"
 import type { StageLayout } from "../../chart/stats/parity/StageLayouts"
 import { getParityColor } from "../../util/Color"
-import { clamp, lerp } from "../../util/Math"
+import { clamp } from "../../util/Math"
 import { Options } from "../../util/Options"
 import { getDancerFitZoom, resizeDancerProjection } from "./DancerFraming"
 import { PANEL_SPACING, type DancerPose, type FootPose } from "./DancerMotion"
@@ -455,9 +455,7 @@ export class DancerScene {
     const { left, right, yaw } = pose
     const feet = [left, right]
     const shift = left.unload - right.unload
-    const balance = 0.5 + 0.34 * shift
-    const x = lerp(left.x, right.x, balance)
-    const z = lerp(left.z, right.z, balance)
+    const { x, z } = pose.hips
     let hipY = 0.86 + Math.min(left.lift, right.lift) - pose.compression
     const cos = Math.cos(yaw),
       sin = Math.sin(yaw)

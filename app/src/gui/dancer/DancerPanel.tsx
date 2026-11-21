@@ -235,6 +235,7 @@ export default function DancerPanel({ app }: { app: App }) {
   const viewport = useRef<HTMLDivElement>(null)
   const caption = useRef<HTMLDivElement>(null)
   const coaching = useRef<HTMLDivElement>(null)
+  const fastSteps = useRef<HTMLButtonElement>(null)
 
   useLayoutEffect(
     () =>
@@ -252,11 +253,13 @@ export default function DancerPanel({ app }: { app: App }) {
     const card = panel.current!
     const cue = caption.current!
     const instruction = coaching.current!
+    const fastButton = fastSteps.current!
     let scene: DancerScene | undefined
     let motion: DancerMotion | undefined
     let activeChart: Chart | undefined
     let states: ParityState[] | undefined
     let lastTime = NaN
+    let rate = NaN
     let reference:
       | {
           panelWidth: number
@@ -293,6 +296,15 @@ export default function DancerPanel({ app }: { app: App }) {
       if (event.detail > 0) fitButton.blur()
     }
     fitButton.addEventListener("click", fitDancer)
+    const nextFastStep = () => {
+      const steps = motion?.fastSteps
+      if (!steps?.length) return
+      const next =
+        steps.find(step => step.beat > app.chartManager.beat + 0.0001) ??
+        steps[0]
+      app.chartManager.beat = next.beat
+    }
+    fastButton.addEventListener("click", nextFastStep)
     const colors = (id: string) => {
       if (id.startsWith("chart.parity.") && id.endsWith("Color")) {
         scene?.setColors()
@@ -313,10 +325,22 @@ export default function DancerPanel({ app }: { app: App }) {
         scene.setLayout(layout)
         resize()
       }
-      if (chart !== activeChart || states !== chart.stats.parity?.states) {
+      if (
+        chart !== activeChart ||
+        states !== chart.stats.parity?.states ||
+        rate !== Options.audio.rate
+      ) {
         activeChart = chart
         states = chart.stats.parity?.states
-        motion = new DancerMotion(chart, layout)
+        rate = Options.audio.rate
+        motion = new DancerMotion(chart, layout, rate)
+        const hideFlags = motion.fastSteps.length === 0
+        if (fastButton.hidden !== hideFlags) {
+          fastButton.hidden = hideFlags
+          reference = undefined
+          resize()
+        }
+        fastButton.textContent = "Fast steps (" + motion.fastSteps.length + ")"
         lastTime = NaN
       }
       const time = chartView.getVisualTime()
@@ -330,7 +354,9 @@ export default function DancerPanel({ app }: { app: App }) {
           ? "No steps in this chart"
           : pose.cue
       if (cue.textContent !== label) cue.textContent = label
-      const tip = states && states.length > 2 ? pose.coaching : ""
+      const tip =
+        states && states.length > 2 ? pose.paceWarning || pose.coaching : ""
+      instruction.classList.toggle("over-pace", !!pose.paceWarning)
       if (instruction.textContent !== tip) instruction.textContent = tip
     }
     const observer = new ResizeObserver(resize)
@@ -343,6 +369,7 @@ export default function DancerPanel({ app }: { app: App }) {
     return () => {
       Ticker.shared.remove(draw)
       fitButton.removeEventListener("click", fitDancer)
+      fastButton.removeEventListener("click", nextFastStep)
       observer.disconnect()
       EventHandler.off("userOptionUpdated", colors)
       scene?.dispose()
@@ -402,7 +429,18 @@ export default function DancerPanel({ app }: { app: App }) {
       <div className="dancer-cue" ref={caption}>
         Ready
       </div>
-      <div className="dancer-coaching" ref={coaching}></div>
+      <div className="dancer-feedback">
+        <div className="dancer-coaching" ref={coaching}></div>
+        <button
+          type="button"
+          className="dancer-fast-steps"
+          ref={fastSteps}
+          hidden
+          title="Jump to the next step over the movement limit at this playback rate"
+        >
+          Fast steps
+        </button>
+      </div>
       <div
         className="dancer-resize"
         ref={resizer}

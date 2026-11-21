@@ -41,7 +41,7 @@ function row(second, left, right, moved, extra = {}) {
 
 function motion(
   rows,
-  { notes = [], angles = [], techs = [], type = "dance-single" } = {}
+  { notes = [], angles = [], techs = [], type = "dance-single", rate = 1 } = {}
 ) {
   const chart = {
     stats: {
@@ -54,7 +54,7 @@ function motion(
     getNotedata: () => notes,
     getSecondsFromBeat: beat => beat / 2,
   }
-  return new DancerMotion(chart, STAGE_LAYOUTS[type])
+  return new DancerMotion(chart, STAGE_LAYOUTS[type], rate)
 }
 
 test("a crossover anticipates support, lands on the beat, and is reproducible after a seek", () => {
@@ -92,13 +92,20 @@ test("a hold or roll stays planted through its actual tail between parity rows",
         notes: [{ beat: 0, col: 2, type, hold: 2 }],
       }
     )
-    const pose = clip.sample(0.99).left
-    assert.equal(pose.z, -PANEL_SPACING)
-    assert.equal(pose.x, 0)
-    assert.equal(pose.lift, 0)
-    assert.equal(pose.holding, true)
+    const planted = clip.sample(0).left
+    assert.ok(Math.abs(planted.z + PANEL_SPACING) < PANEL_SPACING / 2)
+    assert.ok(Math.abs(planted.x) < PANEL_SPACING / 2)
+    for (const t of [0.79, 0.8, 0.99, 1]) {
+      const pose = clip.sample(t).left
+      assert.equal(pose.x, planted.x)
+      assert.equal(pose.z, planted.z)
+      assert.equal(pose.lift, 0)
+      assert.equal(pose.holding, t < 1)
+    }
     assert.ok(clip.sample(1.06).left.lift > 0)
-    assert.equal(clip.sample(1.12).left.x, -PANEL_SPACING)
+    const landed = clip.sample(1.12).left
+    assert.equal(landed.heel, 0)
+    assert.ok(Math.abs(landed.x + PANEL_SPACING) < PANEL_SPACING / 2)
   }
 })
 
@@ -165,7 +172,7 @@ test("pad geometry distinguishes both sides of a double layout and empty charts 
     const clip = motion([row(1, -1, col, [R])], { type })
     const end = clip.sample(1)
     assert.equal(end.right.x, columns[col].x * PANEL_SPACING)
-    assert.equal(end.right.z, -columns[col].y * PANEL_SPACING)
+    assert.ok(Math.abs(end.right.z + columns[col].y * PANEL_SPACING) < 1e-9)
     if (type.endsWith("double")) assert.match(end.cue, /Right 2/)
     assert.equal(clip.sample(9).cue, "Steps complete")
   }
@@ -173,4 +180,132 @@ test("pad geometry distinguishes both sides of a double layout and empty charts 
   assert.equal(empty.cue, "Ready")
   assert.equal(empty.left.heel, -1)
   assert.equal(empty.right.heel, -1)
+})
+
+test("YOU Hard's dense phrase lands every note at full tempo within the movement budget", () => {
+  // Beats 151–157 at 130 BPM. Only 115 ms separate beats 154.5 and 154.75.
+  const steps = [
+    [151, 3, 1, L],
+    [151.75, 3, 1, R],
+    [152.5, 0, 1, L],
+    [153, 0, 2, R],
+    [154, 1, 2, L],
+    [154.5, 1, 3, R],
+    [154.75, 0, 3, L],
+    [155.5, 0, 2, R],
+    [156, 1, 2, L],
+    [156.5, 1, 3, R],
+    [157, 0, 3, L],
+  ]
+  const rows = steps.map(([beat, l, r, foot]) => ({
+    ...row(((beat - 150) * 60) / 130, l, r, [foot]),
+    beat,
+  }))
+  const clip = motion(rows, {
+    angles: rows.map((_, i) => (i % 2 ? -1.3 : 1.3)),
+  })
+  assert.deepEqual(clip.fastSteps, [])
+  for (const row of rows) {
+    const pose = clip.sample(row.second)
+    for (const part of row.movedFeet) {
+      const foot = part === L ? pose.left : pose.right
+      const col = row.footColumns[part],
+        panel = STAGE_LAYOUTS["dance-single"].layout[col]
+      assert.equal(foot.heel, col)
+      assert.ok(foot.contact && foot.lift === 0)
+      assert.ok(Math.abs(foot.x - panel.x * PANEL_SPACING) < PANEL_SPACING / 2)
+      assert.ok(Math.abs(foot.z + panel.y * PANEL_SPACING) < PANEL_SPACING / 2)
+    }
+  }
+  const dt = 0.001
+  let previous = clip.sample(0)
+  for (let t = dt; t <= rows.at(-1).second; t += dt) {
+    const pose = clip.sample(t)
+    assert.ok(Math.min(pose.left.lift, pose.right.lift) < 1e-10)
+    for (const side of ["left", "right"]) {
+      const foot = pose[side],
+        old = previous[side]
+      assert.ok(
+        Math.hypot(foot.x - old.x, foot.z - old.z, foot.lift - old.lift) / dt <=
+          2.50001
+      )
+    }
+    assert.ok(
+      Math.hypot(pose.hips.x - previous.hips.x, pose.hips.z - previous.hips.z) /
+        dt <=
+        1.35001
+    )
+    assert.ok(Math.abs(pose.yaw - previous.yaw) / dt <= 4.00001)
+    previous = pose
+  }
+})
+
+test("an over-budget double-pad step is flagged at its exact beat and still lands on time", () => {
+  const rows = [row(1, 0, 5, [L, R]), row(1.08, 7, 5, [L])]
+  const clip = motion(rows, { type: "dance-double" })
+  assert.deepEqual(
+    clip.fastSteps.map(step => step.beat),
+    [2.16]
+  )
+  const landing = clip.sample(1.08)
+  assert.match(landing.paceWarning, /Left 2→.*beat 2\.16/)
+  assert.equal(clip.sample(1.04).paceWarning, landing.paceWarning)
+  assert.equal(clip.sample(3).paceWarning, "")
+  assert.equal(clip.sample(0).paceWarning, "")
+  assert.equal(landing.left.heel, 7)
+  assert.equal(landing.left.lift, 0)
+  assert.equal(landing.right.heel, 5)
+  assert.deepEqual(clip.sample(1.08), landing)
+  const slow = motion(rows, { type: "dance-double", rate: 0.08 })
+  assert.deepEqual(slow.fastSteps, [])
+  assert.equal(slow.sample(1.08).left.heel, 7)
+})
+
+test("the free foot can start before a grounded bracket on the supporting foot", () => {
+  const clip = motion(
+    [
+      row(1, 2, 1, [L, R]),
+      row(1.56, 2, 1, [toe], { toe: 0, held: [L] }),
+      row(1.7, 2, 3, [R], { toe: 0, held: [L] }),
+    ],
+    { notes: [{ beat: 2, col: 2, type: "Hold", hold: 3 }] }
+  )
+  assert.deepEqual(clip.fastSteps, [])
+  assert.ok(clip.sample(1.53).right.lift > 0)
+  for (const t of [1.53, 1.56, 1.65, 1.7]) {
+    assert.equal(clip.sample(t).left.lift, 0)
+    assert.equal(clip.sample(t).left.holding, true)
+  }
+  assert.equal(clip.sample(1.7).right.heel, 3)
+})
+
+test("a transfer due exactly at a hold tail is flagged and later swings remain feasible", () => {
+  const clip = motion(
+    [
+      row(0, 0, 1, [L, R]),
+      row(1, 3, 1, [L]),
+      row(1.5, 3, 2, [R]),
+      row(1.75, 0, 2, [L]),
+    ],
+    { notes: [{ beat: 0, col: 0, type: "Hold", hold: 2 }] }
+  )
+  assert.deepEqual(
+    clip.fastSteps.map(step => step.beat),
+    [2]
+  )
+  assert.equal(clip.sample(0.999).left.heel, 0)
+  assert.equal(clip.sample(0.999).left.lift, 0)
+  assert.equal(clip.sample(1).left.heel, 3)
+  assert.equal(clip.sample(1.75).left.heel, 0)
+  assert.equal(clip.sample(1.75).paceWarning, "")
+})
+
+test("a tap can arrive turned toward an upcoming bracket", () => {
+  const clip = motion([row(1, 0, 3, [L, R]), row(1.2, 0, 3, [toe], { toe: 1 })])
+  assert.deepEqual(clip.fastSteps, [])
+  assert.ok(clip.sample(1).left.yaw < -1)
+  const bracket = clip.sample(1.2).left
+  assert.equal(bracket.heel, 0)
+  assert.equal(bracket.toe, 1)
+  assert.ok(Math.abs(bracket.yaw + (3 * Math.PI) / 4) < 1e-8)
 })

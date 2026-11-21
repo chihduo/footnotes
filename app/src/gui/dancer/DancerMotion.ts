@@ -7,20 +7,17 @@ import {
 } from "../../chart/stats/parity/ParityDataTypes"
 import type { StageLayout } from "../../chart/stats/parity/StageLayouts"
 import { clamp, lerp } from "../../util/Math"
+import {
+  PANEL_SPACING,
+  planFootwork,
+  swingProgress,
+  turnBetween,
+  type Contact,
+} from "./DancerFootwork"
 
-export const PANEL_SPACING = 0.32
-
-interface Contact {
-  second: number
-  start: number
-  x: number
-  z: number
-  yaw: number
-  heel: number
-  toe: number
-  holdEnd: number
-  height: number
-}
+export { PANEL_SPACING } from "./DancerFootwork"
+const HIP_SPEED_LIMIT = 1.35
+const BODY_TURN_LIMIT = 4 // radians per real second
 
 export interface FootPose {
   x: number
@@ -37,6 +34,8 @@ export interface FootPose {
 
 interface Stance {
   second: number
+  beat: number
+  turnStart: number
   yaw: number
   cue: string
   jump: boolean
@@ -46,10 +45,12 @@ interface Stance {
 export interface DancerPose {
   left: FootPose
   right: FootPose
+  hips: { x: number; z: number }
   yaw: number
   compression: number
   cue: string
   coaching: string
+  paceWarning: string
 }
 
 function smooth(t: number) {
@@ -73,6 +74,7 @@ function indexAt<T extends { second: number }>(items: T[], second: number) {
 function neutral(side: number): Contact {
   return {
     second: -Infinity,
+    beat: -Infinity,
     start: -Infinity,
     heel: -1,
     toe: -1,
@@ -81,10 +83,14 @@ function neutral(side: number): Contact {
     yaw: -side * 0.09,
     holdEnd: -Infinity,
     height: 0,
+    fixed: true,
+    pivot: false,
+    jump: false,
+    overLimit: false,
   }
 }
 
-function sampleFoot(track: Contact[], second: number): FootPose {
+function sampleFoot(track: Contact[], second: number, rate: number): FootPose {
   const i = indexAt(track, second)
   const old = track[i]
   const next = track[i + 1]
@@ -104,28 +110,68 @@ function sampleFoot(track: Contact[], second: number): FootPose {
 
   // Transfer weight before takeoff. A bracket can pivot with a heel or toe
   // still on a held panel, in which case it stays on the floor.
-  const lead = Math.min(0.11, (next.second - old.second) * 0.2)
+  const lead = Math.min(
+    0.11 * rate,
+    (next.second - old.second) * 0.2,
+    next.start - old.second
+  )
   const duration = next.second - next.start
   if (duration <= 0 || second <= next.start - lead) return pose
   const phase = clamp((second - next.start) / duration, 0, 1)
-  const blend = smooth(phase)
-  const arc = Math.sin(Math.PI * phase)
+  const blend = swingProgress(phase)
   if (next.height > 0) {
     pose.unload =
       smooth((second - next.start + lead) / (lead + duration * 0.22)) *
       (1 - smooth((phase - 0.62) / 0.38))
   }
-  pose.x = lerp(old.x, next.x, blend)
-  pose.z = lerp(old.z, next.z, blend)
-  const turn = Math.atan2(
-    Math.sin(next.yaw - old.yaw),
-    Math.cos(next.yaw - old.yaw)
-  )
+  pose.x += (next.x - old.x) * blend
+  pose.z += (next.z - old.z) * blend
+  const turn = turnBetween(old.yaw, next.yaw)
   pose.yaw += turn * blend
-  pose.lift = arc * next.height
+  pose.lift = Math.sin(Math.PI * phase) ** 2 * next.height
   pose.pitch = -Math.sin(2 * Math.PI * phase) * Math.min(0.22, next.height * 2)
   pose.contact = pose.contact && pose.lift < 0.002
   return pose
+}
+
+interface BalancePoint {
+  second: number
+  x: number
+  z: number
+}
+
+function planBalance(tracks: Contact[][], rate: number) {
+  const times = new Set<number>()
+  for (const track of tracks)
+    for (const hit of track.slice(1)) {
+      times.add(hit.start - 0.11 * rate)
+      times.add((hit.start + hit.second) / 2)
+      times.add(hit.second)
+      times.add(hit.second + 0.45 * rate)
+    }
+  const points: BalancePoint[] = [{ second: -Infinity, x: 0, z: 0 }]
+  for (const second of [...times].sort((a, b) => a - b)) {
+    const left = sampleFoot(tracks[0], second, rate)
+    const right = sampleFoot(tracks[1], second, rate)
+    const weight = 0.5 + 0.2 * (left.unload - right.unload)
+    const old = points[points.length - 1]
+    const dx = lerp(left.x, right.x, weight) - old.x
+    const dz = lerp(left.z, right.z, weight) - old.z
+    const distance = Math.hypot(dx, dz)
+    const reach = (HIP_SPEED_LIMIT * (second - old.second)) / rate
+    const fraction = distance > reach ? reach / distance : 1
+    points.push({ second, x: old.x + dx * fraction, z: old.z + dz * fraction })
+  }
+  return points
+}
+
+function balanceAt(points: BalancePoint[], second: number) {
+  const i = indexAt(points, second),
+    old = points[i],
+    next = points[i + 1]
+  if (!next || i === 0) return old
+  const t = (second - old.second) / (next.second - old.second)
+  return { x: lerp(old.x, next.x, t), z: lerp(old.z, next.z, t) }
 }
 
 function panelLabel(layout: StageLayout, column: number) {
@@ -156,8 +202,9 @@ function leavePanel(
   side: number,
   layout: StageLayout,
   second: number,
-  previousRow: number,
-  nextRow: number
+  beat: number,
+  nextRow: number,
+  rate: number
 ) {
   const old = track[track.length - 1]
   const sign = side === 0 ? -1 : 1
@@ -169,24 +216,38 @@ function leavePanel(
   if (Math.hypot(rest.x - old.x, rest.z - old.z) < 0.16)
     rest.x = padCenter + sign * 0.2
   const handoff = old.holdEnd >= second
+  old.fixed = true
   old.holdEnd = Math.min(old.holdEnd, second)
-  rest.start = handoff
-    ? second
-    : Math.max(old.second, previousRow, second - 0.2)
+  rest.beat = beat
+  rest.start = handoff ? second : -Infinity
   rest.second = handoff
-    ? second + Math.min(0.16, (nextRow - second) / 2)
+    ? second + Math.min(0.16 * rate, (nextRow - second) / 2)
     : second
-  rest.height = Math.min(0.08, (rest.second - rest.start) * 0.5)
   track.push(rest)
 }
 
 export class DancerMotion {
   private tracks = [[neutral(-1)], [neutral(1)]]
+  private balance: BalancePoint[] = [{ second: -Infinity, x: 0, z: 0 }]
+  readonly fastSteps: { second: number; beat: number; label: string }[] = []
   private stances: Stance[] = [
-    { second: -Infinity, yaw: 0, cue: "Ready", jump: false, crossed: false },
+    {
+      second: -Infinity,
+      beat: -Infinity,
+      turnStart: -Infinity,
+      yaw: 0,
+      cue: "Ready",
+      jump: false,
+      crossed: false,
+    },
   ]
 
-  constructor(chart: Chart, layout: StageLayout) {
+  constructor(
+    chart: Chart,
+    layout: StageLayout,
+    private rate = 1
+  ) {
+    if (!Number.isFinite(rate) || rate <= 0) this.rate = 1
     const parity = chart.stats.parity
     if (!parity) return
 
@@ -209,12 +270,20 @@ export class DancerMotion {
       const holdHeads = holds.get(row.beat)
       for (const [col, end] of holdHeads ?? []) heldTo.set(col, end)
       const previous = this.stances[this.stances.length - 1]
-      const yaw = bodyFacing(
+      const facing = bodyFacing(
         parity.facingRows[i - 1] ?? 0,
         row.frontFoot,
         previous.yaw
       )
+      const turn = facing - previous.yaw
+      const turnWindow = Math.min(
+        row.second - previous.second,
+        Math.max(0.34, (1.5 * Math.abs(turn)) / BODY_TURN_LIMIT) * this.rate
+      )
+      const maxTurn = (BODY_TURN_LIMIT * turnWindow) / (1.5 * this.rate)
+      const yaw = previous.yaw + clamp(turn, -maxTurn, maxTurn)
       const steps: string[] = []
+      const arrivals: Contact[] = []
       let bracket = false
       let repeated = false
       let support = ""
@@ -259,8 +328,9 @@ export class DancerMotion {
               side,
               layout,
               row.second,
-              previous.second,
-              nextTime
+              row.beat,
+              nextTime,
+              this.rate
             )
             continue
           }
@@ -278,7 +348,6 @@ export class DancerMotion {
         const footYaw = b
           ? Math.atan2(a.x - b.x, b.y - a.y)
           : yaw * 0.78 + (side === 0 ? 0.09 : -0.09)
-        const distance = Math.hypot(x - old.x, z - old.z)
         const keepsHold =
           old.holdEnd >= row.second &&
           [heel, toe].some(
@@ -286,32 +355,26 @@ export class DancerMotion {
               (heldTo.get(col) ?? -Infinity) >= row.second &&
               (col === old.heel || col === old.toe)
           )
-        let start = Math.max(
-          previous.second,
-          old.second,
-          row.second - Math.min(0.3, 0.18 + distance * 0.32)
-        )
-        if (!keepsHold)
-          start = Math.min(row.second, Math.max(start, old.holdEnd))
-        const height = keepsHold
-          ? 0
-          : Math.min(
-              0.135,
-              0.065 + distance * 0.13,
-              (row.second - start) * 0.56
-            )
-        track.push({
+        if (keepsHold) old.fixed = true
+        const arrival = {
           second: row.second,
-          start,
+          beat: row.beat,
+          start: -Infinity,
           x,
           z,
           yaw: footYaw,
           heel,
           toe,
           holdEnd,
-          height,
-        })
+          height: 0,
+          fixed: !!b || sharesPanel || keepsHold,
+          pivot: keepsHold,
+          jump: false,
+          overLimit: false,
+        }
+        track.push(arrival)
         if (moved) {
+          arrivals.push(arrival)
           steps.push(
             name +
               " " +
@@ -325,6 +388,7 @@ export class DancerMotion {
       const kinds = parity.techRows[i - 1]
       const crossed = kinds?.has(TechCategory.Crossovers) ?? false
       const jump = steps.length === 2 && !kinds?.has(TechCategory.Holdswitch)
+      if (jump) for (const foot of arrivals) foot.jump = true
       let cue = steps.join(" + ") || "Stay planted"
       if (kinds?.has(TechCategory.Holdswitch)) cue = "Switch hold · " + cue
       else if (jump && bracket) cue = "Bracket jump · " + cue
@@ -341,38 +405,115 @@ export class DancerMotion {
       else if (support) cue = "Hold " + support + " · " + cue
       else if (holdHeads?.size) cue = "Hold · " + cue
       else if (repeated) cue = "Retap · " + cue
-      this.stances.push({ second: row.second, yaw, jump, cue, crossed })
+      this.stances.push({
+        second: row.second,
+        beat: row.beat,
+        turnStart: row.second - turnWindow,
+        yaw,
+        jump,
+        cue,
+        crossed,
+      })
     }
+    planFootwork(this.tracks, this.rate)
+    this.balance = planBalance(this.tracks, this.rate)
+    const flagged = new Map<number, string[]>()
+    for (const [side, track] of this.tracks.entries())
+      for (const step of track) {
+        if (!step.overLimit) continue
+        const feet = flagged.get(step.beat) ?? []
+        const target =
+          step.heel < 0
+            ? "release"
+            : panelLabel(layout, step.heel) +
+              (step.toe >= 0 ? panelLabel(layout, step.toe) : "")
+        feet.push((side === 0 ? "Left " : "Right ") + target)
+        flagged.set(step.beat, feet)
+      }
+    for (const { beat, second } of this.stances) {
+      const feet = flagged.get(beat)
+      if (feet)
+        this.fastSteps.push({
+          beat,
+          second,
+          label:
+            "Over speed limit · " +
+            feet.join(" + ") +
+            " · beat " +
+            Number(beat.toFixed(3)),
+        })
+    }
+  }
+
+  private warningAt(second: number) {
+    const i = indexAt(this.fastSteps, second),
+      last = this.fastSteps[i]
+    if (!last) return ""
+    if (last.second <= second && second - last.second <= 0.3 * this.rate)
+      return last.label
+    const next = last.second > second ? last : this.fastSteps[i + 1]
+    return next && next.second - second <= 0.35 * this.rate ? next.label : ""
   }
 
   sample(second: number): DancerPose {
     const i = indexAt(this.stances, second)
     const old = this.stances[i]
     const next = this.stances[i + 1]
-    const left = sampleFoot(this.tracks[0], second)
-    const right = sampleFoot(this.tracks[1], second)
+    const left = sampleFoot(this.tracks[0], second, this.rate)
+    const right = sampleFoot(this.tracks[1], second, this.rate)
+    // Average nearby points on the speed-limited weight-transfer path. This
+    // rounds the change of direction and anticipates the next support foot.
+    const before = balanceAt(this.balance, second - 0.075 * this.rate)
+    const at = balanceAt(this.balance, second)
+    const after = balanceAt(this.balance, second + 0.075 * this.rate)
+    const hips = {
+      x: (before.x + 2 * at.x + after.x) / 4,
+      z: (before.z + 2 * at.z + after.z) / 4,
+    }
     let yaw = old.yaw
     let cue = old.cue
     let preparingJump = false
     let compression = 0
     if (next) {
-      const duration = Math.min(0.34, next.second - old.second)
+      const duration = Math.min(0.34 * this.rate, next.second - old.second)
       const phase = duration > 0 ? 1 - (next.second - second) / duration : 0
-      yaw = lerp(old.yaw, next.yaw, smooth(phase))
+      const turnDuration = next.second - next.turnStart
+      if (turnDuration > 0)
+        yaw = lerp(
+          old.yaw,
+          next.yaw,
+          smooth((second - next.turnStart) / turnDuration)
+        )
       if (
         phase > 0 &&
-        (i === 0 || second - old.second > Math.min(0.1, duration * 0.35))
+        (i === 0 ||
+          second - old.second > Math.min(0.1 * this.rate, duration * 0.35))
       )
         cue = next.cue
       if (next.jump) {
         preparingJump = phase > 0
-        compression = 0.105 * Math.sin(Math.PI * clamp(phase * 2, 0, 1))
+        const depth = Math.min(
+          0.105,
+          (0.9 * duration) / (2 * Math.PI * this.rate)
+        )
+        compression = depth * Math.sin(Math.PI * clamp(phase * 2, 0, 1)) ** 2
       }
     }
-    compression +=
-      (old.jump ? 0.085 : 0.022) *
-      Math.sin(Math.PI * clamp((second - old.second) / 0.21, 0, 1))
-    if (second - old.second > 0.55 && (!next || next.second - second > 0.34)) {
+    const landing = Math.min(
+      0.21 * this.rate,
+      (next?.second ?? Infinity) - old.second
+    )
+    if (landing > 0)
+      compression +=
+        Math.min(
+          old.jump ? 0.085 : 0.022,
+          (0.9 * landing) / (Math.PI * this.rate)
+        ) *
+        Math.sin(Math.PI * clamp((second - old.second) / landing, 0, 1)) ** 2
+    if (
+      second - old.second > 0.55 * this.rate &&
+      (!next || next.second - second > 0.34 * this.rate)
+    ) {
       if (left.holding && right.holding) cue = "Hold both feet"
       else if (left.holding) cue = "Hold left"
       else if (right.holding) cue = "Hold right"
@@ -384,7 +525,7 @@ export class DancerMotion {
         Math.min(left.lift, right.lift) > 0.02
           ? "Bring both feet down together"
           : "Bend both knees to push off"
-    else if (old.jump && second - old.second < 0.21)
+    else if (old.jump && second - old.second < landing)
       coaching = "Soften the landing"
     else if (left.unload - right.unload > 0.15)
       coaching = "Weight on right foot"
@@ -394,6 +535,15 @@ export class DancerMotion {
     else if (right.holding) coaching = "Keep right foot planted"
     else if (old.crossed) coaching = "Keep hips turned"
     else if (i === 0) coaching = "Face the screen"
-    return { left, right, yaw, cue, coaching, compression }
+    return {
+      left,
+      right,
+      hips,
+      yaw,
+      cue,
+      coaching,
+      compression,
+      paceWarning: this.warningAt(second),
+    }
   }
 }
