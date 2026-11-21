@@ -40,30 +40,84 @@ export function setPracticeBottomBarRoom(pixels: number) {
 
 // The floating view and the pad use the same measurements. The initial slot
 // stays free while dragging, so the arrows never move underneath the pointer.
-export function getPracticeDancerRoom(width: number, height: number) {
+export function getPracticeDancerRoom(
+  width: number,
+  height: number,
+  gameTypeId?: string,
+  pixelsPerUnit = 0,
+  size = Options.practice.dancerSize
+) {
   const margin = Math.min(14, width * 0.022, height * 0.03)
   const usableHeight = Math.max(
     1,
     height - (bottomBarRoom ?? BOTTOM_BAR_REM * 16 * Options.general.uiScale)
   )
-  const panelWidth = Math.max(
+  const fullHeight = Math.max(1, Math.floor(usableHeight - 2 * margin))
+  const defaultWidth = Math.max(
     1,
     Math.floor(Math.min(448, width * 0.42, usableHeight * 0.84))
   )
-  const panelHeight = Math.max(
-    1,
-    Math.floor(Math.min(usableHeight - 2 * margin, panelWidth * 1.07 + 24))
+  const defaultHeight = Math.min(
+    fullHeight,
+    Math.floor(defaultWidth * 1.07 + 24)
   )
-  return { margin, panelWidth, panelHeight, usableHeight }
+  const custom =
+    Array.isArray(size) &&
+    size.length === 2 &&
+    size.every(value => Number.isFinite(value) && value > 0)
+  const panelWidth = custom
+    ? clamp(
+        Math.round(defaultWidth * size[0]),
+        Math.min(defaultWidth, 128),
+        Math.max(defaultWidth, Math.floor((width - 2 * margin) * 0.65))
+      )
+    : defaultWidth
+
+  const columns = gameTypeId
+    ? (STAGE_LAYOUTS[gameTypeId]?.layout.length ?? 0)
+    : 0
+  const right = Options.chart.noteLayout.enabled ? noteLayoutRoom : 0
+  const fieldWidth = columns * COLUMN_WIDTH * Options.chart.zoom
+  const notesBeside =
+    custom &&
+    columns > 0 &&
+    panelWidth + 2 * margin + (fieldWidth + right) * pixelsPerUnit <= width
+  // When the arrows need to sit below the panel, leave a strip for playing them.
+  const minHeight = Math.min(defaultHeight, 144)
+  const maxHeight = notesBeside
+    ? fullHeight
+    : Math.max(
+        minHeight,
+        fullHeight - Math.min(112, Math.round(fullHeight / 3))
+      )
+  const panelHeight = custom
+    ? clamp(Math.round(defaultHeight * size[1]), minHeight, maxHeight)
+    : defaultHeight
+  return {
+    margin,
+    panelWidth,
+    panelHeight,
+    usableHeight,
+    defaultWidth,
+    defaultHeight,
+    custom,
+    notesBeside,
+  }
 }
 
-function dancerSlot(width: number, height: number, pixelsPerUnit: number) {
-  if (!Options.practice.showDancer || pixelsPerUnit <= 0) return 0
-  const room = getPracticeDancerRoom(
+function stageDancerRoom(
+  width: number,
+  height: number,
+  gameTypeId: string,
+  pixelsPerUnit: number
+) {
+  if (!Options.practice.showDancer || pixelsPerUnit <= 0) return
+  return getPracticeDancerRoom(
     width * pixelsPerUnit,
-    height * pixelsPerUnit
+    height * pixelsPerUnit,
+    gameTypeId,
+    pixelsPerUnit
   )
-  return (room.panelWidth + room.margin * 2) / pixelsPerUnit
 }
 
 interface PadBounds {
@@ -149,9 +203,20 @@ function getSideLayout(
     (bottomBarRoom ?? BOTTOM_BAR_REM * 16 * Options.general.uiScale) /
     pixelsPerUnit
   const notefieldWidth = columns * COLUMN_WIDTH * zoom
-  const slot = dancerSlot(stageWidth, stageHeight, pixelsPerUnit)
+  const room = stageDancerRoom(
+    stageWidth,
+    stageHeight,
+    gameTypeId,
+    pixelsPerUnit
+  )
+  const slot = room ? (room.panelWidth + room.margin * 2) / pixelsPerUnit : 0
   const right = slot && Options.chart.noteLayout.enabled ? noteLayoutRoom : 0
   const availableWidth = stageWidth - slot - right
+  if (
+    room?.custom &&
+    availableWidth < notefieldWidth + SIDE_GAP + BOT_PANEL_SIZE
+  )
+    return
   const scale = Math.min(
     (stageHeight - TOP_MARGIN - bottomBar) / padHeight,
     (availableWidth / 2 - SIDE_GAP) / padWidth,
@@ -189,10 +254,25 @@ export function getPracticeNotefieldX(
   zoom: number,
   pixelsPerUnit: number
 ): number {
-  return (
-    getSideLayout(stageWidth, stageHeight, gameTypeId, zoom, pixelsPerUnit)
-      ?.notefieldX ?? 0
+  const side = getSideLayout(
+    stageWidth,
+    stageHeight,
+    gameTypeId,
+    zoom,
+    pixelsPerUnit
   )
+  if (side) return side.notefieldX
+  const room = stageDancerRoom(
+    stageWidth,
+    stageHeight,
+    gameTypeId,
+    pixelsPerUnit
+  )
+  if (!room?.notesBeside) return 0
+  const slot = (room.panelWidth + 2 * room.margin) / pixelsPerUnit
+  const fieldWidth =
+    STAGE_LAYOUTS[gameTypeId].layout.length * COLUMN_WIDTH * zoom
+  return Math.max(0, -stageWidth / 2 + slot + fieldWidth / 2)
 }
 
 /**
@@ -218,7 +298,13 @@ export function getPracticeBotPlacement(
   if (!bounds) return
   const width = bounds.maxX - bounds.minX
   const height = bounds.maxY - bounds.minY
-  const slot = dancerSlot(stageWidth, stageHeight, pixelsPerUnit)
+  const room = stageDancerRoom(
+    stageWidth,
+    stageHeight,
+    gameTypeId,
+    pixelsPerUnit
+  )
+  const slot = room ? (room.panelWidth + room.margin * 2) / pixelsPerUnit : 0
   const right = slot && Options.chart.noteLayout.enabled ? noteLayoutRoom : 0
   const scale = Math.min(
     (Options.practice.botHeight * stageHeight) / height,
@@ -264,11 +350,13 @@ export function getPracticeReceptorY(
   )
   if (!placement) return
   let bottom = placement.bottom
-  if (placement.x > 0 && pixelsPerUnit > 0) {
-    const room = getPracticeDancerRoom(
-      stageWidth * pixelsPerUnit,
-      stageHeight * pixelsPerUnit
-    )
+  const room = stageDancerRoom(
+    stageWidth,
+    stageHeight,
+    gameTypeId,
+    pixelsPerUnit
+  )
+  if (room && !room.notesBeside && (placement.x > 0 || room.custom)) {
     bottom = Math.max(
       bottom,
       -stageHeight / 2 + (room.margin + room.panelHeight) / pixelsPerUnit

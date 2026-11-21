@@ -25,6 +25,7 @@ import type { StageLayout } from "../../chart/stats/parity/StageLayouts"
 import { getParityColor } from "../../util/Color"
 import { clamp, lerp } from "../../util/Math"
 import { Options } from "../../util/Options"
+import { getDancerFitZoom, resizeDancerProjection } from "./DancerFraming"
 import { PANEL_SPACING, type DancerPose, type FootPose } from "./DancerMotion"
 
 const up = new Vector3(0, 1, 0)
@@ -179,8 +180,7 @@ export class DancerScene {
     elbow: new Vector3(),
     wrist: new Vector3(),
   }))
-  private width = 1
-  private height = 1
+  private cameraRestored = false
   private padWidth = 1
 
   constructor(private mount: HTMLDivElement) {
@@ -208,7 +208,6 @@ export class DancerScene {
     this.controls.cursorStyle = "grab"
     this.controls.update()
     this.controls.saveState()
-    this.restoreCameraPreference()
     this.controls.addEventListener("change", this.render)
     this.controls.addEventListener("end", this.rememberCamera)
     mount.addEventListener("dblclick", this.resetCamera)
@@ -412,21 +411,45 @@ export class DancerScene {
       mark.position.copy(tile.position).y = 0.002
       this.pad.add(mark)
     }
-    this.resize(this.width, this.height)
   }
 
-  resize(width: number, height: number) {
-    if (width <= 0 || height <= 0) return
-    this.width = width
-    this.height = height
-    const aspect = width / height
-    const half = Math.max(0.96, (this.padWidth + 0.26) / (2 * aspect))
-    this.camera.left = -half * aspect
-    this.camera.right = half * aspect
-    this.camera.top = half
-    this.camera.bottom = -half
-    this.camera.updateProjectionMatrix()
+  resize(
+    width: number,
+    height: number,
+    referenceWidth: number,
+    referenceHeight: number
+  ) {
+    resizeDancerProjection(
+      this.camera,
+      width,
+      height,
+      referenceWidth,
+      referenceHeight,
+      this.padWidth
+    )
+    this.controls.minZoom = Math.min(
+      this.camera.zoom,
+      0.6 * Math.min(1, width / referenceWidth, height / referenceHeight)
+    )
     this.renderer.setSize(width, height)
+    if (!this.cameraRestored) {
+      this.cameraRestored = true
+      this.restoreCameraPreference()
+    }
+  }
+
+  fitDancer() {
+    const camera = this.camera
+    const fit = getDancerFitZoom(
+      camera,
+      this.body,
+      this.hips.position,
+      this.controls.target.y
+    )
+    camera.zoom = clamp(fit, this.controls.minZoom, this.controls.maxZoom)
+    camera.updateProjectionMatrix()
+    this.render()
+    this.rememberCamera()
   }
 
   draw(pose: DancerPose) {

@@ -26,7 +26,7 @@ For more songs, the [Songs page](https://chihduo.github.io/footnotes/songs/) has
 
 ## How it works
 
-Practice opens with two synchronized views on Dance and Pump single and double charts. The overhead pad shows the chosen footing. A draggable 3D dancer demonstrates weight shifts, knee bends, turns, and landings for that footing. Drag the dancer to rotate the view and scroll over it to zoom. Double-click the dancer to restore the starting view. Drag the title bar to move the panel, or toggle **3D dancer** in the top bar.
+Practice opens with two synchronized views on Dance and Pump single and double charts. The overhead pad shows the chosen footing. A draggable 3D dancer demonstrates weight shifts, knee bends, turns, and landings for that footing. Drag the dancer to rotate the view and scroll over it to zoom. Double-click the dancer to restore the starting view. Drag the title bar to move the panel. Drag its lower-right corner to reveal more of the dancer at the same zoom, or click **Fit** to see the whole dancer at your current angle. Toggle **3D dancer** in the top bar to hide or show the panel.
 
 To try the dancer in this checkout, run `npm ci` and `npm run dev`, then [open the local Medium practice chart](http://127.0.0.1:5173/footnotes/app/?url=../demo/you.sm&chartType=dance-single&chartIndex=2&flags=D). Beat 144 has a left-foot crossover.
 
@@ -77,7 +77,7 @@ Practice mode is toggled with <kbd>Shift</kbd>+<kbd>H</kbd> or **View > Dance pr
 | ------------------- | --------------------------------------------------------- |
 | `npm run dev`       | Starts a dev server at `http://127.0.0.1:5173/footnotes/` |
 | `npm run build`     | Builds the site, app and guide into `dist/`               |
-| `npm run test:dancer` | Checks timed contacts, holds, jumps, handoffs and seeking |
+| `npm run test:dancer` | Checks dancer motion, seeking, panel resizing and camera framing |
 | `npm run guide:dev` | Starts the guide's dev server                             |
 | `npm run app:dev`   | Runs the desktop app against the dev server               |
 

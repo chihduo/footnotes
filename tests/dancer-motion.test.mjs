@@ -7,7 +7,7 @@ const vite = await createServer({
   appType: "custom",
   logLevel: "error",
   optimizeDeps: { noDiscovery: true, include: [] },
-  server: { middlewareMode: true, hmr: false, watch: null },
+  server: { middlewareMode: true, hmr: false, ws: false, watch: null },
 })
 const { DancerMotion, PANEL_SPACING } = await vite.ssrLoadModule(
   "/app/src/gui/dancer/DancerMotion.ts"

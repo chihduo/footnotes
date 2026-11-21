@@ -21,6 +21,10 @@
 #practice-dancer.dragging * {
   cursor: grabbing;
 }
+#practice-dancer.resizing,
+#practice-dancer.resizing * {
+  cursor: nwse-resize;
+}
 .dancer-header {
   display: flex;
   align-items: center;
@@ -49,7 +53,7 @@
   font-weight: 400;
   color: #b1c1ca;
 }
-@container (min-width: 20rem) {
+@container (min-width: 21rem) {
   .dancer-camera-hint {
     display: inline;
   }
@@ -59,6 +63,24 @@
   height: 0.84rem;
   background: radial-gradient(circle, #9badb5 1px, transparent 1.4px) 0 0 /
     0.265rem 0.28rem;
+}
+@container (max-width: 10rem) {
+  .dancer-grip-dots {
+    display: none;
+  }
+}
+#practice-dancer .dancer-fit {
+  flex: none;
+  margin: 0 0.13rem;
+  padding: 0.12rem 0.3rem;
+  border: 1px solid #536672;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: #d5e0e5;
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1.1;
+  cursor: pointer;
 }
 #practice-dancer .dancer-reset {
   font: inherit;
@@ -72,11 +94,14 @@
   color: #ced9df;
   cursor: pointer;
 }
+#practice-dancer .dancer-fit:hover,
 #practice-dancer .dancer-reset:hover {
   background: #ffffff20;
 }
 .dancer-grip:focus-visible,
 .dancer-viewport:focus-visible,
+.dancer-fit:focus-visible,
+.dancer-resize:focus-visible,
 .dancer-reset:focus-visible {
   outline: 2px solid #92dacc;
   outline-offset: -2px;
@@ -103,10 +128,38 @@
 
 .dancer-coaching {
   min-height: 1.3em;
-  padding: 0 0.25rem 0.22rem;
+  padding: 0 1rem 0.22rem;
   background: #1d2730;
   color: #a6cdc6;
   font-size: clamp(0.68rem, 1vw, 0.82rem);
   line-height: 1.15;
   text-align: center;
+}
+
+.dancer-resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 1.8rem;
+  height: 1.8rem;
+  color: #a2bac3;
+  cursor: nwse-resize;
+}
+.dancer-resize::after {
+  content: "";
+  position: absolute;
+  bottom: 0.28rem;
+  right: 0.28rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 3px,
+    currentColor 3px 4.5px
+  );
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+.dancer-resize:hover,
+.dancer-resize:focus-visible {
+  color: #bcf1e7;
 }
