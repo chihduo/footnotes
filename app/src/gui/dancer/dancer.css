@@ -1,205 +1,77 @@
 #practice-dancer {
-  position: fixed;
-  z-index: 1;
+  position: absolute;
+  top: 50%;
+  left: 50%;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
-  overflow: hidden;
-  border: 1px solid #546273;
-  border-radius: 0.6rem;
-  background: radial-gradient(ellipse at 49% 50%, #344451, #202832 83%);
-  color: #ecf2f3;
-  box-shadow: 0 0.25rem 1rem #0004;
+  pointer-events: none;
   user-select: none;
-  touch-action: none;
   container-type: inline-size;
 }
-#practice-dancer[hidden] {
+#practice-dancer[hidden],
+.dancer-guidance[hidden],
+.dancer-fast-steps[hidden] {
   display: none;
-}
-#practice-dancer.dragging,
-#practice-dancer.dragging * {
-  cursor: grabbing;
-}
-#practice-dancer.resizing,
-#practice-dancer.resizing * {
-  cursor: nwse-resize;
-}
-.dancer-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 1.75rem;
-  padding: 0 0.3rem 0 0.55rem;
-  color: #d5e0e5;
-  background: #1d2730;
-  border-bottom: 1px solid #ffffff16;
-}
-.dancer-grip {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  gap: 0.45rem;
-  align-self: stretch;
-  cursor: grab;
-  font-size: 0.85rem;
-  font-weight: 650;
-}
-.dancer-camera-hint {
-  display: none;
-  margin-left: auto;
-  padding-right: 0.4rem;
-  font-size: 0.73rem;
-  font-weight: 400;
-  color: #b1c1ca;
-}
-@container (min-width: 21rem) {
-  .dancer-camera-hint {
-    display: inline;
-  }
-}
-.dancer-grip-dots {
-  width: 0.53rem;
-  height: 0.84rem;
-  background: radial-gradient(circle, #9badb5 1px, transparent 1.4px) 0 0 /
-    0.265rem 0.28rem;
-}
-@container (max-width: 10rem) {
-  .dancer-grip-dots {
-    display: none;
-  }
-}
-#practice-dancer .dancer-fit {
-  flex: none;
-  margin: 0 0.13rem;
-  padding: 0.12rem 0.3rem;
-  border: 1px solid #536672;
-  border-radius: 0.25rem;
-  background: transparent;
-  color: #d5e0e5;
-  font: inherit;
-  font-size: 0.75rem;
-  line-height: 1.1;
-  cursor: pointer;
-}
-#practice-dancer .dancer-reset {
-  font: inherit;
-  font-size: 1.1rem;
-  line-height: 1;
-  width: 1.65rem;
-  height: 1.65rem;
-  border: 0;
-  border-radius: 0.2rem;
-  background: transparent;
-  color: #ced9df;
-  cursor: pointer;
-}
-#practice-dancer .dancer-fit:hover,
-#practice-dancer .dancer-reset:hover {
-  background: #ffffff20;
-}
-.dancer-grip:focus-visible,
-.dancer-viewport:focus-visible,
-.dancer-fit:focus-visible,
-.dancer-resize:focus-visible,
-.dancer-reset:focus-visible {
-  outline: 2px solid #92dacc;
-  outline-offset: -2px;
 }
 .dancer-viewport {
   flex: 1;
   min-height: 0;
-  width: 100%;
-  overflow: hidden;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
 }
-.dancer-viewport canvas,
-.dancer-viewport svg {
-  display: block;
+.dancer-viewport:focus-visible,
+#practice-dancer button:focus-visible {
+  outline: 2px solid #92dacc;
+  outline-offset: -2px;
 }
-.dancer-cue {
-  flex: none;
-  box-sizing: content-box;
-  overflow-y: auto;
+.dancer-guidance {
   text-align: center;
-  font-size: clamp(0.72rem, 1.25vw, 0.92rem);
-  line-height: 1.2;
-  height: 1.25em;
-  padding: 0.22rem;
-  background: #1d2730;
   color: #e2edeb;
+  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+  line-height: 1.15;
+  text-shadow: 0 1px 3px #10151a;
 }
-
-.dancer-feedback {
-  flex: none;
-  display: grid;
-  justify-items: center;
-  padding: 0 1rem 0.22rem;
-  background: #1d2730;
+.dancer-cue,
+.dancer-coaching {
+  height: 1.2em;
 }
 .dancer-coaching {
-  width: 100%;
-  height: 1.3em;
-  overflow-y: auto;
+  font-size: 0.9em;
   color: #a6cdc6;
-  font-size: clamp(0.68rem, 1vw, 0.82rem);
-  line-height: 1.15;
-  text-align: center;
 }
-.dancer-coaching.over-pace,
-#practice-dancer .dancer-fast-steps {
-  color: #ffcf92;
-}
-#practice-dancer .dancer-fast-steps {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font-size: 0.74rem;
-  text-decoration: underline;
-  cursor: pointer;
-}
-#practice-dancer .dancer-fast-steps[hidden] {
-  display: none;
-}
-
-/* Wrapping a new foot cue must never resize the camera during playback. */
 @container (max-width: 19rem) {
-  .dancer-cue {
-    height: 2.4em;
-  }
   .dancer-coaching {
     height: 2.3em;
   }
 }
-@container (max-width: 12rem) {
-  .dancer-feedback:has(.dancer-fast-steps:not([hidden])) .dancer-coaching {
-    height: 3.45em;
+@container (max-width: 13rem) {
+  .dancer-cue {
+    height: 2.3em;
   }
 }
-
-.dancer-resize {
+#practice-dancer button {
+  pointer-events: auto;
+  border: 0;
+  padding: 0 0.25em;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.dancer-coaching.over-pace,
+.dancer-fast-steps {
+  color: #ffcf92;
+}
+.dancer-fit {
   position: absolute;
+  top: 0;
   right: 0;
-  bottom: 0;
-  width: 1.8rem;
-  height: 1.8rem;
-  color: #a2bac3;
-  cursor: nwse-resize;
+  color: #ced9df;
+  font-size: 0.75rem;
+  visibility: hidden;
 }
-.dancer-resize::after {
-  content: "";
-  position: absolute;
-  bottom: 0.28rem;
-  right: 0.28rem;
-  width: 0.9rem;
-  height: 0.9rem;
-  background: repeating-linear-gradient(
-    135deg,
-    transparent 0 3px,
-    currentColor 3px 4.5px
-  );
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
-}
-.dancer-resize:hover,
-.dancer-resize:focus-visible {
-  color: #bcf1e7;
+#practice-dancer:hover .dancer-fit,
+#practice-dancer:focus-within .dancer-fit {
+  visibility: visible;
 }

@@ -11,10 +11,7 @@ import { PopupManager } from "../gui/popup/PopupManager"
 import { Flags } from "../util/Flags"
 import { Options } from "../util/Options"
 import { isRightClick } from "../util/PixiUtil"
-import {
-  getPracticeNotefieldX,
-  getPracticeReceptorY,
-} from "../util/PracticeLayout"
+import { getPracticeLayout } from "../util/PracticeLayout"
 import { bsearch } from "../util/Util"
 import { ChartManager, EditMode, EditTimingMode } from "./ChartManager"
 import { BarlineContainer } from "./component/edit/BarlineContainer"
@@ -336,13 +333,13 @@ export class ChartRenderer extends Container<ChartRendererComponent> {
 
     const app = this.chartManager.app
     this.x = Options.practice.enabled
-      ? getPracticeNotefieldX(
+      ? (getPracticeLayout(
           app.STAGE_WIDTH,
           app.STAGE_HEIGHT,
           this.chart.gameType.id,
           Options.chart.zoom,
           app.stage.scale.y
-        )
+        )?.notefieldX ?? 0)
       : Options.chart.receptorXPos
 
     this.speedMult = Options.chart.doSpeedChanges
@@ -622,14 +619,14 @@ export class ChartRenderer extends Container<ChartRendererComponent> {
     if (Options.practice.enabled) {
       // Place the receptors directly under the dancing bot
       const app = this.chartManager.app
-      const practiceY = getPracticeReceptorY(
+      const layout = getPracticeLayout(
         app.STAGE_WIDTH,
         app.STAGE_HEIGHT,
         this.chart.gameType.id,
         Options.chart.zoom,
         app.stage.scale.y
       )
-      if (practiceY !== undefined) return practiceY / Options.chart.zoom
+      if (layout) return layout.receptorY / Options.chart.zoom
     }
     return (
       (Options.chart.receptorYPos / Options.chart.zoom) *

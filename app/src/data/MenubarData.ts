@@ -373,7 +373,10 @@ export const MENUBAR_DATA: { [key: string]: MenuMain } = {
           {
             type: "checkbox",
             id: "showDancingBot",
-            checked: () => Options.chart.parity.showDancingBot,
+            checked: () =>
+              Options.practice.enabled
+                ? Options.practice.showDancer
+                : Options.chart.parity.showDancingBot,
           },
         ],
       },

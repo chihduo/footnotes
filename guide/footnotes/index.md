@@ -3,7 +3,7 @@
 Footnotes helps you learn how to dance a StepMania chart.
 A dancing bot stands on a dance pad at the top of the screen and steps exactly when you should, right above the arrows you're about to hit.
 Copy its feet while you read the arrows, and slow the song down until the pattern feels natural.
-The 3D dancer starts with a view of the same steps from behind. Watch the hips shift over the supporting leg before a crossover and the knees bend before a jump. The colored shoes match the overhead pad. Scroll over the dancer to look closer, drag the model to see another angle, or drag the title bar to place it beside the chart.
+The camera looks down over the dancer’s back at 45°. Watch the hips shift over the supporting leg before a crossover and the knees bend before a jump. Drag over the pad to change the angle and scroll to zoom.
 
 ![The Footnotes practice screen](../assets/footnotes/practice.png)
 
@@ -17,9 +17,9 @@ For more songs, open the [Songs page](https://chihduo.github.io/footnotes/songs/
 
 ## Reading the bot
 
-- The pad at the top is the dance stage, seen from above. Blue is your **left** foot and orange is your **right** foot, and each foot is labeled **L** or **R**.
+- The blue shoe is your **left** foot and the orange shoe is your **right** foot. Their colors match the foot highlights on the chart.
 - A foot moves onto a panel just as the arrow for that panel reaches the targets. The panel lights up when it's stepped on.
-- When a foot steps again on the panel it's already standing on, it disappears for a moment and reappears exactly on the beat, like a tap. In a jump on the same two panels, both feet do this.
+- When a foot steps again on the panel it's already standing on, it lifts and lands again on the beat. In a jump, both shoes lift off the pad.
 - A foot that holds a panel for a hold note stays on it until the hold ends.
 - When the chart asks you to cross over or turn, the bot's feet cross and turn too.
 
@@ -30,7 +30,7 @@ The footing is a suggestion, so trust your body when a step feels wrong.
 ## The practice screen
 
 1. **Top bar:** playback rate, the assist tick and metronome, scroll speed, foot highlights, and **Loop** to repeat a section.
-2. **Dancing bot:** the pad with the two feet.
+2. **Dancing bot:** the full-body dancer on the pad.
 3. **Targets:** arrows rise into these, just under the bot. Once an arrow passes the targets, it slides away under the pad.
 4. **Note layout:** the strip on the right shows the whole chart. Click or drag on it to jump to any part of the song.
 5. **Bottom bar:** skip to the start or end, play or pause, the current time and beat, **Songs** to pick another song, **Chart** to see and switch the difficulty, **Footing** to choose how the bot picks your feet, and **Exit practice**.

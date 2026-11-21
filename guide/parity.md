@@ -79,7 +79,7 @@ You can turn this timeline off in the preferences.
 
 ### Dancing Bot
 
-When this option is enabled, a stage will appear in the bottom right of the screen which plays the chart.
+Enable **Show dancing bot** to see the full-body dancer on the pad in the lower-right corner of the chart editor. Drag over the pad to orbit, use the wheel to zoom, or double-click for the rear 45° view.
 
 ![Dancing Bot](assets/parity/bot.gif)
 
@@ -90,7 +90,7 @@ It enlarges the dancing bot and places it at the top of the screen, with the rec
 The editing interface is hidden while you practice.
 
 Toggle practice mode with <kbd>Shift</kbd>+<kbd>H</kbd>, from **View > Dance practice mode**, or with the **Exit practice** button in the playback bar.
-Practice mode turns on parity checking and the dancing bot automatically, and restores your previous settings when you leave.
+Practice mode turns on parity checking and remembers your choice of whether to show the 3D dancer. When you leave, the editor restores your parity settings.
 The size of the bot can be changed in **Preferences > Parity > Dance practice bot size**.
 
 See the [Footnotes guide](./footnotes/) for more.

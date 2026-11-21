@@ -8,6 +8,10 @@ const SAVE_BLACKLIST = [
   "chart.CMod",
   "play.timingCollection",
   "practice.enabled",
+  // Retired floating-window preferences from the 2D practice layout.
+  "practice.dancerPosition",
+  "practice.dancerSize",
+  "practice.dancerCamera",
 ]
 
 export class DefaultOptions {
@@ -171,9 +175,7 @@ export class DefaultOptions {
     enabled: false,
     botHeight: 0.38,
     showDancer: true,
-    dancerPosition: [] as number[],
-    dancerSize: [] as number[], // width and height relative to the default panel
-    dancerCamera: [] as number[],
+    stageCamera: [] as number[],
   }
   static performance = {
     lowDetailHolds: false,

@@ -612,14 +612,16 @@ export class App {
   }
 }
 
-const DancerPanel = lazy(() => import("./gui/dancer/DancerPanel"))
+const DancerStage = lazy(() => import("./gui/dancer/DancerStage"))
 
-function PracticeDancer({ app }: { app: App }) {
+function ChartDancer({ app }: { app: App }) {
   const practice = useOption<boolean>("practice.enabled")
-  const show = useOption<boolean>("practice.showDancer")
-  return practice && show ? (
+  const showPractice = useOption<boolean>("practice.showDancer")
+  const showEditor = useOption<boolean>("chart.parity.showDancingBot")
+  const parity = useOption<boolean>("chart.parity.enabled")
+  return parity && (practice ? showPractice : showEditor) ? (
     <Suspense fallback={null}>
-      <DancerPanel app={app} />
+      <DancerStage app={app} practice={practice} />
     </Suspense>
   ) : null
 }
@@ -645,8 +647,10 @@ function SMEditorApp() {
         <div id="waterfall">
           <div id="waterfall-container"></div>
         </div>
-        <canvas ref={pixiCanvas} id="pixi"></canvas>
-        {app && <PracticeDancer app={app} />}
+        <div id="chart-stage">
+          <canvas ref={pixiCanvas} id="pixi"></canvas>
+          {app && <ChartDancer app={app} />}
+        </div>
         {app && <StatusBar app={app} />}
       </div>
       <div id="context-menu"></div>

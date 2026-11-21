@@ -9,7 +9,6 @@ interface PracticeSnapshot {
   mode: EditMode
   reverse: boolean
   parityEnabled: boolean
-  showDancingBot: boolean
 }
 
 /**
@@ -61,8 +60,6 @@ export class PracticeMode {
     if (snapshot) {
       if (Options.chart.reverse != snapshot.reverse)
         Options.chart.reverse = snapshot.reverse
-      if (Options.chart.parity.showDancingBot != snapshot.showDancingBot)
-        Options.chart.parity.showDancingBot = snapshot.showDancingBot
       if (Options.chart.parity.enabled != snapshot.parityEnabled)
         Options.chart.parity.enabled = snapshot.parityEnabled
       const chartManager = app.chartManager
@@ -89,14 +86,11 @@ export class PracticeMode {
           : EditMode.Edit,
       reverse: Options.chart.reverse,
       parityEnabled: Options.chart.parity.enabled,
-      showDancingBot: Options.chart.parity.showDancingBot,
     }
   }
 
   private static applyPracticeOptions() {
     if (Options.chart.reverse) Options.chart.reverse = false
     if (!Options.chart.parity.enabled) Options.chart.parity.enabled = true
-    if (!Options.chart.parity.showDancingBot)
-      Options.chart.parity.showDancingBot = true
   }
 }

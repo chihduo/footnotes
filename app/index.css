@@ -296,6 +296,14 @@ a:link {
   font-size: 0.75rem;
   color: var(--text-color-detail);
 }
+#chart-stage {
+  position: relative;
+  align-self: flex-start;
+  overflow: clip;
+}
+#chart-stage > canvas {
+  display: block;
+}
 #view-wrapper {
   display: flex;
   flex-direction: column;

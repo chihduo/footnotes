@@ -1625,10 +1625,12 @@ export const KEYBIND_DATA: { [key: string]: Keybind } = {
     combos: [],
     disabled: () => !Options.chart.parity.enabled,
     callback: () => {
-      Options.chart.parity.showDancingBot = !Options.chart.parity.showDancingBot
-      WaterfallManager.create(
-        "Dancing Bot: " + (Options.chart.parity.showDancingBot ? "on" : "off")
-      )
+      const option = Options.practice.enabled
+        ? "practice.showDancer"
+        : "chart.parity.showDancingBot"
+      const show = !Options.getOption(option)
+      Options.applyOption([option, show])
+      WaterfallManager.create("Dancing Bot: " + (show ? "on" : "off"))
     },
   },
   showTechNotation: {

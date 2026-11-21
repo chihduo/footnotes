@@ -2,31 +2,16 @@ import { STAGE_LAYOUTS } from "../chart/stats/parity/StageLayouts"
 import { clamp } from "./Math"
 import { Options } from "./Options"
 
-// Size of one dancing bot panel before scaling
-export const BOT_PANEL_SIZE = 80
-
+const PANEL_SIZE = 80
 const TOP_MARGIN = 16
 const RECEPTOR_GAP = 12
 const RECEPTOR_HALF_HEIGHT = 32
-const MAX_WIDTH_FRACTION = 0.9
 const COLUMN_WIDTH = 64
-
-// Screens shorter than this, in CSS pixels, such as phones held sideways,
-// zoom the stage in so the pad and arrows aren't tiny
 const SHORT_SCREEN_HEIGHT = 560
-const MAX_STAGE_ZOOM = 1.8
-// Short screens at least this wide for their height put the pad beside the
-// arrows instead of above them
 const SIDE_MIN_ASPECT = 1.6
 const SIDE_GAP = 48
-// Room for the bottom bar, which floats over the bottom of the stage, in rem,
-// until the bar reports its actual size: one row of buttons, its distance
-// from the bottom edge, and a small gap
 const BOTTOM_BAR_REM = 5.5
 
-// The room the bottom bar takes at the bottom of the screen, in CSS pixels.
-// The bar wraps onto more rows on narrow screens, so it reports this whenever
-// its size changes
 let bottomBarRoom: number | null = null
 let noteLayoutRoom = 0
 
@@ -38,329 +23,93 @@ export function setPracticeBottomBarRoom(pixels: number) {
   bottomBarRoom = pixels
 }
 
-// The floating view and the pad use the same measurements. The initial slot
-// stays free while dragging, so the arrows never move underneath the pointer.
-export function getPracticeDancerRoom(
-  width: number,
-  height: number,
-  gameTypeId?: string,
-  pixelsPerUnit = 0,
-  size = Options.practice.dancerSize
-) {
-  const margin = Math.min(14, width * 0.022, height * 0.03)
-  const usableHeight = Math.max(
-    1,
-    height - (bottomBarRoom ?? BOTTOM_BAR_REM * 16 * Options.general.uiScale)
-  )
-  const fullHeight = Math.max(1, Math.floor(usableHeight - 2 * margin))
-  const defaultWidth = Math.max(
-    1,
-    Math.floor(Math.min(448, width * 0.42, usableHeight * 0.84))
-  )
-  const defaultHeight = Math.min(
-    fullHeight,
-    Math.floor(defaultWidth * 1.07 + 24)
-  )
-  const custom =
-    Array.isArray(size) &&
-    size.length === 2 &&
-    size.every(value => Number.isFinite(value) && value > 0)
-  const panelWidth = custom
-    ? clamp(
-        Math.round(defaultWidth * size[0]),
-        Math.min(defaultWidth, 128),
-        Math.max(defaultWidth, Math.floor((width - 2 * margin) * 0.65))
-      )
-    : defaultWidth
-
-  const columns = gameTypeId
-    ? (STAGE_LAYOUTS[gameTypeId]?.layout.length ?? 0)
-    : 0
-  const right = Options.chart.noteLayout.enabled ? noteLayoutRoom : 0
-  const fieldWidth = columns * COLUMN_WIDTH * Options.chart.zoom
-  const notesBeside =
-    custom &&
-    columns > 0 &&
-    panelWidth + 2 * margin + (fieldWidth + right) * pixelsPerUnit <= width
-  // When the arrows need to sit below the panel, leave a strip for playing them.
-  const minHeight = Math.min(defaultHeight, 144)
-  const maxHeight = notesBeside
-    ? fullHeight
-    : Math.max(
-        minHeight,
-        fullHeight - Math.min(112, Math.round(fullHeight / 3))
-      )
-  const panelHeight = custom
-    ? clamp(Math.round(defaultHeight * size[1]), minHeight, maxHeight)
-    : defaultHeight
-  return {
-    margin,
-    panelWidth,
-    panelHeight,
-    usableHeight,
-    defaultWidth,
-    defaultHeight,
-    custom,
-    notesBeside,
-  }
-}
-
-function stageDancerRoom(
-  width: number,
-  height: number,
-  gameTypeId: string,
-  pixelsPerUnit: number
-) {
-  if (!Options.practice.showDancer || pixelsPerUnit <= 0) return
-  return getPracticeDancerRoom(
-    width * pixelsPerUnit,
-    height * pixelsPerUnit,
-    gameTypeId,
-    pixelsPerUnit
-  )
-}
-
-interface PadBounds {
-  minX: number
-  maxX: number
-  minY: number
-  maxY: number
-}
-
-export interface PracticeBotPlacement {
-  scale: number
-  pivotX: number
-  pivotY: number
-  x: number
-  y: number
-  bottom: number
-}
-
-const boundsCache = new Map<string, PadBounds | undefined>()
-
-/**
- * Returns the bounds of the dancing bot's pad in unscaled bot coordinates,
- * matching the panel positions built by DancingBotWidget.
- */
-function getPadBounds(gameTypeId: string): PadBounds | undefined {
-  if (boundsCache.has(gameTypeId)) return boundsCache.get(gameTypeId)
-  const layout = STAGE_LAYOUTS[gameTypeId]
-  let bounds: PadBounds | undefined
-  if (layout) {
-    const xs = layout.layout.map(point => point.x * BOT_PANEL_SIZE)
-    const ys = layout.layout.map(point => point.y * -BOT_PANEL_SIZE)
-    const half = BOT_PANEL_SIZE / 2
-    bounds = {
-      minX: Math.min(...xs) - half,
-      maxX: Math.max(...xs) + half,
-      minY: Math.min(...ys) - half,
-      maxY: Math.max(...ys) + half,
-    }
-  }
-  boundsCache.set(gameTypeId, bounds)
-  return bounds
-}
-
-/**
- * How much dance practice mode zooms the whole stage in, for a canvas this
- * many CSS pixels tall. Only short screens are zoomed.
- */
 export function getPracticeStageZoom(screenHeight: number): number {
   if (!Options.practice.enabled || screenHeight <= 0) return 1
-  return clamp(SHORT_SCREEN_HEIGHT / screenHeight, 1, MAX_STAGE_ZOOM)
+  return clamp(SHORT_SCREEN_HEIGHT / screenHeight, 1, 1.8)
 }
 
-interface SideLayout {
-  bot: PracticeBotPlacement
+export interface DancerArea {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+const padSizes = new Map<string, { width: number; height: number }>()
+
+// Use the footprint of the original pad, including both pads on double charts.
+export function getPadSize(gameTypeId: string) {
+  const layout = STAGE_LAYOUTS[gameTypeId]
+  if (!layout) return
+  let size = padSizes.get(gameTypeId)
+  if (!size) {
+    const xs = layout.layout.map(point => point.x)
+    const ys = layout.layout.map(point => point.y)
+    size = {
+      width: (Math.max(...xs) - Math.min(...xs) + 1) * PANEL_SIZE,
+      height: (Math.max(...ys) - Math.min(...ys) + 1) * PANEL_SIZE,
+    }
+    padSizes.set(gameTypeId, size)
+  }
+  return size
+}
+
+interface PracticeLayout {
+  dancer?: DancerArea
   notefieldX: number
   receptorY: number
 }
 
-/**
- * On a short, wide screen, the pad goes on the left, as tall as the room
- * above the bottom bar allows, and the arrows go on its right, near the top
- * so the notes have the whole height to scroll. The pair is centred.
- * pixelsPerUnit is the stage's scale; without it, there's no side layout.
- */
-function getSideLayout(
+// Both the dancer and the scrolling chart use these centered Pixi stage coordinates.
+export function getPracticeLayout(
   stageWidth: number,
   stageHeight: number,
   gameTypeId: string,
   zoom: number,
   pixelsPerUnit: number
-): SideLayout | undefined {
-  if (pixelsPerUnit <= 0) return
-  const isShort = stageHeight * pixelsPerUnit < SHORT_SCREEN_HEIGHT
-  if (!isShort || stageWidth < SIDE_MIN_ASPECT * stageHeight) return
-  const bounds = getPadBounds(gameTypeId)
-  const columns = STAGE_LAYOUTS[gameTypeId]?.layout.length
-  if (!bounds || !columns) return
-
-  const padWidth = bounds.maxX - bounds.minX
-  const padHeight = bounds.maxY - bounds.minY
+): PracticeLayout | undefined {
+  const pad = getPadSize(gameTypeId)
+  if (!pad) return
   const top = -stageHeight / 2 + TOP_MARGIN
-  const bottomBar =
-    (bottomBarRoom ?? BOTTOM_BAR_REM * 16 * Options.general.uiScale) /
-    pixelsPerUnit
-  const notefieldWidth = columns * COLUMN_WIDTH * zoom
-  const room = stageDancerRoom(
-    stageWidth,
-    stageHeight,
-    gameTypeId,
-    pixelsPerUnit
-  )
-  const slot = room ? (room.panelWidth + room.margin * 2) / pixelsPerUnit : 0
-  const right = slot && Options.chart.noteLayout.enabled ? noteLayoutRoom : 0
-  const availableWidth = stageWidth - slot - right
-  if (
-    room?.custom &&
-    availableWidth < notefieldWidth + SIDE_GAP + BOT_PANEL_SIZE
-  )
-    return
-  const scale = Math.min(
-    (stageHeight - TOP_MARGIN - bottomBar) / padHeight,
-    (availableWidth / 2 - SIDE_GAP) / padWidth,
-    slot
-      ? Math.max(
-          0.1,
-          (availableWidth - notefieldWidth - SIDE_GAP - 20) / padWidth
-        )
-      : Infinity
-  )
-  const groupWidth = padWidth * scale + SIDE_GAP + notefieldWidth
-  const left = (slot - right - groupWidth) / 2
-  return {
-    bot: {
-      scale,
-      pivotX: (bounds.minX + bounds.maxX) / 2,
-      pivotY: bounds.minY,
-      x: left + (padWidth * scale) / 2,
-      y: top,
-      bottom: top + padHeight * scale,
-    },
-    notefieldX: left + padWidth * scale + SIDE_GAP + notefieldWidth / 2,
-    receptorY: top + RECEPTOR_GAP + RECEPTOR_HALF_HEIGHT * zoom,
-  }
-}
+  const receptorY = top + RECEPTOR_GAP + RECEPTOR_HALF_HEIGHT * zoom
+  if (!Options.practice.showDancer || !Options.chart.parity.enabled)
+    return { notefieldX: 0, receptorY }
 
-/**
- * Returns the stage x position of the notefield in dance practice mode:
- * centred, or beside the pad on a short, wide screen.
- */
-export function getPracticeNotefieldX(
-  stageWidth: number,
-  stageHeight: number,
-  gameTypeId: string,
-  zoom: number,
-  pixelsPerUnit: number
-): number {
-  const side = getSideLayout(
-    stageWidth,
-    stageHeight,
-    gameTypeId,
-    zoom,
-    pixelsPerUnit
-  )
-  if (side) return side.notefieldX
-  const room = stageDancerRoom(
-    stageWidth,
-    stageHeight,
-    gameTypeId,
-    pixelsPerUnit
-  )
-  if (!room?.notesBeside) return 0
-  const slot = (room.panelWidth + 2 * room.margin) / pixelsPerUnit
+  const sidebar = Options.chart.noteLayout.enabled ? noteLayoutRoom : 0
   const fieldWidth =
     STAGE_LAYOUTS[gameTypeId].layout.length * COLUMN_WIDTH * zoom
-  return Math.max(0, -stageWidth / 2 + slot + fieldWidth / 2)
-}
-
-/**
- * Returns where the enlarged dancing bot sits in dance practice mode, in stage coordinates.
- * The bot is centred horizontally and pinned to the top of the screen, or
- * beside the arrows on a short, wide screen.
- */
-export function getPracticeBotPlacement(
-  stageWidth: number,
-  stageHeight: number,
-  gameTypeId: string,
-  pixelsPerUnit = 0
-): PracticeBotPlacement | undefined {
-  const side = getSideLayout(
-    stageWidth,
-    stageHeight,
-    gameTypeId,
-    Options.chart.zoom,
-    pixelsPerUnit
-  )
-  if (side) return side.bot
-  const bounds = getPadBounds(gameTypeId)
-  if (!bounds) return
-  const width = bounds.maxX - bounds.minX
-  const height = bounds.maxY - bounds.minY
-  const room = stageDancerRoom(
-    stageWidth,
-    stageHeight,
-    gameTypeId,
-    pixelsPerUnit
-  )
-  const slot = room ? (room.panelWidth + room.margin * 2) / pixelsPerUnit : 0
-  const right = slot && Options.chart.noteLayout.enabled ? noteLayoutRoom : 0
-  const scale = Math.min(
-    (Options.practice.botHeight * stageHeight) / height,
-    (MAX_WIDTH_FRACTION * (stageWidth - slot - right)) / width
-  )
-  const top = -stageHeight / 2 + TOP_MARGIN
-  const x = Math.max(0, -stageWidth / 2 + slot + (width * scale) / 2)
-  return {
-    scale,
-    pivotX: (bounds.minX + bounds.maxX) / 2,
-    pivotY: bounds.minY,
-    x,
-    y: top,
-    bottom: top + height * scale,
-  }
-}
-
-/**
- * Returns the stage y position of the receptors in dance practice mode,
- * placed directly underneath the enlarged dancing bot, or near the top beside
- * it on a short, wide screen.
- */
-export function getPracticeReceptorY(
-  stageWidth: number,
-  stageHeight: number,
-  gameTypeId: string,
-  zoom: number,
-  pixelsPerUnit = 0
-): number | undefined {
-  const side = getSideLayout(
-    stageWidth,
-    stageHeight,
-    gameTypeId,
-    zoom,
-    pixelsPerUnit
-  )
-  if (side) return side.receptorY
-  const placement = getPracticeBotPlacement(
-    stageWidth,
-    stageHeight,
-    gameTypeId,
-    pixelsPerUnit
-  )
-  if (!placement) return
-  let bottom = placement.bottom
-  const room = stageDancerRoom(
-    stageWidth,
-    stageHeight,
-    gameTypeId,
-    pixelsPerUnit
-  )
-  if (room && !room.notesBeside && (placement.x > 0 || room.custom)) {
-    bottom = Math.max(
-      bottom,
-      -stageHeight / 2 + (room.margin + room.panelHeight) / pixelsPerUnit
+  const availableWidth = stageWidth - sidebar
+  if (
+    pixelsPerUnit > 0 &&
+    stageHeight * pixelsPerUnit < SHORT_SCREEN_HEIGHT &&
+    stageWidth >= SIDE_MIN_ASPECT * stageHeight &&
+    availableWidth > fieldWidth + SIDE_GAP + PANEL_SIZE
+  ) {
+    const bottomBar =
+      (bottomBarRoom ?? BOTTOM_BAR_REM * 16 * Options.general.uiScale) /
+      pixelsPerUnit
+    const height = Math.max(1, stageHeight - TOP_MARGIN - bottomBar)
+    const width = Math.min(
+      (height * pad.width) / pad.height,
+      availableWidth / 2 - SIDE_GAP,
+      availableWidth - fieldWidth - SIDE_GAP
     )
+    const x = -(sidebar + width + SIDE_GAP + fieldWidth) / 2
+    return {
+      dancer: { x, y: top, width, height },
+      notefieldX: x + width + SIDE_GAP + fieldWidth / 2,
+      receptorY,
+    }
   }
-  return bottom + RECEPTOR_GAP + RECEPTOR_HALF_HEIGHT * zoom
+
+  const height = Options.practice.botHeight * stageHeight
+  const width = Math.min(
+    (height * pad.width) / pad.height,
+    0.9 * Math.max(1, stageWidth - 2 * sidebar)
+  )
+  return {
+    dancer: { x: -width / 2, y: top, width, height },
+    notefieldX: 0,
+    receptorY: receptorY + height,
+  }
 }

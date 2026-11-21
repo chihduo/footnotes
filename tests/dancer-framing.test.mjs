@@ -13,46 +13,43 @@ const vite = await createServer({
 const { resizeDancerProjection, getDancerFitZoom } = await vite.ssrLoadModule(
   "/app/src/gui/dancer/DancerFraming.ts"
 )
+// Use the same options defaults the chart loader uses in a worker.
+globalThis.WorkerGlobalScope = class {}
+globalThis.self = new WorkerGlobalScope()
+const { Options } = await vite.ssrLoadModule("/app/src/util/Options.ts")
+const { getPracticeLayout } = await vite.ssrLoadModule(
+  "/app/src/util/PracticeLayout.ts"
+)
+delete globalThis.WorkerGlobalScope
+delete globalThis.self
 await vite.close()
 
-test("expanding either edge uncrops the body at the original pixel scale", () => {
+test("zoom enlarges the stage image around the pad without cropping the dancer texture", () => {
   const camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 14)
-  camera.position.set(0, 2.4, 3.2)
+  camera.position.set(0, 3, 3)
   camera.lookAt(0, 0, 0)
   camera.updateMatrixWorld()
-  camera.zoom = 2
-  const head = new Vector3(0, 1.4, 0)
-  const shoe = new Vector3(0.63, 0.04, 0.48)
-  function measure(width, height) {
-    resizeDancerProjection(camera, width, height, 300, 300, 0.96)
-    const a = head.clone().project(camera)
-    const b = shoe.clone().project(camera)
-    return {
-      a,
-      b,
-      pixelHeight: ((a.y - b.y) * height) / 2,
-      pixelWidth: ((b.x - a.x) * width) / 2,
-    }
+  const head = new Vector3(0, 1.52, 0)
+  const shoe = new Vector3(0.35, 0.04, 0.36)
+  let normalHeight
+  for (const zoom of [1, 1.6, 3, 0.6]) {
+    camera.zoom = zoom
+    const extent = resizeDancerProjection(camera, 300, 270, 0.96)
+    const a = head.clone().project(camera),
+      b = shoe.clone().project(camera)
+    assert.ok(Math.abs(a.y) < 1 && Math.abs(b.y) < 1 && Math.abs(b.x) < 1)
+    const stageHeight = ((a.y - b.y) * 270 * extent) / 2
+    normalHeight ??= stageHeight
+    assert.ok(Math.abs(stageHeight - normalHeight * zoom) < 1e-8)
   }
-
-  const small = measure(300, 300)
-  assert.ok(small.a.y > 1 && small.b.y < -1 && small.b.x > 1)
-  const wide = measure(450, 300)
-  assert.ok(wide.b.x < 1 && wide.a.y > 1 && wide.b.y < -1)
-  const tall = measure(450, 500)
-  assert.ok(tall.b.x < 1 && tall.a.y < 1 && tall.b.y > -1)
-  assert.ok(Math.abs(tall.pixelHeight - small.pixelHeight) < 1e-8)
-  assert.ok(Math.abs(tall.pixelWidth - small.pixelWidth) < 1e-8)
-  assert.equal(camera.zoom, 2)
 })
 
 test("zoom and orbit keep the pad center at a fixed, visible point in the frame", () => {
   const camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 14)
   const pad = new Vector3()
-  resizeDancerProjection(camera, 460, 410, 400, 370, 1.92)
   let anchor
   for (const eye of [
-    [0.82, 1.9, 3.25],
+    [0, 3, 3],
     [2, 0.5, -1.8],
     [-1, 3, 0.4],
   ]) {
@@ -61,7 +58,7 @@ test("zoom and orbit keep the pad center at a fixed, visible point in the frame"
     camera.updateMatrixWorld()
     for (const zoom of [0.6, 1, 1.6, 3]) {
       camera.zoom = zoom
-      camera.updateProjectionMatrix()
+      resizeDancerProjection(camera, 460, 410, 1.92)
       const center = pad.clone().project(camera)
       anchor ??= center
       assert.ok(Math.abs(center.x - anchor.x) < 1e-10)
@@ -89,9 +86,10 @@ test("Fit contains the posed body at an oblique angle on either side of a double
       [680, 720],
     ]) {
       camera.zoom = 3
-      resizeDancerProjection(camera, width, height, 400, 370, 1.92)
-      camera.zoom = Math.min(3, getDancerFitZoom(camera, body))
-      camera.updateProjectionMatrix()
+      const before = resizeDancerProjection(camera, width, height, 1.92)
+      camera.zoom = Math.min(3, getDancerFitZoom(camera, body, before))
+      const extent = resizeDancerProjection(camera, width, height, 1.92)
+      const anchor = new Vector3().project(camera)
       for (const mesh of body.children) {
         const vertices = mesh.geometry.getAttribute("position")
         for (let i = 0; i < vertices.count; i++) {
@@ -99,9 +97,59 @@ test("Fit contains the posed body at an oblique angle on either side of a double
             .fromBufferAttribute(vertices, i)
             .applyMatrix4(mesh.matrixWorld)
             .project(camera)
-          assert.ok(Math.abs(v.x) <= 0.941 && Math.abs(v.y) <= 0.941)
+          const y = anchor.y + (v.y - anchor.y) * extent
+          assert.ok(Math.abs(v.x * extent) <= 0.941 && Math.abs(y) <= 0.941)
         }
       }
     }
   }
+})
+
+test("an end-on double pad fits inside the sprite at every zoom", () => {
+  const camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 14)
+  for (const eye of [
+    [3, 9, 0],
+    [0, 3, 3],
+    [-3, 0.5, 0],
+  ]) {
+    camera.position.set(...eye)
+    camera.lookAt(0, 0, 0)
+    for (const zoom of [0.6, 1, 3]) {
+      camera.zoom = zoom
+      resizeDancerProjection(camera, 260, 250, 1.92)
+      for (const x of [-0.97, 0.97])
+        for (const z of [-0.49, 0.49]) {
+          const tile = new Vector3(x, -0.05, z).project(camera)
+          assert.ok(Math.abs(tile.x) <= 1 && Math.abs(tile.y) <= 1)
+        }
+    }
+  }
+})
+
+test("the dancer shares the chart center in portrait and sits to the left in landscape", () => {
+  Options.chart.parity.enabled = true
+  for (const game of [
+    "dance-single",
+    "dance-double",
+    "pump-single",
+    "pump-double",
+  ]) {
+    const portrait = getPracticeLayout(460, 960, game, 1, 0.85)
+    const pad = portrait.dancer
+    assert.equal(pad.x + pad.width / 2, portrait.notefieldX)
+    assert.ok(pad.y + pad.height < portrait.receptorY)
+    assert.equal(pad.height, 960 * Options.practice.botHeight)
+    const landscape = getPracticeLayout(1400, 600, game, 1, 0.59)
+    assert.ok(
+      landscape.dancer.x + landscape.dancer.width < landscape.notefieldX
+    )
+    assert.ok(
+      landscape.receptorY < landscape.dancer.y + landscape.dancer.height
+    )
+  }
+  Options.practice.showDancer = false
+  const hidden = getPracticeLayout(460, 960, "dance-single", 1, 0.85)
+  assert.equal(hidden.dancer, undefined)
+  assert.ok(hidden.receptorY < 0)
+  Options.practice.showDancer = true
 })

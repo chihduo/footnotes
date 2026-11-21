@@ -164,7 +164,7 @@ export function PlaybackOptions() {
           type="button"
           className="po-dancer-toggle"
           aria-pressed={showDancer}
-          title="Show the full-body dancer alongside the foot view"
+          title="Show or hide the dancer on the practice pad"
           onClick={e => {
             Options.practice.showDancer = !showDancer
             e.currentTarget.blur()

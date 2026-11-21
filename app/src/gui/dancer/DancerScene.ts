@@ -133,6 +133,8 @@ function createRenderer(): WebGLRenderer | SVGRenderer {
     const context = canvas.getContext("webgl2", {
       alpha: true,
       antialias: true,
+      // Pixi can upload this image on the next frame after a mouse gesture.
+      preserveDrawingBuffer: true,
     })
     if (context) {
       const renderer = new WebGLRenderer({
@@ -150,7 +152,6 @@ function createRenderer(): WebGLRenderer | SVGRenderer {
   const renderer = new SVGRenderer()
   renderer.setQuality("low")
   renderer.setPrecision(1)
-  renderer.setClearColor(new Color(0x222d39), 1)
   return renderer
 }
 
@@ -195,9 +196,20 @@ export class DancerScene {
   private cameraRestored = false
   private padWidth = 1
 
-  constructor(private mount: HTMLDivElement) {
-    this.renderer.domElement.setAttribute("aria-hidden", "true")
-    mount.replaceChildren(this.renderer.domElement)
+  private width = 0
+  private height = 0
+  private extent = 1
+  private canvas =
+    this.renderer instanceof WebGLRenderer
+      ? this.renderer.domElement
+      : document.createElement("canvas")
+  private svgContext =
+    this.renderer instanceof SVGRenderer ? this.canvas.getContext("2d") : null
+
+  constructor(
+    private mount: HTMLDivElement,
+    private present: (canvas: HTMLCanvasElement, extent: number) => void
+  ) {
     this.scene.add(this.pad, this.body)
     this.body.add(this.hips, this.chest, this.anatomy.head)
     this.chest.add(...this.anatomy.hands)
@@ -212,7 +224,8 @@ export class DancerScene {
     const rim = new DirectionalLight(0xc7f1f6, 1.2)
     rim.position.set(2, 3, -3)
     this.scene.add(key, rim)
-    this.camera.position.set(0.82, 1.9, 3.25)
+    // The neutral dancer faces -Z. Equal height and rear distance give 45° elevation.
+    this.camera.position.set(0, 3, 3)
     this.controls = new OrbitControls(this.camera, mount)
     this.controls.target.copy(this.pad.position)
     this.controls.enablePan = false
@@ -225,7 +238,7 @@ export class DancerScene {
     this.controls.cursorStyle = "grab"
     this.controls.update()
     this.controls.saveState()
-    this.controls.addEventListener("change", this.render)
+    this.controls.addEventListener("change", this.cameraChanged)
     this.controls.addEventListener("end", this.rememberCamera)
     mount.addEventListener("dblclick", this.resetCamera)
     mount.addEventListener("keydown", this.cameraKey)
@@ -272,7 +285,7 @@ export class DancerScene {
   }
 
   private restoreCameraPreference() {
-    const saved = Options.practice.dancerCamera
+    const saved = Options.practice.stageCamera
     if (
       !Array.isArray(saved) ||
       saved.length !== 3 ||
@@ -301,7 +314,7 @@ export class DancerScene {
   }
 
   private rememberCamera = () => {
-    Options.practice.dancerCamera = [
+    Options.practice.stageCamera = [
       this.controls.getAzimuthalAngle(),
       this.controls.getPolarAngle(),
       this.camera.zoom,
@@ -310,7 +323,7 @@ export class DancerScene {
 
   private resetCamera = () => {
     this.controls.reset()
-    Options.practice.dancerCamera = []
+    Options.practice.stageCamera = []
   }
 
   private cameraKey = (event: KeyboardEvent) => {
@@ -430,34 +443,43 @@ export class DancerScene {
     }
   }
 
-  resize(
-    width: number,
-    height: number,
-    referenceWidth: number,
-    referenceHeight: number
-  ) {
-    resizeDancerProjection(
-      this.camera,
-      width,
-      height,
-      referenceWidth,
-      referenceHeight,
-      this.padWidth
-    )
-    this.controls.minZoom = Math.min(
-      this.camera.zoom,
-      0.6 * Math.min(1, width / referenceWidth, height / referenceHeight)
-    )
-    this.renderer.setSize(width, height)
+  resize(width: number, height: number) {
+    this.width = width
+    this.height = height
     if (!this.cameraRestored) {
       this.cameraRestored = true
       this.restoreCameraPreference()
     }
+    this.updateProjection()
+  }
+
+  private updateProjection() {
+    this.extent = resizeDancerProjection(
+      this.camera,
+      this.width,
+      this.height,
+      this.padWidth
+    )
+    if (this.renderer instanceof WebGLRenderer) {
+      const resolution = Math.min(window.devicePixelRatio * this.extent, 2)
+      if (
+        this.canvas.width !== Math.floor(this.width * resolution) ||
+        this.canvas.height !== Math.floor(this.height * resolution)
+      )
+        this.renderer.setDrawingBufferSize(this.width, this.height, resolution)
+    } else if (
+      this.canvas.width !== this.width ||
+      this.canvas.height !== this.height
+    ) {
+      this.renderer.setSize(this.width, this.height)
+      this.canvas.width = this.width
+      this.canvas.height = this.height
+    }
   }
 
   fitDancer() {
-    this.setViewZoom(getDancerFitZoom(this.camera, this.body))
-    this.render()
+    this.setViewZoom(getDancerFitZoom(this.camera, this.body, this.extent))
+    this.cameraChanged()
     this.rememberCamera()
   }
 
@@ -526,8 +548,30 @@ export class DancerScene {
     this.render()
   }
 
+  private cameraChanged = () => {
+    if (!this.width || !this.height) return
+    this.updateProjection()
+    this.render()
+  }
+
   private render = () => {
+    if (!this.width || !this.height) return
     this.renderer.render(this.scene, this.camera)
+    if (this.renderer instanceof SVGRenderer && this.svgContext) {
+      // SVGRenderer emits filled paths in coordinates centered on the viewport.
+      // Rasterize those paths onto the same transparent Pixi texture as WebGL.
+      const ctx = this.svgContext
+      ctx.clearRect(0, 0, this.width, this.height)
+      ctx.save()
+      ctx.translate(this.width / 2, this.height / 2)
+      for (const path of this.renderer.domElement.querySelectorAll("path")) {
+        ctx.fillStyle = path.style.fill
+        ctx.globalAlpha = Number(path.style.fillOpacity || 1)
+        ctx.fill(new Path2D(path.getAttribute("d")!))
+      }
+      ctx.restore()
+    }
+    this.present(this.canvas, this.extent)
   }
 
   private poseArm(
@@ -581,7 +625,7 @@ export class DancerScene {
   dispose() {
     this.mount.removeEventListener("dblclick", this.resetCamera)
     this.mount.removeEventListener("keydown", this.cameraKey)
-    this.controls.removeEventListener("change", this.render)
+    this.controls.removeEventListener("change", this.cameraChanged)
     this.controls.removeEventListener("end", this.rememberCamera)
     this.controls.dispose()
     this.disposeMeshes(this.scene)
@@ -589,6 +633,5 @@ export class DancerScene {
       this.renderer.dispose()
       this.renderer.forceContextLoss()
     }
-    this.mount.replaceChildren()
   }
 }

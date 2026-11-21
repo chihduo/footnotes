@@ -14,7 +14,7 @@
 ### The dancing bot doesn't appear
 
 The bot works with dance single, dance double, pump single and pump double charts.
-For long charts, it can take a moment to work out the footing before the bot appears.
+Turn on **3D dancer** in the practice toolbar. On long charts, Footnotes can take a moment to calculate the footing.
 
 ### The bot's feet look wrong
 
