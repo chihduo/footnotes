@@ -195,9 +195,9 @@ export class DancerScene {
     const rim = new DirectionalLight(0xc7f1f6, 1.2)
     rim.position.set(2, 3, -3)
     this.scene.add(key, rim)
-    this.camera.position.set(0.82, 2.55, 3.25)
+    this.camera.position.set(0.82, 1.9, 3.25)
     this.controls = new OrbitControls(this.camera, mount)
-    this.controls.target.y = 0.65
+    this.controls.target.copy(this.pad.position)
     this.controls.enablePan = false
     this.controls.minPolarAngle = Math.PI / 12
     this.controls.maxPolarAngle = Math.PI / 2 - 0.06
@@ -266,7 +266,8 @@ export class DancerScene {
     if (
       !Array.isArray(saved) ||
       saved.length !== 3 ||
-      !saved.every(Number.isFinite)
+      !saved.every(Number.isFinite) ||
+      saved[2] < Number.EPSILON
     )
       return
     const [azimuth, polar, zoom] = saved
@@ -278,9 +279,15 @@ export class DancerScene {
         azimuth
       )
       .add(controls.target)
-    this.camera.zoom = clamp(zoom, controls.minZoom, controls.maxZoom)
-    this.camera.updateProjectionMatrix()
+    this.setViewZoom(zoom)
     controls.update()
+  }
+
+  private setViewZoom(zoom: number) {
+    // Fit may need a wider view for a foot on the far edge of a double pad.
+    this.camera.zoom = Math.min(zoom, this.controls.maxZoom)
+    this.controls.minZoom = Math.min(this.controls.minZoom, this.camera.zoom)
+    this.camera.updateProjectionMatrix()
   }
 
   private rememberCamera = () => {
@@ -439,15 +446,7 @@ export class DancerScene {
   }
 
   fitDancer() {
-    const camera = this.camera
-    const fit = getDancerFitZoom(
-      camera,
-      this.body,
-      this.hips.position,
-      this.controls.target.y
-    )
-    camera.zoom = clamp(fit, this.controls.minZoom, this.controls.maxZoom)
-    camera.updateProjectionMatrix()
+    this.setViewZoom(getDancerFitZoom(this.camera, this.body))
     this.render()
     this.rememberCamera()
   }
@@ -520,15 +519,6 @@ export class DancerScene {
   }
 
   private render = () => {
-    // Keep the pad steady in the overview and follow the dancer across it in a close-up.
-    const follow = clamp(this.camera.zoom - 1, 0, 1)
-    const x = this.hips.position.x * follow
-    const z = this.hips.position.z * follow
-    const target = this.controls.target
-    this.camera.position.x += x - target.x
-    this.camera.position.z += z - target.z
-    target.x = x
-    target.z = z
     this.renderer.render(this.scene, this.camera)
   }
 

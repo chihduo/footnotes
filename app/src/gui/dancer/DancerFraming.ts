@@ -1,11 +1,7 @@
-import {
-  Box3,
-  Matrix4,
-  Mesh,
-  Vector3,
-  type Group,
-  type OrthographicCamera,
-} from "three"
+import { Box3, Matrix4, Mesh, type Group, type OrthographicCamera } from "three"
+
+// Leave room for the body above the pad and the nearest arrows below it.
+const PAD_CENTER_FROM_TOP = 0.75
 
 export function resizeDancerProjection(
   camera: OrthographicCamera,
@@ -25,15 +21,18 @@ export function resizeDancerProjection(
   camera.top = (height * unitsPerPixel) / 2
   camera.left = -camera.right
   camera.bottom = -camera.top
-  camera.updateProjectionMatrix()
+  // A view offset holds the orbit target at the same pixel as the zoom changes.
+  camera.setViewOffset(
+    width,
+    height,
+    0,
+    (0.5 - PAD_CENTER_FROM_TOP) * height,
+    width,
+    height
+  )
 }
 
-export function getDancerFitZoom(
-  camera: OrthographicCamera,
-  body: Group,
-  hips: Vector3,
-  targetHeight: number
-) {
+export function getDancerFitZoom(camera: OrthographicCamera, body: Group) {
   camera.updateMatrixWorld()
   body.updateWorldMatrix(true, true)
   // Fit the posed limbs, including outstretched hands and feet, along the camera axes.
@@ -48,21 +47,13 @@ export function getDancerFitZoom(
     bounds.union(limb.copy(geometry.boundingBox).applyMatrix4(transform))
   })
   if (bounds.isEmpty()) return camera.zoom
-  const zoomAt = (follow: number) => {
-    const target = new Vector3(
-      hips.x * follow,
-      targetHeight,
-      hips.z * follow
-    ).applyMatrix4(camera.matrixWorldInverse)
-    const halfWidth = Math.max(target.x - bounds.min.x, bounds.max.x - target.x)
-    const halfHeight = Math.max(
-      target.y - bounds.min.y,
-      bounds.max.y - target.y
-    )
-    return 0.94 * Math.min(camera.right / halfWidth, camera.top / halfHeight)
-  }
-  // At 2× the camera follows the hips. Below that it blends toward the
-  // middle of the pad, so allow room at both ends of that blend.
-  const tracked = zoomAt(1)
-  return tracked >= 2 ? tracked : Math.min(tracked, zoomAt(0))
+  const height = camera.top - camera.bottom
+  const margin = 0.03
+  const halfWidth = camera.right * (1 - 2 * margin)
+  const fractionOfView = Math.max(
+    Math.max(-bounds.min.x, bounds.max.x) / halfWidth,
+    bounds.max.y / (height * (PAD_CENTER_FROM_TOP - margin)),
+    -bounds.min.y / (height * (1 - PAD_CENTER_FROM_TOP - margin))
+  )
+  return 1 / fractionOfView
 }
