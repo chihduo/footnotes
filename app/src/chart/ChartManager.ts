@@ -416,6 +416,11 @@ export class ChartManager {
       }
 
       const notedata = this.loadedChart.getNotedata()
+      const songEnd = Options.practice.enabled
+        ? this.chartAudio.getScheduledSongDuration()
+        : undefined
+      const canScheduleCues =
+        songEnd === undefined || (songEnd > 0 && time < songEnd)
       if (this.chartAudio.isPlaying()) {
         this._beat = this.loadedChart?.getBeatFromSeconds(this.time) ?? 0
         let note = notedata[this.noteFlashIndex]
@@ -466,43 +471,39 @@ export class ChartManager {
         // Play assist tick
         const assistRows = new Set()
         while (
+          canScheduleCues &&
           this.assistTickIndex < notedata.length &&
           time >
             notedata[this.assistTickIndex].second +
               Options.play.effectOffset -
               EFFECT_BUFFER
         ) {
-          if (
-            assistRows.has(notedata[this.assistTickIndex].second) ||
-            notedata[this.assistTickIndex].second +
-              Options.play.effectOffset -
-              time <
-              0
-          ) {
+          const note = notedata[this.assistTickIndex]
+          const cueTime = note.second + Options.play.effectOffset
+          if (assistRows.has(note.second) || cueTime < time) {
             this.assistTickIndex++
             continue
           }
           if (
             this.mode != EditMode.Record &&
-            this.loadedChart.gameType.gameLogic.shouldAssistTick(
-              notedata[this.assistTickIndex]
-            )
+            this.loadedChart.gameType.gameLogic.shouldAssistTick(note)
           ) {
             if (Options.audio.assistTick && Flags.assist) {
-              this.assistTick.play(
-                (notedata[this.assistTickIndex].second +
-                  Options.play.effectOffset -
-                  time) /
-                  Options.audio.rate
+              this.assistTick.playAt(
+                cueTime,
+                this.time,
+                Options.audio.rate,
+                songEnd
               )
             }
-            assistRows.add(notedata[this.assistTickIndex].second)
+            assistRows.add(note.second)
           }
           this.assistTickIndex++
         }
       }
       // Play metronome
       if (
+        canScheduleCues &&
         this.chartAudio.isPlaying() &&
         Options.audio.metronome &&
         Flags.assist
@@ -526,11 +527,13 @@ export class ChartManager {
           const barSecond = td.getSecondsFromBeat(barBeat)
           if (scheduledBeats.has(barSecond)) continue
           scheduledBeats.add(barSecond)
-          const offset =
-            (barSecond + Options.play.effectOffset - this.time) /
-            Options.audio.rate
-          if (isMeasure) this.me_high.play(offset)
-          else this.me_low.play(offset)
+          const sound = isMeasure ? this.me_high : this.me_low
+          sound.playAt(
+            barSecond + Options.play.effectOffset,
+            this.time,
+            Options.audio.rate,
+            songEnd
+          )
         }
         if (measureBeats.length > 0) {
           const lastBeat = measureBeats.at(-1)![0]
@@ -574,12 +577,11 @@ export class ChartManager {
         option != "audio.rate" &&
         option != "play.effectOffset" &&
         option != "audio.assistTick" &&
-        option != "audio.metronome"
+        option != "audio.metronome" &&
+        option != "practice.enabled"
       )
         return
-      this.assistTick.stop()
-      this.me_low.stop()
-      this.me_high.stop()
+      this.stopTimingCues()
       this.setNoteIndex()
     })
 
@@ -719,13 +721,7 @@ export class ChartManager {
     this._beat = beat
 
     this.setNoteIndex()
-
-    this.lastMetronomeMeasure = Math.floor(
-      this.loadedChart.timingData.getMeasure(this.beat)
-    )
-    this.lastMetronomeDivision = Math.floor(
-      this.loadedChart.timingData.getDivisionOfMeasure(this.beat)
-    )
+    this.resetMetronomePosition()
   }
 
   get time() {
@@ -737,6 +733,7 @@ export class ChartManager {
     this.chartAudio.seek(time)
     this._beat = this.loadedChart.getBeatFromSeconds(time)
     this.setNoteIndex()
+    this.resetMetronomePosition()
   }
 
   /**
@@ -1078,11 +1075,7 @@ export class ChartManager {
       WaterfallManager.create("Loaded audio")
     })
     this.beat = prevBeat
-    this.chartAudio.onStop = () => {
-      this.assistTick.stop()
-      this.me_high.stop()
-      this.me_low.stop()
-    }
+    this.chartAudio.onStop = () => this.stopTimingCues()
     this.setNoteIndex()
     EventHandler.emit("audioLoaded")
   }
@@ -1167,6 +1160,21 @@ export class ChartManager {
     this.me_high.volume(volume)
     this.me_low.volume(volume)
     if (this.mine.volume() != volume) this.mine.volume(volume)
+  }
+
+  private stopTimingCues() {
+    this.assistTick.stop()
+    this.me_high.stop()
+    this.me_low.stop()
+    this.resetMetronomePosition()
+  }
+
+  private resetMetronomePosition() {
+    if (!this.loadedChart) return
+    const timing = this.loadedChart.timingData
+    const beat = this.beat
+    this.lastMetronomeMeasure = Math.floor(timing.getMeasure(beat))
+    this.lastMetronomeDivision = Math.floor(timing.getDivisionOfMeasure(beat))
   }
 
   private setNoteIndex() {

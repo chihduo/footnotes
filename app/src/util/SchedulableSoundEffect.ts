@@ -125,12 +125,19 @@ export class SchedulableSoundEffect {
     }
   }
 
-  /**
-   * Starts playing this audio.
-   *
-   * @memberof ChartAudio
-   */
-  play(offset: number) {
+  /** Schedule a cue in song seconds, optionally limiting it to the recorded audio. */
+  playAt(second: number, songTime: number, songRate: number, songEnd?: number) {
+    const start = Math.max(second, songTime)
+    let duration: number | undefined
+    if (songEnd !== undefined) {
+      if (second < 0 || start >= songEnd) return
+      duration = (songEnd - start) / songRate
+    }
+    this.play((start - songTime) / songRate, duration)
+  }
+
+  /** Delay and maximum audible duration are in real seconds. */
+  play(offset: number, maxDuration?: number) {
     if (this._destroyed) return
     const source = SafeAudioBufferSourceNode.create(
       this._audioContext.createBufferSource()
@@ -139,9 +146,12 @@ export class SchedulableSoundEffect {
     source.buffer = this._buffer
     source.connect(this._gainNode)
     this._gainNode.connect(this._audioContext.destination)
-    source.start(offset + this._audioContext.currentTime, 0)
-
     source.playbackRate.value = this._rate
+    source.start(
+      offset + this._audioContext.currentTime,
+      0,
+      maxDuration === undefined ? undefined : maxDuration * this._rate
+    )
     this._sources.push(source)
     source.onended = () => {
       source.disconnect()

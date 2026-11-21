@@ -7,7 +7,7 @@ Everything you need while practicing is on screen. The keyboard shortcuts below 
 **Top bar**
 
 - **Playback:** the song's speed, as a percentage. Lower it to slow the song down.
-- **Clap and metronome** are on by default. The clap plays a tick on every step, and the metronome ticks on every beat. Click either control to mute it.
+- **Clap and metronome** are on by default. The clap marks each step, and the metronome marks each beat. In practice mode, both go quiet when you pause or the song ends. When you play the song again, the cues you enabled resume. Click either control to toggle it.
 - **Speedmod:** how fast the arrows scroll. **X** scales the scroll speed with the song's tempo, and **C** keeps it constant.
 - **Foot highlights:** the feet button colors each arrow blue or orange for the foot that steps it. It's the same setting as the chart editor's foot highlights.
 - **3D dancer** is on by default and shows the full-body dancer alongside the overhead feet. The camera stays anchored to the center of the pad as the dancer moves. Drag left or right to orbit the pad, or up and down to tilt the view. Scroll over the model or pinch with two fingers to zoom. Double-click the model to restore the starting camera angle and zoom. To move the panel, drag its title bar. The curved arrow returns the panel to its starting position. Drag the lower-right corner to change the panel’s width and height. Enlarging it reveals more of the dancer at the same magnification. If your screen runs out of room, click **Fit** to bring the whole dancer into the panel at your current angle. Double-click the corner to restore the default size. Footnotes remembers your panel size, position, and camera view.

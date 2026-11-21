@@ -42,7 +42,8 @@ export class ChartAudio {
   private _startTimestamp = 0
   private _rate = 1
   private _isPlaying = false
-  private _buffer: AudioBuffer
+  private readonly _emptyBuffer = this._audioContext.createBuffer(2, 1, 44100)
+  private _buffer = this._emptyBuffer
   private _filteredBuffer: AudioBuffer
   private _loadedBuffer: AudioBuffer
   private _delay?: NodeJS.Timeout
@@ -81,7 +82,6 @@ export class ChartAudio {
       this._filteredAudioAnalyzer.frequencyBinCount
     )
     this._gainNode = this._audioContext.createGain()
-    this._buffer = this._audioContext.createBuffer(2, 1, 44100)
     this._filteredBuffer = this._audioContext.createBuffer(2, 1, 44100)
     this._loadedBuffer = this._audioContext.createBuffer(2, 1, 44100)
     this.initSource()
@@ -316,7 +316,18 @@ export class ChartAudio {
    * @memberof ChartAudio
    */
   getSongLength(): number {
-    return this._buffer.length / this._buffer.sampleRate
+    return this._buffer === this._emptyBuffer ? 0 : this._buffer.duration
+  }
+
+  /** Song seconds covered by the current source. The chart clock can run beyond it. */
+  getScheduledSongDuration(): number {
+    if (
+      !this.isPlaying() ||
+      this._audioContext.state !== "running" ||
+      this._source?.buffer !== this._buffer
+    )
+      return 0
+    return this.getSongLength()
   }
 
   /**
@@ -424,7 +435,7 @@ export class ChartAudio {
   destroy() {
     if (this._destroyed) return
     this.stop()
-    this._buffer = this._audioContext.createBuffer(2, 1, 44100)
+    this._buffer = this._emptyBuffer
     this._updateListeners = []
     clearTimeout(this._delay)
     this._destroyed = true
@@ -465,7 +476,7 @@ export class ChartAudio {
         resolve()
         return
       }
-      (async () => {
+      ;(async () => {
         try {
           resolve(await this._audioContext.decodeAudioData(data))
         } catch (e) {
