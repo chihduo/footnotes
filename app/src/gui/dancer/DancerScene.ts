@@ -1,4 +1,5 @@
 import {
+  AmbientLight,
   BoxGeometry,
   CircleGeometry,
   Color,
@@ -25,10 +26,12 @@ import type { StageLayout } from "../../chart/stats/parity/StageLayouts"
 import { getParityColor } from "../../util/Color"
 import { clamp } from "../../util/Math"
 import { Options } from "../../util/Options"
+import { createDancerAnatomy } from "./DancerAnatomy"
 import { getDancerFitZoom, resizeDancerProjection } from "./DancerFraming"
 import { PANEL_SPACING, type DancerPose, type FootPose } from "./DancerMotion"
 
 const up = new Vector3(0, 1, 0)
+const down = new Vector3(0, -1, 0)
 const direction = new Vector3()
 const pole = new Vector3()
 const thighLength = 0.425
@@ -146,12 +149,13 @@ function createRenderer(): WebGLRenderer | SVGRenderer {
   }
   const renderer = new SVGRenderer()
   renderer.setQuality("low")
+  renderer.setPrecision(1)
   renderer.setClearColor(new Color(0x222d39), 1)
   return renderer
 }
 
 export class DancerScene {
-  private renderer: WebGLRenderer | SVGRenderer
+  private renderer = createRenderer()
   private scene = new Scene()
   private camera = new OrthographicCamera(-1, 1, 1, -1, 0.1, 14)
   private controls: OrbitControls<OrthographicCamera>
@@ -159,9 +163,8 @@ export class DancerScene {
   private pad = new Group()
   private hips = new Group()
   private chest = new Group()
-  private head = new Group()
+  private anatomy = createDancerAnatomy(this.renderer instanceof SVGRenderer)
   private skin = material(0xc58b68)
-  private hair = material(0x30292c)
   private jersey = material(0x387f80)
   private trim = material(0x9de1d3)
   private shorts = material(0x354260)
@@ -172,10 +175,19 @@ export class DancerScene {
   private floorColor = new Color(0x47596d)
   private tiles: Mesh<BoxGeometry, MeshLambertMaterial>[] = []
   private legs = [this.buildLeg(0), this.buildLeg(1)]
-  private arms = [-1, 1].map(() => ({
+  private arms = this.anatomy.hands.map(hand => ({
     upper: limb(this.chest, this.jersey, 0.058, 0.061, 0.043),
-    lower: limb(this.chest, this.skin, 0.041, 0.044, 0.03),
-    hand: oval(this.chest, this.skin, 0, 0, 0, 0.034, 0.049, 0.032),
+    lower: profile(this.chest, this.skin, [
+      [0, 0],
+      [0.041, 0],
+      [0.044, 0.22],
+      [0.036, 0.53],
+      [0.028, 0.75],
+      [0.022, 0.92],
+      [0.0205, 0.97],
+      [0.0196, 1],
+    ]),
+    hand,
     shoulder: new Vector3(),
     elbow: new Vector3(),
     wrist: new Vector3(),
@@ -184,12 +196,17 @@ export class DancerScene {
   private padWidth = 1
 
   constructor(private mount: HTMLDivElement) {
-    this.renderer = createRenderer()
     this.renderer.domElement.setAttribute("aria-hidden", "true")
     mount.replaceChildren(this.renderer.domElement)
     this.scene.add(this.pad, this.body)
-    this.body.add(this.hips, this.chest, this.head)
-    this.scene.add(new HemisphereLight(0xfff6e8, 0x91a9c8, 1.65))
+    this.body.add(this.hips, this.chest, this.anatomy.head)
+    this.chest.add(...this.anatomy.hands)
+    // SVGRenderer supports ambient fill only through AmbientLight.
+    this.scene.add(
+      this.renderer instanceof SVGRenderer
+        ? new AmbientLight(0xb8b4ae)
+        : new HemisphereLight(0xfff6e8, 0x91a9c8, 1.65)
+    )
     const key = new DirectionalLight(0xffe5c8, 2.1)
     key.position.set(-3, 5, 3)
     const rim = new DirectionalLight(0xc7f1f6, 1.2)
@@ -251,13 +268,6 @@ export class DancerScene {
     )
     // The contrasting yoke makes shoulder rotation visible from behind.
     oval(this.chest, this.trim, 0, 0.299, 0.112, 0.123, 0.014, 0.014)
-    oval(this.chest, this.skin, 0, 0.377, 0, 0.057, 0.082, 0.055)
-    oval(this.head, this.skin, 0, 0, 0, 0.096, 0.122, 0.1)
-    oval(this.head, this.skin, 0, -0.006, -0.096, 0.024, 0.028, 0.027)
-    for (const s of [-1, 1])
-      oval(this.head, this.skin, s * 0.092, -0.005, 0, 0.019, 0.031, 0.018)
-    oval(this.head, this.hair, 0, 0.047, 0.013, 0.101, 0.095, 0.102)
-    oval(this.head, this.hair, 0, -0.002, 0.068, 0.081, 0.079, 0.048)
     this.setColors()
   }
 
@@ -487,11 +497,11 @@ export class DancerScene {
       -shift * 0.075,
       "YXZ"
     )
-    this.head.position
-      .set(0, 0.515, -0.012)
+    this.anatomy.head.position
+      .set(0, 0.355, 0)
       .applyQuaternion(this.chest.quaternion)
       .add(this.chest.position)
-    this.head.rotation.set(-0.035, yaw * 0.39, -shift * 0.025, "YXZ")
+    this.anatomy.head.rotation.set(-0.035, yaw * 0.39, -shift * 0.025, "YXZ")
     for (const tile of this.tiles) tile.material.color.copy(this.floorColor)
     for (const [i, foot] of feet.entries()) {
       const side = i === 0 ? -1 : 1
@@ -550,7 +560,10 @@ export class DancerScene {
     connect(arm.upper, arm.shoulder, arm.elbow)
     connect(arm.lower, arm.elbow, arm.wrist)
     arm.hand.position.copy(arm.wrist)
-    arm.hand.position.y -= 0.025
+    arm.hand.quaternion.setFromUnitVectors(
+      down,
+      direction.subVectors(arm.wrist, arm.elbow).normalize()
+    )
   }
 
   private disposeMeshes(group: Group | Scene) {
