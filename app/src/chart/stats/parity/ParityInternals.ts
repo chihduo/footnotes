@@ -33,6 +33,13 @@ import { STAGE_LAYOUTS, StageLayout } from "./StageLayouts"
 
 const SECOND_EPSILON = 0.0005
 
+interface FootingPath {
+  cost: number
+  swings: number
+  contactCost: number
+  path: string
+}
+
 export class ParityGraphNode {
   // map from ids to costs
   children: Map<string, { [id: string]: number }> = new Map()
@@ -92,7 +99,7 @@ export class ParityInternals {
   private cachedEdges = new Map<string, Map<string, { [id: string]: number }>>()
 
   // Store the lowest cost for each node by key
-  private cachedLowestCost = new Map<string, { cost: number; path: string }>()
+  private cachedLowestCost = new Map<string, FootingPath>()
 
   // Keep track of the size of the edge cache, prune when too large
   edgeCacheSize = 0
@@ -636,124 +643,75 @@ export class ParityInternals {
     }
   }
 
-  // Finds the best path through the graph
   computeBestPath(updatedCosts: {
     firstUpdatedCost: number
     lastUpdatedCost: number
   }) {
-    const pathTimeStart = performance.now()
+    const start = performance.now()
+    const firstRow =
+      this.cachedLowestCost.size > 1 ? updatedCosts.firstUpdatedCost : -1
+    this.debugStats.cachedBestRows = firstRow + 1
 
-    // we use string for path because list creation is slow
-    // a bit jank, but performance!
-    this.cachedLowestCost.set(this.initialNode.key, {
+    let best = this.findBestPath(firstRow, false)
+    // Keep the style's original solution when it already avoids these swings.
+    // Otherwise an earlier step, even before an edited row, can free the
+    // support foot. Replan the whole chart using the same legal graph edges.
+    if (best?.swings) {
+      best = this.findBestPath(-1, true)
+      this.debugStats.cachedBestRows = 0
+    }
+    this.bestPath = best?.path.split("*")
+    this.bestPathCost = best?.cost ?? 0
+    this.bestPathSet = new Set(this.bestPath ?? [])
+    if (!best) console.error("No best path found")
+    this.debugStats.pathUpdateTime = performance.now() - start
+  }
+
+  private findBestPath(firstRow: number, avoidSwings: boolean) {
+    const cache = avoidSwings ? undefined : this.cachedLowestCost
+    let previous = cache ?? new Map<string, FootingPath>()
+    previous.set(this.initialNode.key, {
       cost: 0,
+      swings: 0,
+      contactCost: 0,
       path: this.initialNode.key,
     })
-
-    let rowIndex = updatedCosts.firstUpdatedCost
-    if (this.cachedLowestCost.size == 1) {
-      // Cache cleared
-      rowIndex = -1
-    }
-    this.debugStats.cachedBestRows = updatedCosts.firstUpdatedCost + 1
-
-    // We can reuse the shortest paths up to the first updated edge
-    // Unforunately, we can't reuse anything after that (at least i think so)
-    const rowNodes = new Map<string, number>()
-
-    while (rowIndex < this.notedataRows.length) {
-      let minNode = null
-      let minNodeCost = 0
-      rowNodes.clear()
-      const nodes = this.nodeRows[rowIndex]?.nodes ?? [this.initialNode]
-      if (nodes.length == 0) {
-        // there are no nodes at this row, can't proceed
-        console.log("No nodes at row", rowIndex, this.nodeRows[rowIndex].beat)
-        break
-      }
-      for (const node of nodes) {
-        const currentCost = this.cachedLowestCost.get(node.key)?.cost
-        if (currentCost === undefined) {
-          // how
-          console.warn("No cost found for node:", node.key)
-          continue
-        }
-
-        if (rowIndex == this.notedataRows.length - 1) {
-          node.children.set(this.endNode.key, {
-            TOTAL: 0,
-          })
-        }
-        for (const [child, costs] of node.children.entries()) {
-          const oldCost = rowNodes.get(child)
-          if (oldCost === undefined || currentCost + costs["TOTAL"] < oldCost) {
-            this.cachedLowestCost.set(child, {
-              cost: currentCost + costs["TOTAL"],
-              path: this.cachedLowestCost.get(node.key)!.path + "*" + child,
-            })
-            rowNodes.set(child, currentCost + costs["TOTAL"])
-
-            if (minNode === null || rowNodes.get(child)! < minNodeCost) {
-              minNode = child
-              minNodeCost = rowNodes.get(child)!
-            }
+    const finish = new Map<string, Record<string, number>>([
+      [this.endNode.key, { TOTAL: 0 }],
+    ])
+    for (let row = firstRow; row < this.notedataRows.length; row++) {
+      const rowBest = new Map<string, FootingPath>()
+      for (const node of this.nodeRows[row]?.nodes ?? [this.initialNode]) {
+        const prefix = previous.get(node.key)
+        if (!prefix) continue
+        const edges =
+          row === this.notedataRows.length - 1 ? finish : node.children
+        for (const [child, edge] of edges) {
+          const cost = prefix.cost + edge.TOTAL
+          const swings = prefix.swings + (edge.ANCHORED_SWING ?? 0)
+          const contactCost = prefix.contactCost + (edge.CONTACT_COST ?? 0)
+          const old = rowBest.get(child)
+          if (old) {
+            // Preserve chart contacts first, then minimize anchored swings.
+            // The existing style costs decide between equally ergonomic paths.
+            const priority = avoidSwings
+              ? contactCost - old.contactCost || swings - old.swings
+              : 0
+            if (priority > 0 || (priority === 0 && !(cost < old.cost))) continue
           }
-        }
-        if (rowIndex == this.notedataRows.length - 1) {
-          node.children.delete(this.endNode.key)
+          const best = {
+            cost,
+            swings,
+            contactCost,
+            path: prefix.path + "*" + child,
+          }
+          rowBest.set(child, best)
         }
       }
-      // we can't reuse best path (kind of sad because most cases do reuse)
-      // if (
-      //   minNode &&
-      //   this.bestPathSet?.has(minNode) &&
-      //   shouldCache == 0 &&
-      //   rowIndex >= updatedCosts.lastUpdatedCost
-      // ) {
-      //   const firstPart =
-      //     this.cachedLowestCost.get(minNode)!.path.split("*") ?? []
-      //   const endPart = this.bestPath!.slice(
-      //     this.bestPath!.indexOf(minNode) + 1
-      //   )
-      //   this.bestPath = firstPart.concat(endPart)
-
-      //   let cost = this.cachedLowestCost.get(minNode)!.cost
-      //   let node = firstPart.at(-1)
-      //     ? this.nodeMap.get(firstPart.at(-1)!)!
-      //     : this.initialNode
-      //   for (let i = 0; i < endPart.length; i++) {
-      //     const nextNode = this.nodeMap.get(endPart[i])
-      //     if (!nextNode) continue
-      //     cost += node.children.get(nextNode.key)?.TOTAL ?? 0
-      //     node = nextNode
-      //   }
-
-      //   this.bestPathCost = cost
-
-      //   this.debugStats.cachedBestRows += endPart.length - 1
-
-      //   this.bestPathSet = new Set(this.bestPath ?? [])
-
-      //   this.debugStats.pathUpdateTime = performance.now() - pathTimeStart
-      //   shouldCache = rowIndex
-
-      //   return
-      // }
-      rowIndex++
+      if (cache) for (const [key, best] of rowBest) cache.set(key, best)
+      previous = rowBest
     }
-
-    // this.cachedLowestCost = lowestCosts
-
-    this.bestPath = this.cachedLowestCost.get(this.endNode.key)?.path.split("*")
-    this.bestPathCost = this.cachedLowestCost.get(this.endNode.key)?.cost ?? 0
-
-    if (!this.bestPath) {
-      console.error("No best path found")
-    }
-
-    this.bestPathSet = new Set(this.bestPath ?? [])
-
-    this.debugStats.pathUpdateTime = performance.now() - pathTimeStart
+    return previous.get(this.endNode.key)
   }
 
   calculatePermuteColumnKey(row: Row): string {

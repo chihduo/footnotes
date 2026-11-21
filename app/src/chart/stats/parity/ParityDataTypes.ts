@@ -50,8 +50,8 @@ export type FootOverride = "Left" | "Right" | Foot
 // little as they can.
 // Natural: a foot may step twice in a row when steps are slow, and two feet
 // never stand on one arrow.
-// Alternating: SMEditor's original footing, which alternates feet whenever
-// it can, crossing over or switching feet to do so.
+// Alternating: prefers to alternate, crossing over or switching feet to do so.
+// All styles avoid lateral swings around a foot planted on Up or Down.
 export type FootingStyle = "Minimal effort" | "Natural" | "Alternating"
 export const FOOTING_STYLES: FootingStyle[] = [
   "Minimal effort",
@@ -144,6 +144,8 @@ export const WEIGHT_SHORT_NAMES: { [id: string]: string } = {
   OTHER: "OTH",
   SHARED_ARROW: "SHA",
   BRACKET: "BRK",
+  ANCHORED_SWING: "ASW",
+  CONTACT_COST: "CON",
   OPPOSITE_MOVE: "OPP",
   OVERRIDE: "OVR",
   TOTAL: "TOT",

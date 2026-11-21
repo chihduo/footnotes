@@ -268,7 +268,7 @@ export const USER_OPTIONS_WINDOW_DATA: UserOption[] = [
               values: ["Minimal effort", "Natural", "Alternating"],
             },
             tooltip:
-              "Minimal effort moves your feet as little as it can, and avoids long, fast moves. Natural lets a foot step twice in a row when steps are slow, and never puts both feet on one arrow. Alternating is SMEditor's original footing, which alternates feet whenever it can.",
+              "Minimal effort limits travel and speed. Natural allows same-foot steps in slow passages and avoids putting both feet on one arrow. Alternating prefers to switch feet. On Dance pads, all three avoid swinging one foot between Left and Right around the other foot on Up or Down.",
           },
           {
             type: "item",

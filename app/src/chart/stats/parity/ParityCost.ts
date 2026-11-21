@@ -141,6 +141,20 @@ export class ParityCostCalculator {
       totalCost += costs[c]
     }
     costs["TOTAL"] = totalCost
+    // These describe the transition for path selection. TOTAL remains the
+    // ordinary cost for the selected footing style.
+    if (this.layout.lateralSupports.length) {
+      if (this.hasAnchoredSwing(initialState, resultState, row))
+        costs["ANCHORED_SWING"] = 1
+      const contactCost =
+        costs["MINE"] +
+        costs["BRACKET"] +
+        costs["TWISTED_FOOT"] +
+        costs["SHARED_ARROW"] +
+        this.holdTransfers(initialState, resultState, row) *
+          this.WEIGHTS.HOLDSWITCH
+      if (contactCost) costs["CONTACT_COST"] = contactCost
+    }
     return costs
   }
 
@@ -687,6 +701,58 @@ export class ParityCostCalculator {
       if (Math.abs(distanceSq - 4) < 1e-6) cost += this.WEIGHTS.OPPOSITE_MOVE
     }
     return cost
+  }
+
+  // A support foot can retap the same arrow or keep it through several rows.
+  // Use occupied panels so a heel/toe change on a bracket stays on one foot.
+  private hasAnchoredSwing(before: ParityState, after: ParityState, row: Row) {
+    for (const { column, sides } of this.layout.lateralSupports) {
+      const support = before.combinedColumns[column]
+      const current = after.combinedColumns[column]
+      if (!support || !current) continue
+      // On a continuing hold, swapping the supporting foot during the swing
+      // also needs a replan. A free foot can legitimately leave a tapped panel.
+      if (
+        !row.holds[column] &&
+        current !== support &&
+        current !== OTHER_PART_OF_FOOT[support]
+      )
+        continue
+      const moving = LEFT_FOOT_PARTS.includes(support)
+        ? RIGHT_FOOT_PARTS
+        : LEFT_FOOT_PARTS
+      const landing = LEFT_FOOT_PARTS.includes(current)
+        ? RIGHT_FOOT_PARTS
+        : LEFT_FOOT_PARTS
+      const start = this.occupiedSide(before, moving, sides)
+      const end = this.occupiedSide(after, landing, sides)
+      if (start * end < 0) return true
+    }
+    return false
+  }
+
+  private occupiedSide(state: ParityState, parts: Foot[], sides: number[]) {
+    for (const part of parts) {
+      const col = state.footColumns[part]
+      if (state.combinedColumns[col] === part && sides[col]) return sides[col]
+    }
+    return 0
+  }
+
+  private holdTransfers(before: ParityState, after: ParityState, row: Row) {
+    let transfers = 0
+    for (let col = 0; col < row.holds.length; col++) {
+      if (!row.holds[col]) continue
+      const oldFoot = before.combinedColumns[col]
+      const newFoot = after.combinedColumns[col]
+      if (
+        oldFoot &&
+        newFoot !== oldFoot &&
+        newFoot !== OTHER_PART_OF_FOOT[oldFoot]
+      )
+        transfers++
+    }
+    return transfers
   }
 
   calcCrowdedBracketCost(data: PlacementData, elapsedTime: number) {

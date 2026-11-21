@@ -14,6 +14,9 @@ export class StageLayout {
   upArrows: number[]
   downArrows: number[]
   sideArrows: number[]
+  // Each entry describes the side arrows to the left and right of one Up or
+  // Down panel. Pump's diagonal panels do not form this pattern.
+  readonly lateralSupports: { column: number; sides: number[] }[]
   constructor(
     name: string,
     layout: StagePoint[],
@@ -27,6 +30,16 @@ export class StageLayout {
     this.upArrows = upArrows
     this.downArrows = downArrows
     this.sideArrows = sideArrows
+    this.lateralSupports = [...upArrows, ...downArrows]
+      .map(column => ({
+        column,
+        sides: layout.map(({ x, y }, i) =>
+          y === 0 && sideArrows.includes(i)
+            ? Math.sign(x - layout[column].x)
+            : 0
+        ),
+      }))
+      .filter(({ sides }) => sides.includes(-1) && sides.includes(1))
   }
 
   // Returns the cosine of the angle made between the player's
