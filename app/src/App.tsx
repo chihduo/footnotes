@@ -596,11 +596,13 @@ export class App {
   }
 
   checkCoreVersion() {
-    const update = registerSW({})
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      CoreUpdateNotification.open(update)
-      console.log("Found new version")
-    })
+    if ("serviceWorker" in navigator) {
+      const update = registerSW({})
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        CoreUpdateNotification.open(update)
+        console.log("Found new version")
+      })
+    }
 
     const localVersion = localStorage.getItem("coreVersion")
     if (localVersion !== null && semver.lt(localVersion, this.VERSION)) {

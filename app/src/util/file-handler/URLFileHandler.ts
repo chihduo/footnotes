@@ -3,8 +3,6 @@ import { extname } from "../Path"
 import { BaseFileHandler } from "./FileHandler"
 const { GONE } = errors
 
-FileSystemFileHandle
-
 class URLFileHandle {
   private readonly _path
   readonly kind = "file"
@@ -27,9 +25,8 @@ class URLFileHandle {
     throw Error("Cannot call createWriteable from a URLFileHandle")
   }
 
-  async isSameEntry(other: FileSystemHandle) {
-    if (!(FileSystemHandle instanceof URLFileHandle)) return false
-    return (other as unknown as URLFileHandle)._path == this._path
+  async isSameEntry(other: FileSystemHandle): Promise<boolean> {
+    return other instanceof URLFileHandle && other._path === this._path
   }
 
   async queryPermission(): Promise<PermissionState> {
