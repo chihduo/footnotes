@@ -1,3 +1,5 @@
+import type { Chart } from "../../chart/sm/Chart"
+import { isHoldNote } from "../../chart/sm/NoteTypes"
 import { clamp } from "../../util/Math"
 
 export const PANEL_SPACING = 0.32 // metres between panel centres
@@ -8,6 +10,26 @@ const inset = 0.095 // metres from the panel centre toward an edge or corner
 const offsets = [0, -inset, inset]
 const panelLandings = offsets.flatMap(dx => offsets.map(dz => ({ dx, dz })))
 const centreOnly = [{ dx: 0, dz: 0 }]
+
+export interface DancerTiming {
+  rate: number
+  holds: Map<number, Map<number, number>>
+}
+
+// A hold can end between note rows, or after a tempo change or stop.
+export function getDancerTiming(chart: Chart, rate: number): DancerTiming {
+  const holds: DancerTiming["holds"] = new Map()
+  for (const note of chart.getNotedata()) {
+    if (!isHoldNote(note) || note.fake || note.warped) continue
+    let row = holds.get(note.beat)
+    if (!row) {
+      row = new Map()
+      holds.set(note.beat, row)
+    }
+    row.set(note.col, chart.getSecondsFromBeat(note.beat + note.hold))
+  }
+  return { rate, holds }
+}
 
 export interface Contact {
   second: number

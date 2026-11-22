@@ -1,3 +1,4 @@
+import { isHoldNote } from "../../sm/NoteTypes"
 import { clamp, lerp } from "../../../util/Math"
 import {
   DEFAULT_WEIGHTS,
@@ -144,6 +145,11 @@ export class ParityCostCalculator {
     // These describe the transition for path selection. TOTAL remains the
     // ordinary cost for the selected footing style.
     if (this.layout.lateralSupports.length) {
+      if (this.hasReversedSides(resultState)) costs["REVERSED_SIDES"] = 1
+      if (costs["BRACKET"] && row.holdTails.size) {
+        const pivot = this.holdPivotCost(initialState, resultState, row)
+        if (pivot) costs["HOLD_PIVOT"] = pivot
+      }
       if (this.hasAnchoredSwing(initialState, resultState, row))
         costs["ANCHORED_SWING"] = 1
       const contactCost =
@@ -387,11 +393,8 @@ export class ParityCostCalculator {
     return 0
   }
 
-  // One foot never presses two arrows at once (a bracket), unless the chart
-  // leaves no other way, like three arrows at once or a jump while the other
-  // foot holds an arrow. This counts a foot using its heel and toes in this
-  // row, including on arrows it's holding, but not one still standing where
-  // an earlier bracket left it.
+  // Charge each heel/toe bracket required on this row. A foot still
+  // standing where an earlier bracket left it pays no additional cost.
   calcBracketCost(state: ParityState) {
     let cost = 0
     for (const [heel, toe] of [LEFT_FOOT_PARTS, RIGHT_FOOT_PARTS]) {
@@ -699,6 +702,36 @@ export class ParityCostCalculator {
         isLeft ? data.leftPos : data.rightPos
       )
       if (Math.abs(distanceSq - 4) < 1e-6) cost += this.WEIGHTS.OPPOSITE_MOVE
+    }
+    return cost
+  }
+
+  // Count a fully reversed stance on the lateral panels, including the
+  // occupied end of a bracket. Ordinary diagonal crossovers stay available.
+  private hasReversedSides(state: ParityState) {
+    let leftX = -Infinity
+    let rightX = Infinity
+    for (const col of this.layout.sideArrows) {
+      const part = state.combinedColumns[col]
+      const x = this.layout.layout[col].x
+      if (LEFT_FOOT_PARTS.includes(part)) leftX = Math.max(leftX, x)
+      if (RIGHT_FOOT_PARTS.includes(part)) rightX = Math.min(rightX, x)
+    }
+    return leftX > rightX
+  }
+
+  // The same shoe keeps the ending hold pressed while its heel or toe starts
+  // an adjacent hold. Only this bracket is eligible for the uncrossed route.
+  private holdPivotCost(before: ParityState, after: ParityState, row: Row) {
+    let cost = 0
+    for (const col of row.holdTails) {
+      const part = after.action[col]
+      if (!part) continue
+      const other = OTHER_PART_OF_FOOT[part]
+      const old = before.combinedColumns[col]
+      const head = row.notes[after.action.indexOf(other)]
+      if ((old === part || old === other) && head && isHoldNote(head))
+        cost += this.WEIGHTS.BRACKET
     }
     return cost
   }

@@ -6,16 +6,16 @@ Rhythm games call this the chart's parity, and Footnotes works it out with SMEdi
 
 ## The rules
 
-1. **One foot per arrow, two for a jump.** Each arrow is stepped by one foot. When two arrows come at the same time, that's a jump, and both feet land together.
+1. **One foot per arrow, two for a jump.** Each arrow is stepped by one foot. When two arrows start together, the bot usually lands one foot on each.
 2. **Two feet never share an arrow.** If one foot is standing on an arrow, putting the other foot on it doesn't press it again. So when the same arrow comes twice in a row, the foot that's already on it steps it again. On the bot, that foot disappears for a moment and lands again on the beat.
 3. **Move as little as you can.** Every move takes effort, more the farther a foot travels and much more the faster it has to get there. The bot keeps a foot where it is when it can, and plans ahead: if an arrow is coming back soon, it leaves a foot near it. [How effort is counted](#how-effort-is-counted) has the details.
 4. **Free the foot on Up or Down.** All three footing styles plan ahead so one foot can leave Up or Down before the other has to swing from Left to Right or back. This also applies on doubles when the two side arrows lie on opposite sides of the planted foot. A sustained hold or a foot assignment in the chart editor can still require the swing.
 5. **Alternate when it's comfortable.** Left, right, left, right is the default, as long as each foot can stay on its own side of the pad.
 6. **The same foot twice is fine when it's slow.** When steps are 0.4 seconds or more apart, the bot would rather step twice with the same foot than cross your legs over.
 7. **Favor alternating in fast passages.** At intervals of 0.2 seconds or less, the bot prefers to alternate. It can still take two steps with one foot to free the other foot from Up or Down.
-8. **Face the screen.** The bot avoids turning your back to the screen.
-9. **Holds keep a foot in place.** A foot holding an arrow stays on it until the hold ends, and the other foot takes the other arrows.
-10. **No brackets.** A foot never presses two arrows at once, even two next to each other, so two arrows at the same time are always a jump with both feet. The only exceptions are charts that leave no other way: three arrows at once, or a jump while one foot is holding an arrow. Then one foot takes two arrows next to each other, with the heel on one and the toes on the other.
+8. **Face the screen.** If the plan puts the left foot on Right and the right foot on Left, the bot looks for another route. It checks the full chart at your playback rate and uses the alternative only if it adds no fast steps for either foot.
+9. **Keep holds pressed.** The shoe stays in contact with the panel through the end of the hold.
+10. **Use the heel and toes together when needed.** If three arrows fall together, or a jump comes during a hold, one foot can cover two neighboring panels. When one hold ends exactly as a neighboring hold begins, the foot can also pivot with the heel on one panel and the toes on the other.
 
 ## How fast is slow?
 
@@ -76,7 +76,7 @@ The **Footing** menu in the bottom bar chooses between three sets of rules while
 - **Natural** uses the same rules, except that it counts movement, including moves across the pad, much more lightly, so it alternates feet more and plans ahead less. It was the default before Minimal effort.
 - **Alternating** prefers to alternate feet, even in slow passages. It can take two steps with one foot to avoid swinging around the other foot on Up or Down.
 
-All three follow the no-brackets rule, so even Alternating never presses two arrows with one foot unless the chart leaves no other way.
+All three styles use the same checks for crossed feet, holds and fast steps.
 The bot switches to the new footing straight away.
 
 ## When the footing looks wrong

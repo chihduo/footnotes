@@ -1,5 +1,5 @@
 import type { Chart } from "../../chart/sm/Chart"
-import { isHoldNote } from "../../chart/sm/NoteTypes"
+import type { ParityComputeData } from "../../chart/stats/parity/ParityWebWorkerTypes"
 import {
   Foot,
   OTHER_PART_OF_FOOT,
@@ -10,10 +10,12 @@ import { clamp, lerp } from "../../util/Math"
 import {
   PANEL_SPACING,
   comfortableSwingSeconds,
+  getDancerTiming,
   planFootwork,
   swingProgress,
   turnBetween,
   type Contact,
+  type DancerTiming,
 } from "./DancerFootwork"
 
 export { PANEL_SPACING } from "./DancerFootwork"
@@ -319,13 +321,11 @@ function planReturnSteps(
   return lastLanding
 }
 
-export class DancerMotion {
-  private returnStart = Infinity
-  readonly restTime: number = 0
-  private tracks = [[neutral(-1)], [neutral(1)]]
-  private balance: BalancePoint[] = [{ second: -Infinity, x: 0, z: 0 }]
-  readonly fastSteps: { second: number; beat: number; label: string }[] = []
-  private stances: Stance[] = [
+// The footing solver and the renderer use the same timed contacts.
+export class DancerStepPlan {
+  readonly tracks = [[neutral(-1)], [neutral(1)]]
+  protected readonly rate: number
+  protected readonly stances: Stance[] = [
     {
       second: -Infinity,
       beat: -Infinity,
@@ -337,27 +337,19 @@ export class DancerMotion {
   ]
 
   constructor(
-    chart: Chart,
+    parity:
+      | Pick<
+          ParityComputeData,
+          "states" | "techRows" | "facingRows" | "crossingPlan"
+        >
+      | undefined,
     layout: StageLayout,
-    private rate = 1,
-    songEnd = 0
+    { rate, holds }: DancerTiming
   ) {
-    if (!Number.isFinite(rate) || rate <= 0) this.rate = 1
-    const parity = chart.stats.parity
+    this.rate = Number.isFinite(rate) && rate > 0 ? rate : 1
     if (!parity || parity.states.length <= 2) return
 
-    // A hold tail may occur between parity rows. Use the timed tail in the
-    // simfile so a swing can never start in the middle of a sustained note.
-    const holds = new Map<number, Map<number, number>>()
-    for (const note of chart.getNotedata()) {
-      if (!isHoldNote(note) || note.fake || note.warped) continue
-      let row = holds.get(note.beat)
-      if (!row) {
-        row = new Map()
-        holds.set(note.beat, row)
-      }
-      row.set(note.col, chart.getSecondsFromBeat(note.beat + note.hold))
-    }
+    const flexiblePivot = parity.crossingPlan === "uncrossed"
     const heldTo = new Map<number, number>()
     // The worker returns a start node and an end node around the playable rows.
     for (let i = 1; i < parity.states.length - 1; i++) {
@@ -442,7 +434,8 @@ export class DancerMotion {
               (heldTo.get(col) ?? -Infinity) >= row.second &&
               (col === old.heel || col === old.toe)
           )
-        if (keepsHold) old.fixed = true
+        const fixedHold = keepsHold && !flexiblePivot
+        if (fixedHold) old.fixed = true
         const arrival = {
           second: row.second,
           beat: row.beat,
@@ -454,7 +447,9 @@ export class DancerMotion {
           toe,
           holdEnd,
           height: 0,
-          fixed: !!b || sharesPanel || keepsHold,
+          // A bracket has a fixed midpoint. Its single-panel entry or exit
+          // can use an inside corner while the planted shoe pivots.
+          fixed: !!b || sharesPanel || fixedHold,
           pivot: keepsHold,
           jump: false,
           overLimit: false,
@@ -476,6 +471,18 @@ export class DancerMotion {
       })
     }
     planFootwork(this.tracks, this.rate)
+  }
+}
+
+export class DancerMotion extends DancerStepPlan {
+  private returnStart = Infinity
+  readonly restTime: number = 0
+  private balance: BalancePoint[] = [{ second: -Infinity, x: 0, z: 0 }]
+  readonly fastSteps: { second: number; beat: number; label: string }[] = []
+
+  constructor(chart: Chart, layout: StageLayout, rate = 1, songEnd = 0) {
+    super(chart.stats.parity, layout, getDancerTiming(chart, rate))
+    if (this.stances.length === 1) return
     const flagged = new Map<number, string[]>()
     for (const [side, track] of this.tracks.entries())
       for (const step of track) {

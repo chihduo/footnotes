@@ -4,6 +4,8 @@
 // This file, ParityDataTypes, ParityCost, and StageLayouts have been written in a way that can
 // be extracted from SMEditor (some chart/note types/functions will need to be recreated)
 
+import type { DancerTiming } from "../../../gui/dancer/DancerFootwork"
+import { DancerStepPlan } from "../../../gui/dancer/DancerMotion"
 import {
   HoldNotedataEntry,
   Notedata,
@@ -33,8 +35,11 @@ import { STAGE_LAYOUTS, StageLayout } from "./StageLayouts"
 
 const SECOND_EPSILON = 0.0005
 
+type PathPriority = "style" | "swings" | "uncrossed"
+
 interface FootingPath {
   cost: number
+  reversed: number
   swings: number
   contactCost: number
   path: string
@@ -155,12 +160,17 @@ export class ParityInternals {
     )
   }
 
-  compute(startBeat: number, endBeat: number, notedata: Notedata) {
+  compute(
+    startBeat: number,
+    endBeat: number,
+    notedata: Notedata,
+    timing?: DancerTiming
+  ) {
     if (this.layout == undefined) return null
     const updatedRows = this.recalculateRows(startBeat, endBeat, notedata)
     const updatedStates = this.recalculateStates(updatedRows)
     const updatedCosts = this.computeCosts(updatedStates)
-    this.computeBestPath(updatedCosts)
+    const crossingPlan = this.computeBestPath(updatedCosts, timing)
 
     // Prune edge cache if too big
     const shouldPruneEdgeCache = this.edgeCacheSize > this.nEdges * 2
@@ -204,17 +214,8 @@ export class ParityInternals {
 
     // TODO: Potentially optimize by sending only deltas
 
-    const states = this.bestPath.map((key, i) => {
-      if (i == 0) return this.initialNode.state
-      if (i == this.bestPath!.length - 1) return this.endNode.state
-      return this.nodeMap.get(key)!.state
-    })
-
-    const bestNodes = this.bestPath.map((key, i) => {
-      if (i == 0) return this.initialNode
-      if (i == this.bestPath!.length - 1) return this.endNode
-      return this.nodeMap.get(key)!
-    })
+    const bestNodes = this.pathNodes(this.bestPath)
+    const states = bestNodes.map(node => node.state)
 
     const rowStatsTimeStart = performance.now()
 
@@ -235,6 +236,7 @@ export class ParityInternals {
     })
 
     return {
+      crossingPlan,
       parityLabels,
       states,
       rowTimestamps,
@@ -643,21 +645,95 @@ export class ParityInternals {
     }
   }
 
-  computeBestPath(updatedCosts: {
-    firstUpdatedCost: number
-    lastUpdatedCost: number
-  }) {
+  private pathNodes(keys: string[]) {
+    return keys.map((key, i) => {
+      if (i === 0) return this.initialNode
+      if (i === keys.length - 1) return this.endNode
+      return this.nodeMap.get(key)!
+    })
+  }
+
+  private fastBeatsByFoot(
+    nodes: ParityGraphNode[],
+    timing: DancerTiming,
+    crossingPlan: "original" | "uncrossed"
+  ) {
+    const { facingRows, techRows } = calculateRowStats(
+      nodes,
+      this.notedataRows,
+      this.layout,
+      this.footing
+    )
+    const plan = new DancerStepPlan(
+      {
+        states: nodes.map(node => node.state),
+        facingRows,
+        techRows,
+        crossingPlan,
+      },
+      this.layout,
+      timing
+    )
+    return plan.tracks.map(
+      track =>
+        new Set(track.filter(step => step.overLimit).map(step => step.beat))
+    )
+  }
+
+  private tryUncrossedPath(original: FootingPath, timing: DancerTiming) {
+    const originalNodes = this.pathNodes(original.path.split("*"))
+    const originalFast = this.fastBeatsByFoot(originalNodes, timing, "original")
+    const skipPivots = new Set<number>()
+    // If a pivot costs a fast step, try a different hold boundary once.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const next = this.findBestPath(-1, "uncrossed", skipPivots)
+      if (
+        !next ||
+        next.reversed >= original.reversed ||
+        next.swings > original.swings
+      )
+        break
+      const nodes = this.pathNodes(next.path.split("*"))
+      const fast = this.fastBeatsByFoot(nodes, timing, "uncrossed")
+      if (
+        fast.every((beats, side) =>
+          Array.from(beats).every(beat => originalFast[side].has(beat))
+        )
+      )
+        return next
+      if (attempt === 0) {
+        for (let i = 1; i < nodes.length - 1; i++) {
+          if (nodes[i - 1].children.get(nodes[i].key)?.HOLD_PIVOT)
+            skipPivots.add(i - 1)
+        }
+        if (!skipPivots.size) break
+      }
+    }
+    return original
+  }
+
+  private computeBestPath(
+    updatedCosts: { firstUpdatedCost: number; lastUpdatedCost: number },
+    timing?: DancerTiming
+  ) {
     const start = performance.now()
     const firstRow =
       this.cachedLowestCost.size > 1 ? updatedCosts.firstUpdatedCost : -1
     this.debugStats.cachedBestRows = firstRow + 1
 
-    let best = this.findBestPath(firstRow, false)
+    let best = this.findBestPath(firstRow, "style")
     // Keep the style's original solution when it already avoids these swings.
     // Otherwise an earlier step, even before an edited row, can free the
     // support foot. Replan the whole chart using the same legal graph edges.
     if (best?.swings) {
-      best = this.findBestPath(-1, true)
+      best = this.findBestPath(-1, "swings")
+      this.debugStats.cachedBestRows = 0
+    }
+    let crossingPlan: "original" | "uncrossed" | undefined
+    if (best?.reversed && timing) {
+      const next = this.tryUncrossedPath(best, timing)
+      crossingPlan = next === best ? "original" : "uncrossed"
+      best = next
       this.debugStats.cachedBestRows = 0
     }
     this.bestPath = best?.path.split("*")
@@ -665,13 +741,19 @@ export class ParityInternals {
     this.bestPathSet = new Set(this.bestPath ?? [])
     if (!best) console.error("No best path found")
     this.debugStats.pathUpdateTime = performance.now() - start
+    return crossingPlan
   }
 
-  private findBestPath(firstRow: number, avoidSwings: boolean) {
-    const cache = avoidSwings ? undefined : this.cachedLowestCost
+  private findBestPath(
+    firstRow: number,
+    priority: PathPriority,
+    skipPivots?: Set<number>
+  ) {
+    const cache = priority === "style" ? this.cachedLowestCost : undefined
     let previous = cache ?? new Map<string, FootingPath>()
     previous.set(this.initialNode.key, {
       cost: 0,
+      reversed: 0,
       swings: 0,
       contactCost: 0,
       path: this.initialNode.key,
@@ -681,6 +763,7 @@ export class ParityInternals {
     ])
     for (let row = firstRow; row < this.notedataRows.length; row++) {
       const rowBest = new Map<string, FootingPath>()
+      const allowPivot = priority === "uncrossed" && !skipPivots?.has(row + 1)
       for (const node of this.nodeRows[row]?.nodes ?? [this.initialNode]) {
         const prefix = previous.get(node.key)
         if (!prefix) continue
@@ -689,18 +772,26 @@ export class ParityInternals {
         for (const [child, edge] of edges) {
           const cost = prefix.cost + edge.TOTAL
           const swings = prefix.swings + (edge.ANCHORED_SWING ?? 0)
-          const contactCost = prefix.contactCost + (edge.CONTACT_COST ?? 0)
+          const reversed = prefix.reversed + (edge.REVERSED_SIDES ?? 0)
+          const contactCost =
+            prefix.contactCost +
+            (edge.CONTACT_COST ?? 0) -
+            (allowPivot ? (edge.HOLD_PIVOT ?? 0) : 0)
           const old = rowBest.get(child)
           if (old) {
-            // Preserve chart contacts first, then minimize anchored swings.
-            // The existing style costs decide between equally ergonomic paths.
-            const priority = avoidSwings
-              ? contactCost - old.contactCost || swings - old.swings
-              : 0
-            if (priority > 0 || (priority === 0 && !(cost < old.cost))) continue
+            // A hold pivot preserves both contacts and still pays the style's
+            // bracket cost. Only the uncrossed search may use it this way.
+            const order =
+              priority === "style"
+                ? 0
+                : contactCost - old.contactCost ||
+                  (priority === "uncrossed" ? reversed - old.reversed : 0) ||
+                  swings - old.swings
+            if (order > 0 || (order === 0 && !(cost < old.cost))) continue
           }
           const best = {
             cost,
+            reversed,
             swings,
             contactCost,
             path: prefix.path + "*" + child,
@@ -937,8 +1028,9 @@ export class ParityInternals {
   rowToKey(row: Row): string {
     let noteString = ""
     for (let i = 0; i < this.layout.columnCount; i++) {
-      if (row.notes[i]) {
-        noteString += i + "|"
+      const note = row.notes[i]
+      if (note) {
+        noteString += i + (isHoldNote(note) ? "H|" : "|")
       }
     }
     const fakeString = row.fakeMines
@@ -968,7 +1060,7 @@ export class ParityInternals {
         overrideString += i + "" + row.overrides[i]
       }
     }
-    return `${row.beat.toFixed(3)}-${noteString}-${fakeString}-${mineString}-${holdString}-${overrideString}`
+    return `${row.beat.toFixed(3)}@${row.second}-${noteString}-${fakeString}-${mineString}-${holdString}-${overrideString}`
   }
 
   private isSameSecond(
@@ -1134,7 +1226,8 @@ self.onmessage = (e: MessageEvent<ParityInboundMessage>) => {
       const result = instance.compute(
         e.data.startBeat,
         e.data.endBeat,
-        e.data.notedata
+        e.data.notedata,
+        e.data.timing
       )
       if (!result) {
         postMessage({

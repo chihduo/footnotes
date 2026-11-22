@@ -109,8 +109,8 @@ export const DEFAULT_WEIGHTS: { [key: string]: number } = {
   OTHER: 0,
   START_XO: 10000,
   SHARED_ARROW: 100000,
-  // One foot pressing two arrows at once (a bracket) costs this much, so it
-  // only happens when the chart leaves no other way
+  // Charge a full bracket even when its grounded hold pivot qualifies as an
+  // alternative to a reversed stance. Ordinary jumps still favor two feet.
   BRACKET: 100000,
   // Minimal effort footing: moving a foot straight across the pad (Up-Down or
   // Left-Right) costs this much extra. That's more than a slow same-foot step
@@ -145,6 +145,8 @@ export const WEIGHT_SHORT_NAMES: { [id: string]: string } = {
   SHARED_ARROW: "SHA",
   BRACKET: "BRK",
   ANCHORED_SWING: "ASW",
+  REVERSED_SIDES: "REV",
+  HOLD_PIVOT: "PVT",
   CONTACT_COST: "CON",
   OPPOSITE_MOVE: "OPP",
   OVERRIDE: "OVR",

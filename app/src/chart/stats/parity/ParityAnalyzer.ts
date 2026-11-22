@@ -1,3 +1,4 @@
+import { getDancerTiming } from "../../../gui/dancer/DancerFootwork"
 import { WaterfallManager } from "../../../gui/element/WaterfallManager"
 import { EventHandler } from "../../../util/EventHandler"
 import { Options } from "../../../util/Options"
@@ -39,6 +40,11 @@ export class ParityAnalyzer extends ChartAnalyzer {
         this.chart.stats.parity = undefined
         EventHandler.emit("parityModified")
       }
+    }
+    if (item === "audio.rate") {
+      if (this.chart.stats.parity?.crossingPlan || this.pendingJobs.size)
+        this.calculateAll()
+      return
     }
     // The footing style is set when the worker starts, so restart it.
     // A new worker also starts with empty caches of costs.
@@ -92,6 +98,7 @@ export class ParityAnalyzer extends ChartAnalyzer {
       startBeat,
       endBeat,
       notedata,
+      timing: getDancerTiming(this.chart, Options.audio.rate),
       debug: Options.debug.parity.showDebug || Options.debug.parity.showGraph,
     })
       .then(event => {

@@ -1,3 +1,4 @@
+import type { DancerTiming } from "../../../gui/dancer/DancerFootwork"
 import { Notedata } from "../../sm/NoteTypes"
 import {
   Foot,
@@ -10,6 +11,7 @@ import {
 import { ParityGraphNode } from "./ParityInternals"
 
 export interface ParityComputeData {
+  crossingPlan?: "original" | "uncrossed"
   parityLabels: Map<string, Foot>
   states: ParityState[]
   rowTimestamps: { beat: number; second: number }[]
@@ -85,6 +87,7 @@ export interface ParityInboundComputeMessage extends ParityBaseMessage {
   startBeat: number
   endBeat: number
   notedata: Notedata
+  timing: DancerTiming
   debug: boolean
 }
 
