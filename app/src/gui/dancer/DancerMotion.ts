@@ -90,11 +90,8 @@ function neutral(side: number): Contact {
   }
 }
 
-function sampleFoot(track: Contact[], second: number, rate: number): FootPose {
-  const i = indexAt(track, second)
-  const old = track[i]
-  const next = track[i + 1]
-  const pose = {
+function plantedFoot(old: Contact, second: number): FootPose {
+  return {
     x: old.x,
     z: old.z,
     yaw: old.yaw,
@@ -106,6 +103,24 @@ function sampleFoot(track: Contact[], second: number, rate: number): FootPose {
     contact: old.heel >= 0,
     holding: old.holdEnd > second,
   }
+}
+
+const READY_POSE: DancerPose = {
+  left: plantedFoot(neutral(-1), 0),
+  right: plantedFoot(neutral(1), 0),
+  hips: { x: 0, z: 0 },
+  yaw: 0,
+  compression: 0,
+  cue: "Ready",
+  coaching: "Face the screen",
+  paceWarning: "",
+}
+
+function sampleFoot(track: Contact[], second: number, rate: number): FootPose {
+  const i = indexAt(track, second)
+  const old = track[i]
+  const next = track[i + 1]
+  const pose = plantedFoot(old, second)
   if (!next) return pose
 
   // Transfer weight before takeoff. A bracket can pivot with a heel or toe
@@ -455,7 +470,9 @@ export class DancerMotion {
     return next && next.second - second <= 0.35 * this.rate ? next.label : ""
   }
 
-  sample(second: number): DancerPose {
+  /** A finished song has no active chart time and uses the starting stance. */
+  sample(second: number | null): DancerPose {
+    if (second === null) return READY_POSE
     const i = indexAt(this.stances, second)
     const old = this.stances[i]
     const next = this.stances[i + 1]
@@ -503,7 +520,7 @@ export class DancerMotion {
       0.21 * this.rate,
       (next?.second ?? Infinity) - old.second
     )
-    if (landing > 0)
+    if (landing > 0 && second < old.second + landing)
       compression +=
         Math.min(
           old.jump ? 0.085 : 0.022,

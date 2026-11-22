@@ -78,7 +78,7 @@ export default function DancerStage({
     let motion: DancerMotion | undefined
     let activeChart: Chart | undefined
     let states: ParityState[] | undefined
-    let lastTime = NaN
+    let lastTime: number | null = NaN
     let rate = NaN
     let area: DancerArea | undefined
     let scale = 0
@@ -166,6 +166,7 @@ export default function DancerStage({
       ) {
         sprite.visible = false
         layer.hidden = true
+        fastButton.hidden = true
         activeChart = undefined
         return
       }
@@ -186,21 +187,30 @@ export default function DancerStage({
         states = chart.stats.parity?.states
         rate = Options.audio.rate
         motion = new DancerMotion(chart, layout, rate)
-        fastButton.hidden = !motion.fastSteps.length
+        fastButton.hidden = !practice || !motion.fastSteps.length
         fastButton.textContent = "Fast steps (" + motion.fastSteps.length + ")"
         lastTime = NaN
       }
-      const time = chartView.getVisualTime()
+      // The chart clock continues beyond the recording. A pause mid-song still
+      // has a chart pose, and a seek or loop back into the song restores it.
+      const duration = app.chartManager.chartAudio.getSongLength()
+      const time =
+        duration > 0 && app.chartManager.time >= duration
+          ? null
+          : chartView.getVisualTime()
       if (!motion || time === lastTime) return
       lastTime = time
       const pose = motion.sample(time)
       scene.draw(pose)
       if (!practice) return
-      const label = !states
-        ? "Calculating footing…"
-        : states.length <= 2
-          ? "No steps in this chart"
-          : pose.cue
+      const label =
+        time === null
+          ? pose.cue
+          : !states
+            ? "Calculating footing…"
+            : states.length <= 2
+              ? "No steps in this chart"
+              : pose.cue
       if (cue.textContent !== label) cue.textContent = label
       const tip =
         states && states.length > 2 ? pose.paceWarning || pose.coaching : ""
@@ -217,6 +227,7 @@ export default function DancerStage({
     return () => {
       app.renderer.off("prerender", draw)
       EventHandler.off("userOptionUpdated", colors)
+      fastButton.hidden = true
       fastButton.removeEventListener("click", nextFastStep)
       fitButton.removeEventListener("click", fitDancer)
       observer.disconnect()
@@ -227,36 +238,38 @@ export default function DancerStage({
   }, [app, practice])
 
   return (
-    <section id="practice-dancer" aria-label="3D dance pad" ref={root} hidden>
-      <div
-        className="dancer-viewport"
-        ref={viewport}
-        tabIndex={0}
-        role="group"
-        aria-label="Dancer camera. Drag or use the arrow keys to rotate. Scroll, pinch or use plus and minus to zoom. Double-click or press Home for the rear view."
-        title="Drag to rotate. Scroll or pinch to zoom. Double-click for the rear view."
-      />
-      <div className="dancer-guidance" hidden={!practice}>
-        <div className="dancer-cue" ref={caption} />
-        <div className="dancer-coaching" ref={coaching} />
+    <>
+      <section id="practice-dancer" aria-label="3D dance pad" ref={root} hidden>
+        <div
+          className="dancer-viewport"
+          ref={viewport}
+          tabIndex={0}
+          role="group"
+          aria-label="Dancer camera. Drag or use the arrow keys to rotate. Scroll, pinch or use plus and minus to zoom. Double-click or press Home for the rear view."
+          title="Drag to rotate. Scroll or pinch to zoom. Double-click for the rear view."
+        />
+        <div className="dancer-guidance" hidden={!practice}>
+          <div className="dancer-cue" ref={caption} />
+          <div className="dancer-coaching" ref={coaching} />
+        </div>
         <button
+          className="dancer-fit"
+          ref={fit}
           type="button"
-          className="dancer-fast-steps"
-          ref={fastSteps}
-          hidden
-          title="Jump to the next step over the movement limit"
+          title="Fit the whole dancer at this angle"
         >
-          Fast steps
+          Fit
         </button>
-      </div>
+      </section>
       <button
-        className="dancer-fit"
-        ref={fit}
         type="button"
-        title="Fit the whole dancer at this angle"
+        className="dancer-fast-steps"
+        ref={fastSteps}
+        hidden
+        title="Jump to the next step over the movement limit"
       >
-        Fit
+        Fast steps
       </button>
-    </section>
+    </>
   )
 }

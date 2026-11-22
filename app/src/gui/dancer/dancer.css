@@ -21,7 +21,8 @@
   cursor: grab;
 }
 .dancer-viewport:focus-visible,
-#practice-dancer button:focus-visible {
+#practice-dancer button:focus-visible,
+.dancer-fast-steps:focus-visible {
   outline: 2px solid #92dacc;
   outline-offset: -2px;
 }
@@ -50,7 +51,8 @@
     height: 2.3em;
   }
 }
-#practice-dancer button {
+#practice-dancer button,
+.dancer-fast-steps {
   pointer-events: auto;
   border: 0;
   padding: 0 0.25em;
@@ -62,6 +64,13 @@
 .dancer-coaching.over-pace,
 .dancer-fast-steps {
   color: #ffcf92;
+}
+.dancer-fast-steps {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
 }
 .dancer-fit {
   position: absolute;

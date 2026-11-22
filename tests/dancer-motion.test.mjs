@@ -182,6 +182,44 @@ test("pad geometry distinguishes both sides of a double layout and empty charts 
   assert.equal(empty.right.heel, -1)
 })
 
+test("finishing the song restores the opening ready pose and seeking restores the steps", () => {
+  for (const type of [
+    "dance-single",
+    "dance-double",
+    "pump-single",
+    "pump-double",
+  ]) {
+    const last = STAGE_LAYOUTS[type].layout.length - 1
+    const clip = motion([row(1, last, 0, [L, R])], {
+      type,
+      angles: [2.8],
+      techs: [new Set([TechCategory.Crossovers])],
+    })
+    const opening = clip.sample(-2)
+    const lastStep = clip.sample(1)
+    assert.notEqual(lastStep.yaw, 0)
+    assert.equal(lastStep.left.heel, last)
+    assert.equal(clip.sample(3).left.heel, last)
+
+    const ready = clip.sample(null)
+    assert.deepEqual(ready, opening)
+    assert.equal(ready.yaw, 0)
+    assert.deepEqual(ready.hips, { x: 0, z: 0 })
+    assert.ok(ready.left.x < 0 && ready.left.x === -ready.right.x)
+    for (const foot of [ready.left, ready.right]) {
+      assert.ok(Math.abs(foot.x) < PANEL_SPACING / 2)
+      assert.equal(foot.z, 0)
+      assert.equal(foot.lift, 0)
+      assert.equal(foot.heel, -1)
+      assert.equal(foot.toe, -1)
+    }
+    assert.equal(ready.cue, "Ready")
+    assert.equal(ready.coaching, "Face the screen")
+    assert.equal(ready.paceWarning, "")
+    assert.deepEqual(clip.sample(1), lastStep)
+  }
+})
+
 test("YOU Hard's dense phrase lands every note at full tempo within the movement budget", () => {
   // Beats 151–157 at 130 BPM. Only 115 ms separate beats 154.5 and 154.75.
   const steps = [
