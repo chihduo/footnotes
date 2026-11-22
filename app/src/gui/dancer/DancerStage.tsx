@@ -54,17 +54,19 @@ export default function DancerStage({
 }) {
   const root = useRef<HTMLElement>(null)
   const viewport = useRef<HTMLDivElement>(null)
-  const caption = useRef<HTMLDivElement>(null)
   const coaching = useRef<HTMLDivElement>(null)
   const fastSteps = useRef<HTMLButtonElement>(null)
+  const fastLabel = useRef<HTMLSpanElement>(null)
+  const paceWarning = useRef<HTMLSpanElement>(null)
   const fit = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     const layer = root.current!
     const frame = viewport.current!
-    const cue = caption.current!
     const instruction = coaching.current!
     const fastButton = fastSteps.current!
+    const count = fastLabel.current!
+    const warning = paceWarning.current!
     const fitButton = fit.current!
     const sprite = new Sprite()
     sprite.name = "3D dancer"
@@ -78,7 +80,8 @@ export default function DancerStage({
     let motion: DancerMotion | undefined
     let activeChart: Chart | undefined
     let states: ParityState[] | undefined
-    let lastTime: number | null = NaN
+    let lastTime = NaN
+    let songEnd = NaN
     let rate = NaN
     let area: DancerArea | undefined
     let scale = 0
@@ -178,43 +181,38 @@ export default function DancerStage({
         scene.setLayout(layout)
         resizeScene()
       }
+      const duration = app.chartManager.chartAudio.getSongLength()
+      const visualEnd = duration > 0 ? chartView.getVisualTime(duration) : 0
       if (
         chart !== activeChart ||
         states !== chart.stats.parity?.states ||
-        rate !== Options.audio.rate
+        rate !== Options.audio.rate ||
+        songEnd !== visualEnd
       ) {
         activeChart = chart
         states = chart.stats.parity?.states
         rate = Options.audio.rate
-        motion = new DancerMotion(chart, layout, rate)
+        songEnd = visualEnd
+        motion = new DancerMotion(chart, layout, rate, songEnd)
         fastButton.hidden = !practice || !motion.fastSteps.length
-        fastButton.textContent = "Fast steps (" + motion.fastSteps.length + ")"
+        count.textContent = "Fast steps (" + motion.fastSteps.length + ")"
         lastTime = NaN
       }
-      // The chart clock continues beyond the recording. A pause mid-song still
-      // has a chart pose, and a seek or loop back into the song restores it.
-      const duration = app.chartManager.chartAudio.getSongLength()
-      const time =
-        duration > 0 && app.chartManager.time >= duration
-          ? null
-          : chartView.getVisualTime()
-      if (!motion || time === lastTime) return
+      if (!motion) return
+      // The chart clock keeps running through the return steps after the audio.
+      const time = Math.min(chartView.getVisualTime(), motion.restTime)
+      if (time === lastTime) return
       lastTime = time
       const pose = motion.sample(time)
       scene.draw(pose)
       if (!practice) return
-      const label =
-        time === null
-          ? pose.cue
-          : !states
-            ? "Calculating footing…"
-            : states.length <= 2
-              ? "No steps in this chart"
-              : pose.cue
-      if (cue.textContent !== label) cue.textContent = label
-      const tip =
-        states && states.length > 2 ? pose.paceWarning || pose.coaching : ""
-      instruction.classList.toggle("over-pace", !!pose.paceWarning)
+      const tip = !states
+        ? "Calculating footing…"
+        : states.length <= 2
+          ? "No steps in this chart"
+          : pose.coaching
+      if (warning.textContent !== pose.paceWarning)
+        warning.textContent = pose.paceWarning
       if (instruction.textContent !== tip) instruction.textContent = tip
     }
     const observer = new ResizeObserver(resizeScene)
@@ -248,10 +246,7 @@ export default function DancerStage({
           aria-label="Dancer camera. Drag or use the arrow keys to rotate. Scroll, pinch or use plus and minus to zoom. Double-click or press Home for the rear view."
           title="Drag to rotate. Scroll or pinch to zoom. Double-click for the rear view."
         />
-        <div className="dancer-guidance" hidden={!practice}>
-          <div className="dancer-cue" ref={caption} />
-          <div className="dancer-coaching" ref={coaching} />
-        </div>
+        <div className="dancer-coaching" ref={coaching} hidden={!practice} />
         <button
           className="dancer-fit"
           ref={fit}
@@ -268,7 +263,8 @@ export default function DancerStage({
         hidden
         title="Jump to the next step over the movement limit"
       >
-        Fast steps
+        <span ref={fastLabel}>Fast steps</span>
+        <span className="dancer-pace-warning" ref={paceWarning} />
       </button>
     </>
   )

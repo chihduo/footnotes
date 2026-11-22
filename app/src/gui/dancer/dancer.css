@@ -9,7 +9,7 @@
   container-type: inline-size;
 }
 #practice-dancer[hidden],
-.dancer-guidance[hidden],
+.dancer-coaching[hidden],
 .dancer-fast-steps[hidden] {
   display: none;
 }
@@ -26,29 +26,27 @@
   outline: 2px solid #92dacc;
   outline-offset: -2px;
 }
-.dancer-guidance {
+.dancer-coaching {
+  display: grid;
+  align-content: center;
+  flex: none;
+  height: 2.7em;
   text-align: center;
-  color: #e2edeb;
-  font-size: clamp(0.7rem, 1.2vw, 0.9rem);
-  line-height: 1.15;
+  text-wrap: balance;
+  color: #d0ece5;
+  font-size: clamp(1.125rem, 8cqi, 1.625rem);
+  font-weight: 600;
+  line-height: 1.35;
   text-shadow: 0 1px 3px #10151a;
 }
-.dancer-cue,
-.dancer-coaching {
-  height: 1.2em;
-}
-.dancer-coaching {
-  font-size: 0.9em;
-  color: #a6cdc6;
-}
-@container (max-width: 19rem) {
+@container (max-width: 11rem) {
   .dancer-coaching {
-    height: 2.3em;
+    height: 4.05em;
   }
 }
-@container (max-width: 13rem) {
-  .dancer-cue {
-    height: 2.3em;
+@container (min-width: 22rem) {
+  .dancer-coaching {
+    height: 1.35em;
   }
 }
 #practice-dancer button,
@@ -61,16 +59,22 @@
   cursor: pointer;
   text-decoration: underline;
 }
-.dancer-coaching.over-pace,
-.dancer-fast-steps {
-  color: #ffcf92;
-}
 .dancer-fast-steps {
   position: absolute;
   top: 0.5rem;
   left: 0.5rem;
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
+  color: #ffcf92;
+  text-align: left;
+  text-decoration: none;
+}
+.dancer-fast-steps > :first-child {
+  text-decoration: underline;
+}
+.dancer-pace-warning {
+  display: block;
+  max-width: 16em;
 }
 .dancer-fit {
   position: absolute;

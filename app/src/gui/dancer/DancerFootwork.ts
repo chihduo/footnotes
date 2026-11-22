@@ -62,6 +62,19 @@ function speedTimesDuration(distance: number, height: number) {
   return Math.hypot(peakSlope * distance, Math.PI * height)
 }
 
+export function comfortableSwingSeconds(
+  distance: number,
+  height: number,
+  turn: number,
+  jump = false
+) {
+  return Math.max(
+    (jump ? 0.25 : 0.16) + 0.26 * distance,
+    speedTimesDuration(distance, height) / COMFORT_SPEED,
+    (peakSlope * Math.abs(turn)) / FOOT_TURN_LIMIT
+  )
+}
+
 interface Landing {
   x: number
   z: number
@@ -184,11 +197,7 @@ export function planFootwork(tracks: Contact[][], rate: number) {
       const turn = turnBetween(old.yaw, hit.yaw)
       const duration = Math.min(
         window,
-        Math.max(
-          (hit.jump ? 0.25 : 0.16) + 0.26 * distance,
-          travel / COMFORT_SPEED,
-          (peakSlope * Math.abs(turn)) / FOOT_TURN_LIMIT
-        )
+        comfortableSwingSeconds(distance, hit.height, turn, hit.jump)
       )
       hit.start = hit.second - duration * rate
       // A single panel accepts any shoe angle. A bracket must reach both.

@@ -28,7 +28,7 @@ For more songs, the [Songs page](https://chihduo.github.io/footnotes/songs/) has
 
 On Dance and Pump single and double charts, the 3D dancer stands on the pad above the arrows. The camera starts directly behind the dancer, looking down at the pad at 45°. Drag over the pad to orbit or tilt the camera. Use the wheel or pinch to zoom. The pad stays fixed as the dancer shifts weight, turns, and lands. Double-click for the starting view, or use **Fit** to see the whole dancer at your current angle. The **3D dancer** button in the top bar shows or hides the dancer.
 
-For dense passages, the dancer chooses shorter landings inside each arrow and keeps its feet close to the pad. Music and foot strikes follow the selected playback rate. If a planned step exceeds the movement limit, a cue under the dancer shows its foot, arrow, and beat. Click **Fast steps** to jump between flagged notes.
+For dense passages, the dancer chooses shorter landings inside each arrow and keeps its feet close to the pad. Music and foot strikes follow the selected playback rate. If a planned step exceeds the movement limit, the **Fast steps** control shows its foot, arrow, and beat. Click it to jump between flagged notes. The caption under the dancer gives body guidance such as “Weight on right foot.”
 
 To try the dancer in this checkout, run `npm ci` and `npm run dev`, then [open the local Medium practice chart](http://127.0.0.1:5173/footnotes/app/?url=../demo/you.sm&chartType=dance-single&chartIndex=2&flags=D). Beat 144 has a left-foot crossover.
 

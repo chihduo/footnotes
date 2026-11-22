@@ -464,13 +464,12 @@ export class ChartRenderer extends Container<ChartRendererComponent> {
   }
 
   /**
-   * Gets the current time including play and visual offset
+   * Applies the play and visual offsets to a song time (the current time by default).
    *
    * @return {*}  {number}
    * @memberof ChartRenderer
    */
-  getVisualTime(): number {
-    let time = this.cachedTime
+  getVisualTime(time = this.cachedTime): number {
     if (
       this.chartManager.getMode() == EditMode.Play ||
       this.chartManager.getMode() == EditMode.Record

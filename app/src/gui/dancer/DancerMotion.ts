@@ -9,6 +9,7 @@ import type { StageLayout } from "../../chart/stats/parity/StageLayouts"
 import { clamp, lerp } from "../../util/Math"
 import {
   PANEL_SPACING,
+  comfortableSwingSeconds,
   planFootwork,
   swingProgress,
   turnBetween,
@@ -18,6 +19,9 @@ import {
 export { PANEL_SPACING } from "./DancerFootwork"
 const HIP_SPEED_LIMIT = 1.35
 const BODY_TURN_LIMIT = 4 // radians per real second
+const LANDING_SECONDS = 0.21
+const WEIGHT_SETTLE_SECONDS = 0.45
+const BALANCE_SAMPLE_SECONDS = 0.075
 
 export interface FootPose {
   x: number
@@ -37,7 +41,6 @@ interface Stance {
   beat: number
   turnStart: number
   yaw: number
-  cue: string
   jump: boolean
   crossed: boolean
 }
@@ -48,7 +51,6 @@ export interface DancerPose {
   hips: { x: number; z: number }
   yaw: number
   compression: number
-  cue: string
   coaching: string
   paceWarning: string
 }
@@ -105,17 +107,6 @@ function plantedFoot(old: Contact, second: number): FootPose {
   }
 }
 
-const READY_POSE: DancerPose = {
-  left: plantedFoot(neutral(-1), 0),
-  right: plantedFoot(neutral(1), 0),
-  hips: { x: 0, z: 0 },
-  yaw: 0,
-  compression: 0,
-  cue: "Ready",
-  coaching: "Face the screen",
-  paceWarning: "",
-}
-
 function sampleFoot(track: Contact[], second: number, rate: number): FootPose {
   const i = indexAt(track, second)
   const old = track[i]
@@ -162,7 +153,7 @@ function planBalance(tracks: Contact[][], rate: number) {
       times.add(hit.start - 0.11 * rate)
       times.add((hit.start + hit.second) / 2)
       times.add(hit.second)
-      times.add(hit.second + 0.45 * rate)
+      times.add(hit.second + WEIGHT_SETTLE_SECONDS * rate)
     }
   const points: BalancePoint[] = [{ second: -Infinity, x: 0, z: 0 }]
   for (const second of [...times].sort((a, b) => a - b)) {
@@ -241,7 +232,96 @@ function leavePanel(
   track.push(rest)
 }
 
+// Continue the last tempo at a comfortable walking cadence. Very fast beats
+// can span several counts, and a slow beat can be subdivided.
+function returnCadence(chart: Chart, start: number, rate: number) {
+  const beat = Math.ceil(chart.getBeatFromSeconds(start))
+  const origin = chart.getSecondsFromBeat(beat)
+  const beatLength = chart.getSecondsFromBeat(beat + 1) - origin
+  const walkingBeat = 0.46 * rate
+  if (!Number.isFinite(beatLength) || beatLength <= 0)
+    return { origin: start, period: walkingBeat }
+  const subdivision = 2 ** Math.round(Math.log2(walkingBeat / beatLength))
+  return { origin, period: beatLength * subdivision }
+}
+
+// Plan on separate tracks so returning home cannot change a chart landing.
+// Split long walks across a double pad. In a crossover the feet pass on
+// opposite sides, preserving the depth order of the final stance.
+function planReturnSteps(
+  tracks: Contact[][],
+  chart: Chart,
+  start: number,
+  rate: number
+) {
+  const feet = tracks.map(track => track[track.length - 1])
+  const home = [neutral(-1), neutral(1)]
+  const distance = feet.map((foot, i) =>
+    Math.hypot(home[i].x - foot.x, home[i].z - foot.z)
+  )
+  const crossed = feet[0].x > feet[1].x
+  const shoesClose =
+    Math.hypot(feet[0].x - feet[1].x, feet[0].z - feet[1].z) < 0.18
+  const strides = Math.max(
+    crossed ? 2 : 1,
+    Math.ceil(Math.max(...distance) / 0.4)
+  )
+  const front = feet[0].z <= feet[1].z ? 0 : 1
+  let first = feet[0].x + feet[1].x > 0 ? 0 : 1
+  // When uncrossing, lead with the foot that can move away in depth.
+  if (crossed) first = feet[0].z + feet[1].z < 0 ? 1 - front : front
+  const returning = feet.map(foot => [foot])
+  const { origin, period } = returnCadence(chart, start, rate)
+  let lastLanding = start
+  for (let stride = 1; stride <= strides; stride++) {
+    const t = stride / strides
+    for (const side of [first, 1 - first]) {
+      const from = feet[side]
+      const end = home[side]
+      if (
+        distance[side] < 1e-6 &&
+        Math.abs(turnBetween(from.yaw, end.yaw)) < 1e-6 &&
+        from.heel < 0
+      )
+        continue
+      const next = { ...end }
+      if (stride < strides) {
+        let across = t
+        if (crossed)
+          across = shoesClose
+            ? (stride - 1) / (strides - 1)
+            : Math.sin((Math.PI * t) / 2)
+        next.x = lerp(from.x, end.x, across)
+        next.z = lerp(from.z, end.z, t)
+        if (crossed)
+          next.z += (side === front ? -0.23 : 0.23) * Math.sin(Math.PI * t)
+        next.yaw = from.yaw + turnBetween(from.yaw, end.yaw) * t
+      }
+      const steps = returning[side]
+      const old = steps[steps.length - 1]
+      const travel = Math.hypot(next.x - old.x, next.z - old.z)
+      const swing = comfortableSwingSeconds(
+        travel,
+        0.1,
+        turnBetween(old.yaw, next.yaw)
+      )
+      // Leave time for double support and for the hips to shift before lift-off.
+      next.start = lastLanding + 0.19 * rate
+      const earliest = next.start + swing * rate
+      next.second = origin + Math.ceil((earliest - origin) / period) * period
+      steps.push(next)
+      lastLanding = next.second
+    }
+  }
+  planFootwork(returning, rate)
+  for (const [side, steps] of returning.entries())
+    tracks[side].push(...steps.slice(1))
+  return lastLanding
+}
+
 export class DancerMotion {
+  private returnStart = Infinity
+  readonly restTime: number = 0
   private tracks = [[neutral(-1)], [neutral(1)]]
   private balance: BalancePoint[] = [{ second: -Infinity, x: 0, z: 0 }]
   readonly fastSteps: { second: number; beat: number; label: string }[] = []
@@ -251,7 +331,6 @@ export class DancerMotion {
       beat: -Infinity,
       turnStart: -Infinity,
       yaw: 0,
-      cue: "Ready",
       jump: false,
       crossed: false,
     },
@@ -260,11 +339,12 @@ export class DancerMotion {
   constructor(
     chart: Chart,
     layout: StageLayout,
-    private rate = 1
+    private rate = 1,
+    songEnd = 0
   ) {
     if (!Number.isFinite(rate) || rate <= 0) this.rate = 1
     const parity = chart.stats.parity
-    if (!parity) return
+    if (!parity || parity.states.length <= 2) return
 
     // A hold tail may occur between parity rows. Use the timed tail in the
     // simfile so a swing can never start in the middle of a sustained note.
@@ -297,11 +377,7 @@ export class DancerMotion {
       )
       const maxTurn = (BODY_TURN_LIMIT * turnWindow) / (1.5 * this.rate)
       const yaw = previous.yaw + clamp(turn, -maxTurn, maxTurn)
-      const steps: string[] = []
       const arrivals: Contact[] = []
-      let bracket = false
-      let repeated = false
-      let support = ""
       for (const [side, heelPart] of [
         Foot.LEFT_HEEL,
         Foot.RIGHT_HEEL,
@@ -314,7 +390,6 @@ export class DancerMotion {
         const b = layout.layout[toe]
         const track = this.tracks[side]
         const old = track[track.length - 1]
-        const name = side === 0 ? "Left" : "Right"
         const holdEnd = Math.max(
           heldTo.get(heel) ?? -Infinity,
           heldTo.get(toe) ?? -Infinity
@@ -350,10 +425,7 @@ export class DancerMotion {
             continue
           }
         }
-        if (!moved && heel === old.heel && toe === old.toe) {
-          if (holdEnd > row.second) support = name.toLowerCase()
-          continue
-        }
+        if (!moved && heel === old.heel && toe === old.toe) continue
         const otherHeel = side === 0 ? Foot.RIGHT_HEEL : Foot.LEFT_HEEL
         const sharesPanel = moved && !b && row.footColumns[otherHeel] === heel
         // Use the free edge of the panel during a same-panel handoff.
@@ -388,50 +460,22 @@ export class DancerMotion {
           overLimit: false,
         }
         track.push(arrival)
-        if (moved) {
-          arrivals.push(arrival)
-          steps.push(
-            name +
-              " " +
-              panelLabel(layout, heel) +
-              (b ? panelLabel(layout, toe) : "")
-          )
-          repeated = old.heel === heel && old.toe === toe
-          bracket ||= !!b
-        }
+        if (moved) arrivals.push(arrival)
       }
       const kinds = parity.techRows[i - 1]
       const crossed = kinds?.has(TechCategory.Crossovers) ?? false
-      const jump = steps.length === 2 && !kinds?.has(TechCategory.Holdswitch)
+      const jump = arrivals.length === 2 && !kinds?.has(TechCategory.Holdswitch)
       if (jump) for (const foot of arrivals) foot.jump = true
-      let cue = steps.join(" + ") || "Stay planted"
-      if (kinds?.has(TechCategory.Holdswitch)) cue = "Switch hold · " + cue
-      else if (jump && bracket) cue = "Bracket jump · " + cue
-      else if (jump && crossed) cue = "Cross jump · " + cue
-      else if (jump) cue = "Jump · " + cue
-      else if (bracket) cue = "Bracket · " + cue
-      else if (crossed && !previous.crossed) cue = "Cross · " + cue
-      else if (!crossed && previous.crossed) cue = "Unwind · " + cue
-      else if (
-        kinds?.has(TechCategory.Footswitches) ||
-        kinds?.has(TechCategory.Sideswitches)
-      )
-        cue = "Switch · " + cue
-      else if (support) cue = "Hold " + support + " · " + cue
-      else if (holdHeads?.size) cue = "Hold · " + cue
-      else if (repeated) cue = "Retap · " + cue
       this.stances.push({
         second: row.second,
         beat: row.beat,
         turnStart: row.second - turnWindow,
         yaw,
         jump,
-        cue,
         crossed,
       })
     }
     planFootwork(this.tracks, this.rate)
-    this.balance = planBalance(this.tracks, this.rate)
     const flagged = new Map<number, string[]>()
     for (const [side, track] of this.tracks.entries())
       for (const step of track) {
@@ -458,6 +502,41 @@ export class DancerMotion {
             Number(beat.toFixed(3)),
         })
     }
+
+    const last = this.stances[this.stances.length - 1]
+    this.returnStart = Math.max(
+      songEnd,
+      last.second + LANDING_SECONDS * this.rate
+    )
+    for (const track of this.tracks) {
+      const foot = track[track.length - 1]
+      this.returnStart = Math.max(this.returnStart, foot.second, foot.holdEnd)
+    }
+    const landing = planReturnSteps(
+      this.tracks,
+      chart,
+      this.returnStart,
+      this.rate
+    )
+    const facingFront = Math.max(
+      landing,
+      this.returnStart +
+        (1.5 * Math.abs(last.yaw) * this.rate) / BODY_TURN_LIMIT
+    )
+    this.stances.push({
+      second: facingFront,
+      beat: Infinity,
+      turnStart: this.returnStart,
+      yaw: 0,
+      jump: false,
+      crossed: false,
+    })
+    this.balance = planBalance(this.tracks, this.rate)
+    // Include the post-landing weight transfer and the balance sampling window.
+    this.restTime = Math.max(
+      facingFront + LANDING_SECONDS * this.rate,
+      landing + (WEIGHT_SETTLE_SECONDS + BALANCE_SAMPLE_SECONDS) * this.rate
+    )
   }
 
   private warningAt(second: number) {
@@ -470,9 +549,7 @@ export class DancerMotion {
     return next && next.second - second <= 0.35 * this.rate ? next.label : ""
   }
 
-  /** A finished song has no active chart time and uses the starting stance. */
-  sample(second: number | null): DancerPose {
-    if (second === null) return READY_POSE
+  sample(second: number): DancerPose {
     const i = indexAt(this.stances, second)
     const old = this.stances[i]
     const next = this.stances[i + 1]
@@ -480,15 +557,20 @@ export class DancerMotion {
     const right = sampleFoot(this.tracks[1], second, this.rate)
     // Average nearby points on the speed-limited weight-transfer path. This
     // rounds the change of direction and anticipates the next support foot.
-    const before = balanceAt(this.balance, second - 0.075 * this.rate)
+    const before = balanceAt(
+      this.balance,
+      second - BALANCE_SAMPLE_SECONDS * this.rate
+    )
     const at = balanceAt(this.balance, second)
-    const after = balanceAt(this.balance, second + 0.075 * this.rate)
+    const after = balanceAt(
+      this.balance,
+      second + BALANCE_SAMPLE_SECONDS * this.rate
+    )
     const hips = {
       x: (before.x + 2 * at.x + after.x) / 4,
       z: (before.z + 2 * at.z + after.z) / 4,
     }
     let yaw = old.yaw
-    let cue = old.cue
     let preparingJump = false
     let compression = 0
     if (next) {
@@ -501,12 +583,6 @@ export class DancerMotion {
           next.yaw,
           smooth((second - next.turnStart) / turnDuration)
         )
-      if (
-        phase > 0 &&
-        (i === 0 ||
-          second - old.second > Math.min(0.1 * this.rate, duration * 0.35))
-      )
-        cue = next.cue
       if (next.jump) {
         preparingJump = phase > 0
         const depth = Math.min(
@@ -517,7 +593,7 @@ export class DancerMotion {
       }
     }
     const landing = Math.min(
-      0.21 * this.rate,
+      LANDING_SECONDS * this.rate,
       (next?.second ?? Infinity) - old.second
     )
     if (landing > 0 && second < old.second + landing)
@@ -527,15 +603,6 @@ export class DancerMotion {
           (0.9 * landing) / (Math.PI * this.rate)
         ) *
         Math.sin(Math.PI * clamp((second - old.second) / landing, 0, 1)) ** 2
-    if (
-      second - old.second > 0.55 * this.rate &&
-      (!next || next.second - second > 0.34 * this.rate)
-    ) {
-      if (left.holding && right.holding) cue = "Hold both feet"
-      else if (left.holding) cue = "Hold left"
-      else if (right.holding) cue = "Hold right"
-      else cue = next || i === 0 ? "Ready" : "Steps complete"
-    }
     let coaching = ""
     if (preparingJump)
       coaching =
@@ -550,14 +617,14 @@ export class DancerMotion {
     else if (left.holding && right.holding) coaching = "Keep both feet planted"
     else if (left.holding) coaching = "Keep left foot planted"
     else if (right.holding) coaching = "Keep right foot planted"
+    else if (second >= this.restTime || i === 0) coaching = "Face the screen"
+    else if (second >= this.returnStart) coaching = "Step back to center"
     else if (old.crossed) coaching = "Keep hips turned"
-    else if (i === 0) coaching = "Face the screen"
     return {
       left,
       right,
       hips,
       yaw,
-      cue,
       coaching,
       compression,
       paceWarning: this.warningAt(second),
