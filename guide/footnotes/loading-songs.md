@@ -5,10 +5,9 @@ You can try the demo song, pick one on the Songs page, load a song from a link, 
 
 ## The demo song
 
-The [Footnotes home page](https://chihduo.github.io/footnotes/) has a demo song: "YOU" by YURIA, with five charts from **Beginner** (level 1) to **Challenge** (level 9).
-Trick Master Mint made the Beginner, Easy, Medium and Hard charts, and Shuffle Master Mint made the Challenge chart.
-**Try the demo song** opens the **Hard** chart. To start with another chart, press its button in the **Try the demo** card.
-The song and charts are used with permission and aren't covered by Footnotes' license, so please don't redistribute them.
+Choose **Try the demo song** on the [Footnotes home page](https://chihduo.github.io/footnotes/) to play Trick Master Mint’s **Hard (9)** chart of "God Knows... (DJ Bouche Euro Mix)" by Aya Hirano.
+The **Try the demo** card also offers Beginner (1), Easy (4), Medium (6), Challenge (11) and KB Edit (13).
+The chart and music load from the Mintmania pack.
 
 ## The Songs page
 
@@ -21,7 +20,7 @@ To find a song, type part of its title or artist in the search box.
 Two songs also have charts for **double**, which uses both pads, listed after their single charts.
 
 The packs are hosted in their own repository, [chihduo/footnotes-packs](https://github.com/chihduo/footnotes-packs).
-Like the demo song, their songs and charts aren't covered by Footnotes' license, so please don't redistribute them.
+The packs’ songs and charts aren't covered by Footnotes' license, so please don't redistribute them.
 
 ## From a link
 

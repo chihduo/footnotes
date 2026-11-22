@@ -669,8 +669,7 @@ h2 {
 
 /* Demo charts: one tile per chart, linking straight to practice mode */
 
-/* Rows of two, three or all five tiles, as the card's width allows, with a
-   shorter last row centered */
+/* Use two, three or six columns as the demo card widens. */
 .demo-charts {
   container-type: inline-size;
   display: flex;
@@ -689,9 +688,9 @@ h2 {
   }
 }
 
-@container (min-width: 480px) {
+@container (min-width: 560px) {
   .demo-charts > .demo-chart {
-    flex-basis: calc((100% - 32px) / 5);
+    flex-basis: calc((100% - 40px) / 6);
   }
 }
 

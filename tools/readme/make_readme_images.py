@@ -196,10 +196,11 @@ def paragraph(ts, lines, top):
 
 DEMO_CHARTS = [
     ("Beginner", 1, "#3fd6f5"),
-    ("Easy", 3, "#6ad35f"),
-    ("Medium", 5, "#ffd23f"),
-    ("Hard", 7, "#ff5a5a"),
-    ("Challenge", 9, "#c27bff"),
+    ("Easy", 4, "#6ad35f"),
+    ("Medium", 6, "#ffd23f"),
+    ("Hard", 9, "#ff5a5a"),
+    ("Challenge", 11, "#c27bff"),
+    ("KB Edit", 13, "#a0a4ad"),
 ]
 TILES_PER_ROW = 3
 TILE_GAP = 8
@@ -210,8 +211,7 @@ TILES_HEIGHT = TILE_ROWS * 64 + (TILE_ROWS - 1) * TILE_GAP
 def demo_tiles(ts, y):
     """The demo card's chart tiles: a colored top edge, the meter and the difficulty.
 
-    Like the website's card on a desktop screen, they sit in rows of three, with a shorter last
-    row centered.
+    Like the website's card on a desktop screen, they sit in rows of three.
     """
     width = (TEXT_WIDTH - (TILES_PER_ROW - 1) * TILE_GAP) / TILES_PER_ROW
     defs, body = "", ""
@@ -243,8 +243,8 @@ def make_song_cards(ts):
     """The three cards of the website's "Pick a song" section."""
     cards = [
         ("card-demo", "Try the demo",
-         '"YOU" by YURIA, with charts by Trick Master Mint and Shuffle Master Mint, '
-         "used with permission. Pick a chart to start dancing.",
+         '"God Knows... (DJ Bouche Euro Mix)" by Aya Hirano, from the '
+         "Mintmania pack. Start on Hard (9) or pick another chart.",
          "tiles", None),
         ("card-link", "From a link",
          "Paste a link to a .sm or .ssc file. Its music file has to sit next to it.",

@@ -9,7 +9,7 @@ The camera looks down over the dancer’s back at 45°. Watch the hips shift ove
 
 ## Your first song
 
-1. Open [Footnotes](https://chihduo.github.io/footnotes/) and press **Try the demo song**. It opens the **Hard** chart of "YOU" by YURIA. For an easier start, pick **Beginner** or **Easy** in the **Try the demo** card instead.
+1. Open [Footnotes](https://chihduo.github.io/footnotes/) and press **Try the demo song**. It opens the **Hard (9)** chart of "God Knows... (DJ Bouche Euro Mix)" by Aya Hirano. For an easier start, pick **Beginner** or **Easy** in the **Try the demo** card instead.
 2. Press <kbd>Space</kbd> or the play button to start the song, and watch the bot.
 3. If it's too fast to follow, lower **Playback** in the top bar to slow the song down, and use **Loop** to repeat a hard part.
 

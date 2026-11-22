@@ -2,12 +2,17 @@ import dynamicImportVariables from '@rollup/plugin-dynamic-import-vars';
 import react from '@vitejs/plugin-react';
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import monacoEditorEsmPlugin from 'vite-plugin-monaco-editor-esm';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vitejs.dev/config/
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  const packsUrl = new URL(
+    loadEnv(mode, process.cwd()).VITE_PACKS_URL || 'https://chihduo.github.io/footnotes-packs/'
+  )
+  if (!packsUrl.pathname.endsWith('/')) packsUrl.pathname += '/'
+  const demoSimfile = new URL('mintmania/godknows/file.sm', packsUrl)
   try {
     process.env.VITE_GIT_COMMIT_DATE = execSync('git log -1 --format=%cI').toString().trimEnd()
     process.env.VITE_GIT_COMMIT_HASH = execSync('git rev-parse HEAD').toString().trimEnd().slice(0, 7)
@@ -17,6 +22,12 @@ export default defineConfig(() => {
   }
   return {
     base: "/footnotes/",
+    define: {
+      'import.meta.env.VITE_PACKS_URL': JSON.stringify(packsUrl.href),
+      'import.meta.env.DEMO_SIMFILE_PARAM': JSON.stringify(
+        encodeURIComponent(demoSimfile.href)
+      ),
+    },
     appType: "mpa",
     plugins: [
       react(),

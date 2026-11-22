@@ -35,7 +35,7 @@
   text-wrap: balance;
   color: #d0ece5;
   font-size: clamp(1.125rem, 8cqi, 1.625rem);
-  font-weight: 600;
+  font-weight: normal;
   line-height: 1.35;
   text-shadow: 0 1px 3px #10151a;
 }

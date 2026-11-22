@@ -7,7 +7,7 @@
 <a href="https://chihduo.github.io/footnotes/"><img src=".github/readme/hero.svg" width="100%" alt="Footnotes. The notes, with your feet written in. Learn to dance any StepMania chart. A dancing bot shows which foot goes where, right above the arrows you're about to hit." /></a>
 
 <p>
-  <a href="https://chihduo.github.io/footnotes/app/?url=../demo/you.sm&chartType=dance-single&chartIndex=3&flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
+  <a href="https://chihduo.github.io/footnotes/app/?url=https://chihduo.github.io/footnotes-packs/mintmania/godknows/file.sm&chartType=dance-single&chartIndex=3&flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/button-songs.svg" height="44" alt="Load your own song" /></a>
   <a href="https://chihduo.github.io/footnotes/songs/"><img src=".github/readme/button-more-songs.svg" height="44" alt="More songs…" /></a>
 </p>
@@ -17,7 +17,7 @@
 Footnotes plays StepMania simfiles (`.sm` and `.ssc`) together with their music.
 
 <p>
-  <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-demo.svg" width="32%" alt="Try the demo: &quot;YOU&quot; by YURIA, with charts by Trick Master Mint and Shuffle Master Mint, used with permission. Pick a chart to start dancing: Beginner 1, Easy 3, Medium 5, Hard 7 or Challenge 9." /></a>
+  <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-demo.svg" width="32%" alt="Try God Knows... (DJ Bouche Euro Mix) by Aya Hirano on Hard 9, or choose Beginner 1, Easy 4, Medium 6, Challenge 11 or KB Edit 13." /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/card-link.svg" width="32%" alt="From a link: paste a link to a .sm or .ssc file. Its music file has to sit next to it." /></a>
   <a href="https://chihduo.github.io/footnotes/app/?flags=D"><img src=".github/readme/card-computer.svg" width="32%" alt="From your computer: import a song folder that holds a .sm or .ssc file and its music. It stays in your browser." /></a>
 </p>
@@ -30,7 +30,7 @@ On Dance and Pump single and double charts, the 3D dancer stands on the pad abov
 
 For dense passages, the dancer chooses shorter landings inside each arrow and keeps its feet close to the pad. Music and foot strikes follow the selected playback rate. If a planned step exceeds the movement limit, the **Fast steps** control shows its foot, arrow, and beat. Click it to jump between flagged notes. The caption under the dancer gives body guidance such as “Weight on right foot.”
 
-To try the dancer in this checkout, run `npm ci` and `npm run dev`, then [open the local Medium practice chart](http://127.0.0.1:5173/footnotes/app/?url=../demo/you.sm&chartType=dance-single&chartIndex=2&flags=D). Beat 144 has a left-foot crossover.
+To try the dancer in this checkout, run `npm ci` and `npm run dev`, then [open the local home page](http://127.0.0.1:5173/footnotes/) and choose **Try the demo song** for the Hard (9) chart of "God Knows... (DJ Bouche Euro Mix)".
 
 <p>
   <img src=".github/readme/step-bot.svg" width="32%" alt="Watch the bot: the pad at the top shows where each foot goes. Blue is your left foot, orange is your right." />
@@ -85,7 +85,7 @@ Practice mode is toggled with <kbd>Shift</kbd>+<kbd>H</kbd> or **View > Dance pr
 
 Every push to `master` builds the site and publishes it to GitHub Pages (`.github/workflows/bundle.yml`).
 
-The Songs page reads its song packs from https://chihduo.github.io/footnotes-packs/, published from [chihduo/footnotes-packs](https://github.com/chihduo/footnotes-packs).
+The demo and the Songs page load their songs from https://chihduo.github.io/footnotes-packs/, published from [chihduo/footnotes-packs](https://github.com/chihduo/footnotes-packs).
 To try a local copy, serve it and start the dev server with `VITE_PACKS_URL` set to its address, such as `VITE_PACKS_URL=http://127.0.0.1:8765/ npm run dev`.
 
 | Path                               | Contents                                                     |
@@ -93,7 +93,7 @@ To try a local copy, serve it and start the dev server with `VITE_PACKS_URL` set
 | `index.html`, `songs/`, `landing/` | The Footnotes website: home page, song picker and Songs page |
 | `app/`                             | The app: SMEditor with dance practice mode                   |
 | `guide/`                           | The guide (VitePress)                                        |
-| `public/demo/`                     | The demo song                                                |
+| `public/demo/`                     | Bundled copy of "YOU" by YURIA                               |
 | `.github/readme/`                  | The images in this README                                    |
 | `tools/readme/`                    | The script that generates them from the website's design     |
 
@@ -106,6 +106,6 @@ Footnotes is a modified version of SMEditor and is distributed under the MIT Lic
 
 The practice dancer’s head and hands are adapted from the [MakeHuman base mesh](https://github.com/makehumancommunity/makehuman/blob/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/makehuman/data/3dobjs/base.obj), released under [CC0](https://github.com/makehumancommunity/makehuman/blob/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/LICENSE.ASSETS.md).
 
-The demo song in `public/demo/`, "YOU" by YURIA with charts by Trick Master Mint and Shuffle Master Mint, is included with permission. It isn't covered by the MIT License and may not be redistributed.
+The bundled song in `public/demo/`, "YOU" by YURIA with charts by Trick Master Mint and Shuffle Master Mint, is included with permission. It isn't covered by the MIT License and may not be redistributed.
 
 The song packs on the Songs page are hosted separately, in [chihduo/footnotes-packs](https://github.com/chihduo/footnotes-packs), and aren't covered by the MIT License either.

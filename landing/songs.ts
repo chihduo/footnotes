@@ -5,8 +5,7 @@
 
 import { gameTypeName, practiceLink } from "./practice"
 
-const PACKS_URL: string =
-  import.meta.env.VITE_PACKS_URL || "https://chihduo.github.io/footnotes-packs/"
+const PACKS_URL: string = import.meta.env.VITE_PACKS_URL
 const LOAD_TIMEOUT = 15000
 
 interface PackChart {
