@@ -82,15 +82,14 @@ Run `npm ci` and `npm run dev`, then open the [local home page](http://127.0.0.1
 
 Every push to `master` builds the site and publishes it to GitHub Pages (`.github/workflows/bundle.yml`).
 
-The demo and the Songs page load their songs from https://chihduo.github.io/footnotes-packs/, published from [chihduo/footnotes-packs](https://github.com/chihduo/footnotes-packs).
-To try a local copy, serve it and start the dev server with `VITE_PACKS_URL` set to its address, such as `VITE_PACKS_URL=http://127.0.0.1:8765/ npm run dev`.
+The demo loads the chart and music for “God Knows...” directly from the Mintmania pack. The Songs page uses the same [song pack repository](https://github.com/chihduo/footnotes-packs).
+To use a local copy of the packs, serve that repository and set `VITE_PACKS_URL` when starting Footnotes, for example `VITE_PACKS_URL=http://127.0.0.1:8765/ npm run dev`.
 
 | Path                               | Contents                                                     |
 | ---------------------------------- | ------------------------------------------------------------ |
 | `index.html`, `songs/`, `landing/` | The Footnotes website: home page, song picker and Songs page |
 | `app/`                             | The app: SMEditor with dance practice mode                   |
 | `guide/`                           | The guide (VitePress)                                        |
-| `public/demo/`                     | Bundled copy of "YOU" by YURIA                               |
 | `.github/readme/`                  | The images in this README                                    |
 | `tools/readme/`                    | The script that generates them from the website's design     |
 
@@ -102,6 +101,4 @@ Footnotes is a modified version of SMEditor and is distributed under the MIT Lic
 
 The practice dancer’s head and hands are adapted from the [MakeHuman base mesh](https://github.com/makehumancommunity/makehuman/blob/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/makehuman/data/3dobjs/base.obj), released under [CC0](https://github.com/makehumancommunity/makehuman/blob/a8bc2d54ff0ac92e78ff71431b1023eda42bf482/LICENSE.ASSETS.md).
 
-The bundled song in `public/demo/`, "YOU" by YURIA with charts by Trick Master Mint and Shuffle Master Mint, is included with permission. It isn't covered by the MIT License and may not be redistributed.
-
-The song packs on the Songs page are hosted separately, in [chihduo/footnotes-packs](https://github.com/chihduo/footnotes-packs), and aren't covered by the MIT License either.
+The music, charts and artwork in the song packs belong to their creators. See the [song pack terms](https://github.com/chihduo/footnotes-packs#rights).
