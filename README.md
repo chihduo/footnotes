@@ -7,10 +7,16 @@
 <a href="https://chihduo.github.io/footnotes/"><img src=".github/readme/hero.svg" width="100%" alt="Footnotes. The notes, with your feet written in. Learn to dance any StepMania chart. A dancing bot shows which foot goes where, right above the arrows you're about to hit." /></a>
 
 <p>
-  <a href="https://chihduo.github.io/footnotes/app/?url=https://chihduo.github.io/footnotes-packs/mintmania/godknows/file.sm&chartType=dance-single&chartIndex=3&flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
+  <a href="https://chihduo.github.io/footnotes/app/?url=https://chihduo.github.io/footnotes-packs/mintmania/godknows/file.sm&amp;chartType=dance-single&amp;chartIndex=3&amp;flags=D"><img src=".github/readme/button-demo.svg" height="44" alt="Try the demo song" /></a>
   <a href="https://chihduo.github.io/footnotes/#start"><img src=".github/readme/button-songs.svg" height="44" alt="Load your own song" /></a>
   <a href="https://chihduo.github.io/footnotes/songs/"><img src=".github/readme/button-more-songs.svg" height="44" alt="More songs…" /></a>
 </p>
+
+## See it in action
+
+<a href="https://chihduo.github.io/footnotes/app/?url=https://chihduo.github.io/footnotes-packs/mintmania/godknows/file.sm&amp;chartType=dance-single&amp;chartIndex=3&amp;flags=D"><img src=".github/readme/demo.gif" width="100%" alt="The 3D dancer shifts weight, holds a panel and crosses over beside the scrolling arrows. Body cues appear beneath the pad. Click to open the Hard chart." /></a>
+
+The recording loops beats 236–252 of “God Knows... (DJ Bouche Euro Mix)” on **Hard 9** at **75% playback**. Watch the blue left shoe hold the left panel at beat 241.5, then cross to the right panel at beat 244.
 
 ## Pick a song
 
@@ -26,27 +32,21 @@ For more songs, the [Songs page](https://chihduo.github.io/footnotes/songs/) has
 
 ## How it works
 
-On Dance and Pump single and double charts, the 3D dancer stands on the pad above the arrows. The camera starts directly behind the dancer, looking down at the pad at 45°. Drag over the pad to orbit or tilt the camera. Use the wheel or pinch to zoom. The pad stays fixed as the dancer shifts weight, turns, and lands. Double-click for the starting view, or use **Fit** to see the whole dancer at your current angle. The **3D dancer** button in the top bar shows or hides the dancer.
-
-For dense passages, the dancer chooses shorter landings inside each arrow and keeps its feet close to the pad. Music and foot strikes follow the selected playback rate. If a planned step exceeds the movement limit, the **Fast steps** control shows its foot, arrow, and beat. Click it to jump between flagged notes. The caption under the dancer gives body guidance such as “Weight on right foot.”
-
-To try the dancer in this checkout, run `npm ci` and `npm run dev`, then [open the local home page](http://127.0.0.1:5173/footnotes/) and choose **Try the demo song** for the Hard (9) chart of "God Knows... (DJ Bouche Euro Mix)".
+On Dance and Pump single and double charts, the 3D dancer shows which foot to use and how to shift your weight. The caption under the pad gives cues such as “Weight on right foot” or “Soften the landing.” The arrows scroll below the dancer on tall screens and beside it in a short, wide window, as in the recording.
 
 <p>
-  <img src=".github/readme/step-bot.svg" width="32%" alt="Watch the bot: the pad at the top shows where each foot goes. Blue is your left foot, orange is your right." />
-  <img src=".github/readme/step-arrows.svg" width="32%" alt="Read the arrows: arrows rise into the targets just under the bot. Step as they reach them, and they slide away under the pad." />
-  <img src=".github/readme/step-pace.svg" width="32%" alt="Practice at your pace: slow the song down, change the scroll speed, and jump to any part of the chart from the strip on the right." />
+  <img src=".github/readme/step-bot.svg" width="32%" alt="Follow the shoes. Blue is your left foot and orange is your right. Watch the dancer shift weight onto one foot before lifting the other." />
+  <img src=".github/readme/step-arrows.svg" width="32%" alt="Read the arrows. Step when an arrow reaches its target. For a hold, keep that panel pressed until the tail passes." />
+  <img src=".github/readme/step-pace.svg" width="32%" alt="Practice at your pace. Lower Playback to slow the music. Click Loop at the start and end of a phrase to repeat it." />
 </p>
 
-## See it in action
+Use **3D dancer** in the top bar to show or hide the dancer. The camera starts behind it, looking down at 45°. Drag over the pad to rotate, and scroll or pinch to zoom. The pad stays fixed while the dancer moves. Double-click to restore the rear view, or use **Fit** to see the whole body from your current angle.
 
-<a href="https://chihduo.github.io/footnotes/"><img src=".github/readme/demo.gif" width="100%" alt="Footnotes playing a Medium chart. The dancing bot steps on the pad while arrows rise into the targets below it." /></a>
-
-A Medium chart: the bot crosses its feet over, and the arrows below show what's coming next.
+On fast runs the dancer shortens its steps and keeps its feet low. If the suggested footing exceeds the movement limit at your playback rate, **Fast steps** appears in the upper-left corner. Click it to jump to the next flagged note. After the music and the last hold end, the dancer steps back to the center and turns to face the game screen.
 
 ## Controls
 
-Everything you need while practicing stays on screen. These keys make it quicker.
+The assist tick marks each step and the metronome marks each beat. Both start enabled and go quiet when you pause or the music ends.
 
 | Action                               | Keys                                                                                              |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------- |
@@ -54,7 +54,7 @@ Everything you need while practicing stays on screen. These keys make it quicker
 | Step, on a dance pad or the keyboard | <kbd>←</kbd> <kbd>↓</kbd> <kbd>↑</kbd> <kbd>→</kbd>                                               |
 | Slower or faster                     | <kbd>Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd>                                                    |
 | Scroll speed                         | <kbd>Shift</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd>                                                    |
-| Back to the start                    | <kbd>Home</kbd>                                                                                   |
+| Back to the start (chart focused)    | <kbd>Home</kbd>                                                                                   |
 | Choose another chart                 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd> (<kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>O</kbd> on Mac) |
 | Open the chart editor                | <kbd>Shift</kbd> + <kbd>H</kbd>                                                                   |
 
@@ -63,25 +63,22 @@ Everything you need while practicing stays on screen. These keys make it quicker
 ## Built on SMEditor
 
 Footnotes is built on [SMEditor](https://github.com/tillvit/smeditor), an open source StepMania chart editor by tillvit.
-SMEditor works out the most natural foot for every arrow with its [parity checker](https://chihduo.github.io/footnotes/guide/parity.html) and can show the result as a small dancing bot.
-Footnotes adds a **dance practice mode** around it:
+Its [parity checker](https://chihduo.github.io/footnotes/guide/parity.html) assigns a foot to each arrow. Footnotes uses those assignments and the chart timing to animate the dancer.
 
-- The bot is enlarged and placed above the notefield, with the receptors directly underneath. Arrows rise into the receptors and slide under the bot once they pass.
-- The editing interface is hidden. Playback controls, playback rate, scroll speed, the assist tick and the note layout stay.
-- The website loads a song from a link, lists its charts, and opens the chosen chart in practice mode.
-
-Practice mode is toggled with <kbd>Shift</kbd>+<kbd>H</kbd> or **View > Dance practice mode**, and the `D` URL flag opens a song straight into it:
-`app/?url=<link to .sm/.ssc>&chartType=dance-single&chartIndex=0&flags=D`.
+Press <kbd>Shift</kbd>+<kbd>H</kbd> or choose **View > Dance practice mode** to switch between practice and editing. To open a chart directly in practice mode, use `app/?url=<simfile URL>&chartType=dance-single&chartIndex=0&flags=D`.
 
 ## Development
 
-| Command             | What it does                                              |
-| ------------------- | --------------------------------------------------------- |
-| `npm run dev`       | Starts a dev server at `http://127.0.0.1:5173/footnotes/` |
-| `npm run build`     | Builds the site, app and guide into `dist/`               |
-| `npm run test:dancer` | Checks dancer motion, seeking, panel resizing and camera framing |
-| `npm run guide:dev` | Starts the guide's dev server                             |
-| `npm run app:dev`   | Runs the desktop app against the dev server               |
+Run `npm ci` and `npm run dev`, then open the [local home page](http://127.0.0.1:5173/footnotes/) and choose **Try the demo song**.
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Starts the Footnotes dev server |
+| `npm run build` | Builds the site, app and guide into `dist/` |
+| `npm run test:dancer` | Checks footing, body motion, model geometry and camera framing |
+| `npm run test:practice-audio` | Checks assist tick and metronome timing in practice |
+| `npm run guide:dev` | Starts the guide’s dev server |
+| `npm run app:dev` | Runs the desktop app against the dev server |
 
 Every push to `master` builds the site and publishes it to GitHub Pages (`.github/workflows/bundle.yml`).
 
@@ -97,8 +94,7 @@ To try a local copy, serve it and start the dev server with `VITE_PACKS_URL` set
 | `.github/readme/`                  | The images in this README                                    |
 | `tools/readme/`                    | The script that generates them from the website's design     |
 
-The README images are SVGs with their text converted to outlines, so they look the same as the website on GitHub.
-After changing the website's look, regenerate them with `python3 tools/readme/make_readme_images.py` (it needs `fonttools`, `brotli`, `uharfbuzz` and `ffmpeg`).
+The title illustration, buttons and cards use SVGs with outlined text. The GIF in **See it in action** comes from the website’s silent recording at `public/media/footnotes-preview.webm`. After updating the recording or card artwork, regenerate the README images with `python3 tools/readme/make_readme_images.py` (requires `fonttools`, `brotli`, `uharfbuzz` and `ffmpeg`).
 
 ## License
 

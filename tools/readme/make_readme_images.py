@@ -283,20 +283,17 @@ def make_song_cards(ts):
     return files
 
 
-def sole(cx, cy, scale, rotation, fill, label_svg=""):
-    return (
-        f'<g transform="translate({num(cx)} {num(cy)}) rotate({rotation})">'
-        f'<path fill="{fill}" transform="scale({scale}) translate(0 -23)" d="{SOLE}"/>'
-        f"{label_svg}</g>"
-    )
-
-
 def make_step_cards(ts):
-    """The three cards of the website's "How it works" section."""
+    """The three practice instructions in the README."""
     badge_text_width = ts.width("75%", 800, 18)
     badge_width = badge_text_width + 30
+    shoe_key = ""
+    for i, (label, color) in enumerate([("L", LEFT), ("R", RIGHT)]):
+        x = PAD + 44 * i
+        shoe_key += f'<rect x="{x}" y="30" width="36" height="38" rx="8" fill="{color}"/>'
+        shoe_key += ts.text(label, 800, 20, x + (36 - ts.width(label, 800, 20)) / 2, 56, BG)
     icons = [
-        sole(33, 50, 0.958, -8, LEFT) + sole(61, 44, 0.958, 8, RIGHT),
+        shoe_key,
         arrow(45, 50, 46, "up", f'fill="{NOTE}" stroke="#fff" stroke-opacity=".85"'),
         (
             f'<rect x="{PAD + 0.5}" y="30.5" width="{num(badge_width - 1)}" height="39" rx="19.5" '
@@ -305,12 +302,12 @@ def make_step_cards(ts):
         ),
     ]
     cards = [
-        ("step-bot", "Watch the bot",
-         "The pad at the top shows where each foot goes. Blue is your left foot, orange is your right."),
+        ("step-bot", "Follow the shoes",
+         "Blue is your left foot and orange is your right. Watch the dancer shift weight onto one foot before lifting the other."),
         ("step-arrows", "Read the arrows",
-         "Arrows rise into the targets just under the bot. Step as they reach them, and they slide away under the pad."),
+         "Step when an arrow reaches its target. For a hold, keep that panel pressed until the tail passes."),
         ("step-pace", "Practice at your pace",
-         "Slow the song down, change the scroll speed, and jump to any part of the chart from the strip on the right."),
+         "Lower Playback to slow the music. Click Loop at the start and end of a phrase to repeat it."),
     ]
     wrapped = [ts.wrap(c[2], 400, 17, TEXT_WIDTH) for c in cards]
     height = round(max(PAD + 56 + 14 + 31 + 6 + len(lines) * LINE + PAD for lines in wrapped))
@@ -439,8 +436,8 @@ def make_demo_gif(path):
         [
             "ffmpeg", "-y", "-loglevel", "error", "-i", VIDEO_PATH,
             "-vf",
-            "fps=12,scale=720:-1:flags=lanczos,split[a][b];"
-            "[a]palettegen=stats_mode=diff:max_colors=96[p];"
+            "fps=20,scale=800:-1:flags=lanczos,split[a][b];"
+            "[a]palettegen=stats_mode=diff:max_colors=144[p];"
             "[b][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle",
             "-loop", "0", path,
         ],
