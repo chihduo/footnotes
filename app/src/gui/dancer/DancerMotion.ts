@@ -9,6 +9,7 @@ import type { StageLayout } from "../../chart/stats/parity/StageLayouts"
 import { clamp, lerp } from "../../util/Math"
 import {
   PANEL_SPACING,
+  rotatePoint,
   comfortableSwingSeconds,
   getDancerTiming,
   planFootwork,
@@ -19,9 +20,10 @@ import {
 } from "./DancerFootwork"
 
 export { PANEL_SPACING } from "./DancerFootwork"
-const HIP_SPEED_LIMIT = 1.35
-const BODY_TURN_LIMIT = 4 // radians per real second
+export const HIP_SPEED_LIMIT = 1.35
+export const BODY_TURN_LIMIT = 4 // radians per real second
 const LANDING_SECONDS = 0.21
+const WEIGHT_TRANSFER_LEAD = 0.11
 const WEIGHT_SETTLE_SECONDS = 0.45
 const BALANCE_SAMPLE_SECONDS = 0.075
 
@@ -47,7 +49,23 @@ interface Stance {
   crossed: boolean
 }
 
+export interface BodyTurn {
+  start: number
+  end: number
+  angle: number
+  fromYaw: number
+  toYaw: number
+}
+
+export interface DancerChoreography {
+  rate: number
+  tracks: Contact[][]
+  stances: Stance[]
+  turn: BodyTurn
+}
+
 export interface DancerPose {
+  heading: number
   left: FootPose
   right: FootPose
   hips: { x: number; z: number }
@@ -57,7 +75,7 @@ export interface DancerPose {
   paceWarning: string
 }
 
-function smooth(t: number) {
+export function smooth(t: number) {
   const u = clamp(t, 0, 1)
   return u * u * (3 - 2 * u)
 }
@@ -109,7 +127,11 @@ function plantedFoot(old: Contact, second: number): FootPose {
   }
 }
 
-function sampleFoot(track: Contact[], second: number, rate: number): FootPose {
+export function sampleFoot(
+  track: Contact[],
+  second: number,
+  rate: number
+): FootPose {
   const i = indexAt(track, second)
   const old = track[i]
   const next = track[i + 1]
@@ -119,7 +141,7 @@ function sampleFoot(track: Contact[], second: number, rate: number): FootPose {
   // Transfer weight before takeoff. A bracket can pivot with a heel or toe
   // still on a held panel, in which case it stays on the floor.
   const lead = Math.min(
-    0.11 * rate,
+    WEIGHT_TRANSFER_LEAD * rate,
     (next.second - old.second) * 0.2,
     next.start - old.second
   )
@@ -152,7 +174,7 @@ function planBalance(tracks: Contact[][], rate: number) {
   const times = new Set<number>()
   for (const track of tracks)
     for (const hit of track.slice(1)) {
-      times.add(hit.start - 0.11 * rate)
+      times.add(hit.start - WEIGHT_TRANSFER_LEAD * rate)
       times.add((hit.start + hit.second) / 2)
       times.add(hit.second)
       times.add(hit.second + WEIGHT_SETTLE_SECONDS * rate)
@@ -325,7 +347,7 @@ function planReturnSteps(
 export class DancerStepPlan {
   readonly tracks = [[neutral(-1)], [neutral(1)]]
   protected readonly rate: number
-  protected readonly stances: Stance[] = [
+  readonly stances: Stance[] = [
     {
       second: -Infinity,
       beat: -Infinity,
@@ -336,17 +358,33 @@ export class DancerStepPlan {
     },
   ]
 
+  readonly turn?: BodyTurn
+  protected returnStart = Infinity
+  protected unwindStart = Infinity
+  restTime = Infinity
+  private balance?: BalancePoint[]
+  private warnings?: { second: number; beat: number; label: string }[]
+  private readonly layout: StageLayout
+
   constructor(
     parity:
       | Pick<
           ParityComputeData,
-          "states" | "techRows" | "facingRows" | "crossingPlan"
+          "states" | "techRows" | "facingRows" | "crossingPlan" | "choreography"
         >
       | undefined,
     layout: StageLayout,
     { rate, holds }: DancerTiming
   ) {
     this.rate = Number.isFinite(rate) && rate > 0 ? rate : 1
+    this.layout = layout
+    const prepared = parity?.choreography
+    if (prepared && prepared.rate === this.rate) {
+      this.tracks = prepared.tracks.map(track => track.slice())
+      this.stances = prepared.stances.slice()
+      this.turn = prepared.turn
+      return
+    }
     if (!parity || parity.states.length <= 2) return
 
     const flexiblePivot = parity.crossingPlan === "uncrossed"
@@ -472,34 +510,38 @@ export class DancerStepPlan {
     }
     planFootwork(this.tracks, this.rate)
   }
-}
+  // An intro turn must finish before either shoe unloads or the body prepares
+  // for the first chart row. Both times come from the chosen footing.
+  get firstPreparation() {
+    return Math.min(
+      this.stances[1]?.turnStart ?? Infinity,
+      ...this.tracks.map(
+        track =>
+          (track[1]?.start ?? Infinity) - WEIGHT_TRANSFER_LEAD * this.rate
+      )
+    )
+  }
 
-export class DancerMotion extends DancerStepPlan {
-  private returnStart = Infinity
-  readonly restTime: number = 0
-  private balance: BalancePoint[] = [{ second: -Infinity, x: 0, z: 0 }]
-  readonly fastSteps: { second: number; beat: number; label: string }[] = []
-
-  constructor(chart: Chart, layout: StageLayout, rate = 1, songEnd = 0) {
-    super(chart.stats.parity, layout, getDancerTiming(chart, rate))
-    if (this.stances.length === 1) return
+  get fastSteps() {
+    if (this.warnings) return this.warnings
+    const warnings: { second: number; beat: number; label: string }[] = []
     const flagged = new Map<number, string[]>()
     for (const [side, track] of this.tracks.entries())
       for (const step of track) {
-        if (!step.overLimit) continue
+        if (!step.overLimit || !Number.isFinite(step.beat)) continue
         const feet = flagged.get(step.beat) ?? []
         const target =
           step.heel < 0
             ? "release"
-            : panelLabel(layout, step.heel) +
-              (step.toe >= 0 ? panelLabel(layout, step.toe) : "")
+            : panelLabel(this.layout, step.heel) +
+              (step.toe >= 0 ? panelLabel(this.layout, step.toe) : "")
         feet.push((side === 0 ? "Left " : "Right ") + target)
         flagged.set(step.beat, feet)
       }
     for (const { beat, second } of this.stances) {
       const feet = flagged.get(beat)
       if (feet)
-        this.fastSteps.push({
+        warnings.push({
           beat,
           second,
           label:
@@ -510,40 +552,8 @@ export class DancerMotion extends DancerStepPlan {
         })
     }
 
-    const last = this.stances[this.stances.length - 1]
-    this.returnStart = Math.max(
-      songEnd,
-      last.second + LANDING_SECONDS * this.rate
-    )
-    for (const track of this.tracks) {
-      const foot = track[track.length - 1]
-      this.returnStart = Math.max(this.returnStart, foot.second, foot.holdEnd)
-    }
-    const landing = planReturnSteps(
-      this.tracks,
-      chart,
-      this.returnStart,
-      this.rate
-    )
-    const facingFront = Math.max(
-      landing,
-      this.returnStart +
-        (1.5 * Math.abs(last.yaw) * this.rate) / BODY_TURN_LIMIT
-    )
-    this.stances.push({
-      second: facingFront,
-      beat: Infinity,
-      turnStart: this.returnStart,
-      yaw: 0,
-      jump: false,
-      crossed: false,
-    })
-    this.balance = planBalance(this.tracks, this.rate)
-    // Include the post-landing weight transfer and the balance sampling window.
-    this.restTime = Math.max(
-      facingFront + LANDING_SECONDS * this.rate,
-      landing + (WEIGHT_SETTLE_SECONDS + BALANCE_SAMPLE_SECONDS) * this.rate
-    )
+    this.warnings = warnings
+    return warnings
   }
 
   private warningAt(second: number) {
@@ -564,6 +574,7 @@ export class DancerMotion extends DancerStepPlan {
     const right = sampleFoot(this.tracks[1], second, this.rate)
     // Average nearby points on the speed-limited weight-transfer path. This
     // rounds the change of direction and anticipates the next support foot.
+    this.balance ??= planBalance(this.tracks, this.rate)
     const before = balanceAt(
       this.balance,
       second - BALANCE_SAMPLE_SECONDS * this.rate
@@ -599,6 +610,25 @@ export class DancerMotion extends DancerStepPlan {
         compression = depth * Math.sin(Math.PI * clamp(phase * 2, 0, 1)) ** 2
       }
     }
+    let heading = 0
+    if (this.turn) {
+      const turn = this.turn
+      const progress = smooth((second - turn.start) / (turn.end - turn.start))
+      heading = turn.angle * progress
+      if (second >= turn.start && second <= turn.end)
+        yaw = lerp(turn.fromYaw, turn.toYaw, progress)
+      if (second >= this.unwindStart) {
+        const finish = this.stances[this.stances.length - 1].second
+        heading =
+          second >= finish
+            ? 0
+            : heading *
+              (1 -
+                smooth(
+                  (second - this.unwindStart) / (finish - this.unwindStart)
+                ))
+      }
+    }
     const landing = Math.min(
       LANDING_SECONDS * this.rate,
       (next?.second ?? Infinity) - old.second
@@ -611,7 +641,9 @@ export class DancerMotion extends DancerStepPlan {
         ) *
         Math.sin(Math.PI * clamp((second - old.second) / landing, 0, 1)) ** 2
     let coaching = ""
-    if (preparingJump)
+    if (this.turn && second >= this.turn.start && second < this.turn.end)
+      coaching = this.turn.angle > 0 ? "Turn left" : "Turn right"
+    else if (preparingJump)
       coaching =
         Math.min(left.lift, right.lift) > 0.02
           ? "Bring both feet down together"
@@ -627,14 +659,128 @@ export class DancerMotion extends DancerStepPlan {
     else if (second >= this.restTime || i === 0) coaching = "Face the screen"
     else if (second >= this.returnStart) coaching = "Step back to center"
     else if (old.crossed) coaching = "Keep hips turned"
+    else if (Math.abs(heading) > 0.01)
+      coaching =
+        Math.abs(heading) > 2
+          ? "Face away from the screen"
+          : heading > 0
+            ? "Face left"
+            : "Face right"
     return {
       left,
       right,
       hips,
       yaw,
+      heading,
       coaching,
       compression,
       paceWarning: this.warningAt(second),
     }
+  }
+}
+
+// Two alternating steps per quarter-turn move between neutral stances. The
+// same movement prepares the dancer during the intro and unwinds it at home.
+export function turnAtCenter(
+  start: number,
+  from: number,
+  to: number,
+  rate: number
+) {
+  const quarters = Math.round(Math.abs(to - from) / (Math.PI / 2))
+  const tracks = [-1, 1].map(side => {
+    const foot = neutral(side)
+    return [
+      {
+        ...foot,
+        ...rotatePoint(foot, from),
+        yaw: foot.yaw + from,
+        second: start,
+      },
+    ]
+  })
+  for (let q = 1; q <= quarters; q++) {
+    const angle = lerp(from, to, q / quarters)
+    for (const [i, track] of tracks.entries()) {
+      const foot = neutral(i === 0 ? -1 : 1)
+      const takeoff = start + (q - 1 + i / 2) * rate
+      track.push({
+        ...foot,
+        ...rotatePoint(foot, angle),
+        yaw: foot.yaw + angle,
+        start: takeoff,
+        second: takeoff + 0.5 * rate,
+      })
+    }
+  }
+  planFootwork(tracks, rate)
+  return tracks
+}
+
+export class DancerMotion extends DancerStepPlan {
+  constructor(chart: Chart, layout: StageLayout, rate = 1, songEnd = 0) {
+    super(chart.stats.parity, layout, getDancerTiming(chart, rate))
+    if (this.stances.length === 1) {
+      this.restTime = 0
+      return
+    }
+    const last = this.stances[this.stances.length - 1]
+    this.returnStart = Math.max(
+      songEnd,
+      last.second + LANDING_SECONDS * this.rate
+    )
+    for (const track of this.tracks) {
+      const foot = track[track.length - 1]
+      this.returnStart = Math.max(this.returnStart, foot.second, foot.holdEnd)
+    }
+    const heading = this.turn?.angle ?? 0
+    // Walk home in the dancer's current frame, then step around to face the screen.
+    const returning = this.tracks.map(track => {
+      const foot = track[track.length - 1]
+      return [
+        { ...foot, ...rotatePoint(foot, -heading), yaw: foot.yaw - heading },
+      ]
+    })
+    let landing = planReturnSteps(returning, chart, this.returnStart, this.rate)
+    for (const [i, track] of returning.entries()) {
+      for (const foot of track.slice(1))
+        this.tracks[i].push({
+          ...foot,
+          ...rotatePoint(foot, heading),
+          yaw: foot.yaw + heading,
+        })
+    }
+    const facingHome = Math.max(
+      landing,
+      this.returnStart +
+        (1.5 * Math.abs(last.yaw - heading) * this.rate) / BODY_TURN_LIMIT
+    )
+    this.stances.push({
+      second: facingHome,
+      beat: Infinity,
+      turnStart: this.returnStart,
+      yaw: heading,
+      jump: false,
+      crossed: false,
+    })
+    if (heading) {
+      this.unwindStart = facingHome + LANDING_SECONDS * this.rate
+      const unwind = turnAtCenter(this.unwindStart, heading, 0, this.rate)
+      for (const [i, track] of unwind.entries())
+        this.tracks[i].push(...track.slice(1))
+      landing = unwind[1][unwind[1].length - 1].second
+      this.stances.push({
+        second: landing,
+        beat: Infinity,
+        turnStart: this.unwindStart,
+        yaw: 0,
+        jump: false,
+        crossed: false,
+      })
+    }
+    this.restTime = Math.max(
+      facingHome + LANDING_SECONDS * this.rate,
+      landing + (WEIGHT_SETTLE_SECONDS + BALANCE_SAMPLE_SECONDS) * this.rate
+    )
   }
 }

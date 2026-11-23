@@ -31,7 +31,7 @@ export class ParityCostCalculator {
     footing: FootingStyle = "Natural"
   ) {
     this.layout = STAGE_LAYOUTS[type]
-    this.footing = footing
+    this.footing = footing === "Free style" ? "Minimal effort" : footing
     if (weights != undefined) {
       this.WEIGHTS = { ...weights }
     } else {

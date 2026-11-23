@@ -5,7 +5,11 @@
 // be extracted from SMEditor (some chart/note types/functions will need to be recreated)
 
 import type { DancerTiming } from "../../../gui/dancer/DancerFootwork"
-import { DancerStepPlan } from "../../../gui/dancer/DancerMotion"
+import { selectDanceRotation } from "../../../gui/dancer/DancerRotation"
+import {
+  DancerStepPlan,
+  type DancerChoreography,
+} from "../../../gui/dancer/DancerMotion"
 import {
   HoldNotedataEntry,
   Notedata,
@@ -22,6 +26,7 @@ import {
   Row,
 } from "./ParityDataTypes"
 import {
+  ParityComputeData,
   ParityDebugData,
   ParityDebugStats,
   ParityDebugUpdateData,
@@ -166,6 +171,67 @@ export class ParityInternals {
     notedata: Notedata,
     timing?: DancerTiming
   ) {
+    const original = this.computeFixedFacing(
+      startBeat,
+      endBeat,
+      notedata,
+      timing
+    )
+    if (
+      !original ||
+      this.footing !== "Free style" ||
+      this.layout.name !== "dance-single" ||
+      !timing ||
+      !Number.isFinite(timing.rate) ||
+      timing.rate <= 0
+    )
+      return original
+    original.plannedRate = timing.rate
+    const rotation = selectDanceRotation(
+      notedata,
+      timing,
+      original,
+      (local, frameTiming) =>
+        new ParityInternals(this.layout.name, this.footing).computeFixedFacing(
+          local[0]?.beat ?? 0,
+          local.at(-1)?.beat ?? 0,
+          local,
+          frameTiming
+        )
+    )
+    if (!rotation) return original
+
+    // Follow the selected physical actions in the original graph so the
+    // editor's labels, holds, overrides and debug path agree with the dancer.
+    let previous = this.initialNode,
+      cost = 0
+    const path = [previous.key]
+    for (const [i, action] of rotation.actions.entries()) {
+      const key = this.initResultState(
+        previous.state,
+        this.notedataRows[i],
+        action
+      ).toKey()
+      const edge = previous.children.get(key),
+        node = this.nodeMap.get(key)
+      if (!edge || !node) return original
+      cost += edge.TOTAL
+      path.push(key)
+      previous = node
+    }
+    path.push(this.endNode.key)
+    this.bestPath = path
+    this.bestPathSet = new Set(path)
+    this.bestPathCost = cost
+    return this.pathResult(path, undefined, timing.rate, rotation.choreography)
+  }
+
+  computeFixedFacing(
+    startBeat: number,
+    endBeat: number,
+    notedata: Notedata,
+    timing?: DancerTiming
+  ): ParityComputeData | null {
     if (this.layout == undefined) return null
     const updatedRows = this.recalculateRows(startBeat, endBeat, notedata)
     const updatedStates = this.recalculateStates(updatedRows)
@@ -201,10 +267,20 @@ export class ParityInternals {
       return null
     }
 
+    return this.pathResult(this.bestPath, crossingPlan)
+  }
+
+  private pathResult(
+    path: string[],
+    crossingPlan?: ParityComputeData["crossingPlan"],
+    plannedRate?: number,
+    choreography?: DancerChoreography
+  ): ParityComputeData {
+    const bestNodes = this.pathNodes(path)
     const parityLabels = new Map<string, Foot>()
 
     this.notedataRows.forEach((row, idx) => {
-      const bestOption = this.nodeMap.get(this.bestPath![idx + 1])!
+      const bestOption = bestNodes[idx + 1]
       bestOption.state.combinedColumns.forEach((foot, col) => {
         if (foot == Foot.NONE) return
         if (!row.notes[col]) return
@@ -214,7 +290,6 @@ export class ParityInternals {
 
     // TODO: Potentially optimize by sending only deltas
 
-    const bestNodes = this.pathNodes(this.bestPath)
     const states = bestNodes.map(node => node.state)
 
     const rowStatsTimeStart = performance.now()
@@ -223,7 +298,8 @@ export class ParityInternals {
       bestNodes,
       this.notedataRows,
       this.layout,
-      this.footing
+      this.footing,
+      choreography
     )
 
     this.debugStats.rowStatsUpdateTime = performance.now() - rowStatsTimeStart
@@ -236,6 +312,8 @@ export class ParityInternals {
     })
 
     return {
+      plannedRate,
+      choreography,
       crossingPlan,
       parityLabels,
       states,

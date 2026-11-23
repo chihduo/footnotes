@@ -14,15 +14,13 @@ globalThis.self = {}
 const { ParityInternals } = await vite.ssrLoadModule(
   "/app/src/chart/stats/parity/ParityInternals.ts"
 )
-const { Foot, FOOTING_STYLES } = await vite.ssrLoadModule(
+const { Foot, FOOTING_STYLES, TechCategory } = await vite.ssrLoadModule(
   "/app/src/chart/stats/parity/ParityDataTypes.ts"
 )
-const { getDancerTiming } = await vite.ssrLoadModule(
-  "/app/src/gui/dancer/DancerFootwork.ts"
-)
-const { DancerMotion } = await vite.ssrLoadModule(
-  "/app/src/gui/dancer/DancerMotion.ts"
-)
+const { getDancerTiming, FOOT_SPEED_LIMIT, FOOT_TURN_LIMIT, turnBetween } =
+  await vite.ssrLoadModule("/app/src/gui/dancer/DancerFootwork.ts")
+const { DancerMotion, BODY_TURN_LIMIT, HIP_SPEED_LIMIT } =
+  await vite.ssrLoadModule("/app/src/gui/dancer/DancerMotion.ts")
 const { STAGE_LAYOUTS } = await vite.ssrLoadModule(
   "/app/src/chart/stats/parity/StageLayouts.ts"
 )
@@ -386,4 +384,294 @@ test("retimes a hold pivot after a chart edit just as a fresh solve would", () =
     result.states.map(s => [s.second, s.footColumns]),
     fresh.states.map(s => [s.second, s.footColumns])
   )
+})
+
+const rotationEngine = () => new ParityInternals("dance-single", "Free style")
+
+function playRotation(
+  engine,
+  notes,
+  { rate = 1, lead = 0, beatLength = 0.43, from = 0, fixed = false } = {}
+) {
+  const chart = {
+    getNotedata: () => notes,
+    getSecondsFromBeat: beat => lead + beat * beatLength,
+    getBeatFromSeconds: second => (second - lead) / beatLength,
+  }
+  const timing = getDancerTiming(chart, rate)
+  const parity = engine[fixed ? "computeFixedFacing" : "compute"](
+    from,
+    notes.at(-1).beat,
+    notes,
+    timing
+  )
+  // The worker's Maps, Sets and timed contacts reach the stage by structured clone.
+  const motion = new DancerMotion(
+    { ...chart, stats: { parity: structuredClone(parity) } },
+    STAGE_LAYOUTS["dance-single"],
+    rate
+  )
+  return { parity, motion }
+}
+
+// Six chart rows take the feet from the side panels, around opposite ends
+// of the pad, and back onto the same panels with the feet exchanged.
+function halfTurnNotes(mirror = false) {
+  return [
+    [0, 2],
+    [0.5, 2],
+    [0.5, 3],
+    [1.5, 0],
+    [1.5, 3],
+    [2, 0],
+    [2, 1],
+    [3, 2],
+    [3.5, 3],
+    [4, 1],
+    [4, 3],
+    [5, 0],
+    [5, 3],
+  ]
+    .map(([beat, col]) => ({
+      ...note(beat, mirror ? [3, 1, 2, 0][col] : col),
+      second: beat * 0.43,
+    }))
+    .sort((a, b) => a.beat - b.beat || a.col - b.col)
+}
+
+function checkTurnMotion(motion, rate) {
+  const { start, end } = motion.turn
+  const n = Math.ceil(((end - start) * 300) / rate),
+    dt = (end - start) / (rate * n)
+  let prev = motion.sample(start)
+  for (let i = 1; i <= n; i++) {
+    const pose = motion.sample(start + ((end - start) * i) / n)
+    assert.ok(
+      Math.abs(turnBetween(prev.yaw, pose.yaw)) <= dt * BODY_TURN_LIMIT + 1e-8
+    )
+    assert.ok(
+      Math.hypot(prev.hips.x - pose.hips.x, prev.hips.z - pose.hips.z) <=
+        dt * HIP_SPEED_LIMIT + 1e-8
+    )
+    const { left, right, yaw } = pose
+    assert.ok(
+      (right.x - left.x) * Math.cos(yaw) - (right.z - left.z) * Math.sin(yaw) >=
+        0.05 - 1e-8
+    )
+    for (const side of ["left", "right"]) {
+      const a = prev[side],
+        b = pose[side]
+      assert.ok(
+        Math.hypot(b.x - a.x, b.z - a.z, b.lift - a.lift) <=
+          dt * FOOT_SPEED_LIMIT + 1e-8
+      )
+      assert.ok(
+        Math.abs(turnBetween(a.yaw, b.yaw)) <= dt * FOOT_TURN_LIMIT + 1e-8
+      )
+      assert.ok(Math.abs(turnBetween(yaw, b.yaw)) <= Math.PI / 2 + 1e-8)
+    }
+    prev = pose
+  }
+}
+
+test("only Free style changes heading during an intro or a charted half-turn", () => {
+  for (const lead of [0, 4]) {
+    const notes = halfTurnNotes().map(n => ({ ...n, second: lead + n.second }))
+    assert.ok(playRotation(rotationEngine(), notes, { lead }).motion.turn)
+    for (const style of ["Minimal effort", "Natural", "Alternating"]) {
+      const actual = playRotation(
+        new ParityInternals("dance-single", style),
+        notes,
+        { lead }
+      )
+      const fixed = playRotation(
+        new ParityInternals("dance-single", style),
+        notes,
+        { lead, fixed: true }
+      )
+      assert.deepEqual(actual.parity, fixed.parity, style)
+      assert.equal(actual.motion.turn, undefined, style)
+      assert.deepEqual(actual.motion.fastSteps, fixed.motion.fastSteps, style)
+      for (const { second } of notes)
+        assert.equal(actual.motion.sample(second).heading, 0, style)
+    }
+  }
+})
+
+test("Free style scores the same fixed-facing path as Minimal effort", () => {
+  const notes = halfTurnNotes()
+  const free = rotationEngine()
+  const minimal = new ParityInternals("dance-single", "Minimal effort")
+  const fixed = playRotation(free, notes, { fixed: true })
+  const baseline = playRotation(minimal, notes)
+  assert.deepEqual(fixed.parity, baseline.parity)
+  assert.equal(free.bestPathCost, minimal.bestPathCost)
+})
+
+test("a charted half-turn removes a fast row in either direction and lands the labeled feet", () => {
+  for (const mirror of [false, true]) {
+    const notes = halfTurnNotes(mirror),
+      engine = rotationEngine()
+    const fixed = playRotation(engine, notes, { fixed: true }).motion
+    assert.deepEqual(
+      fixed.fastSteps.map(s => s.beat),
+      [4]
+    )
+    const { parity, motion } = playRotation(engine, notes)
+    assert.deepEqual(motion.fastSteps, [])
+    assert.equal(motion.turn.angle, mirror ? Math.PI : -Math.PI)
+    checkTurnMotion(motion, 1)
+
+    for (const n of notes) {
+      const label = parity.parityLabels.get(n.beat.toFixed(3) + "-" + n.col)
+      const foot = motion.sample(n.second)[label === left ? "left" : "right"]
+      assert.ok(foot.contact && foot.heel === n.col)
+    }
+    const landing = motion.sample(5 * 0.43)
+    assert.deepEqual([landing.left.heel, landing.right.heel], [3, 0])
+    assert.equal(landing.yaw, motion.turn.angle)
+    assert.ok(!parity.techRows.at(-1)?.has(TechCategory.Crossovers))
+    assert.deepEqual(
+      engine.bestPath.slice(1, -1),
+      parity.states.slice(1, -1).map(s => s.toKey())
+    )
+    const home = motion.sample(motion.restTime)
+    assert.deepEqual([home.heading, home.yaw], [0, 0])
+    assert.ok(
+      Math.abs(home.left.x + 0.1) < 1e-8 && Math.abs(home.right.x - 0.1) < 1e-8
+    )
+    assert.deepEqual(motion.sample(5 * 0.43), landing)
+  }
+})
+
+test("a charted half-turn requires free panels, permitted feet, and enough real time", () => {
+  const engine = rotationEngine(),
+    notes = halfTurnNotes()
+  for (const [rate, turned] of [
+    [1, true],
+    [1.5, false],
+    [0.5, false],
+    [1, true],
+  ]) {
+    const { parity, motion } = playRotation(engine, notes, { rate })
+    assert.equal(Boolean(motion.turn), turned)
+    assert.equal(parity.plannedRate, rate)
+  }
+  const mine = { ...note(2.5, 0), second: 2.5 * 0.43, type: "Mine" }
+  const withMine = [...notes, mine].sort(
+    (a, b) => a.beat - b.beat || a.col - b.col
+  )
+  assert.equal(
+    playRotation(engine, withMine, { from: 2.5 }).motion.turn,
+    undefined
+  )
+  assert.ok(
+    playRotation(
+      engine,
+      withMine.map(n => (n === mine ? { ...n, fake: true } : n)),
+      { from: 2.5 }
+    ).motion.turn
+  )
+  const held = notes.map(n =>
+    n.beat === 2 && n.col === 1 ? { ...n, type: "Hold", hold: 1.75 } : n
+  )
+  const withHold = playRotation(rotationEngine(), held).motion
+  assert.equal(withHold.turn, undefined)
+  assert.ok(
+    ["left", "right"].some(side => withHold.sample(3.7 * 0.43)[side].holding)
+  )
+  const forced = notes.map(n =>
+    n.beat === 3 ? { ...n, parity: { override: "Right" } } : n
+  )
+  const changed = playRotation(engine, forced, { from: 2.5 })
+  const fresh = playRotation(rotationEngine(), forced)
+  assert.equal(changed.motion.turn, undefined)
+  assert.equal(changed.parity.parityLabels.get("3.000-2"), right)
+  assert.deepEqual(changed.parity.parityLabels, fresh.parity.parityLabels)
+})
+
+test("an intro half-turn starts facing the screen and preserves physical foot overrides", () => {
+  const notes = [
+    [0, 3, "Right"],
+    [1, 0, "Right"],
+    [2, 0, "Left"],
+    [3, 1, "Right"],
+    [4, 0, "Left"],
+    [4, 1],
+    [5, 1, "Right"],
+  ].map(([beat, col, foot]) => ({
+    ...note(beat, col, foot),
+    second: 4 + beat * 0.16,
+  }))
+  const options = { lead: 4, beatLength: 0.16 },
+    engine = rotationEngine()
+  const { motion, parity } = playRotation(engine, notes, options)
+  assert.equal(motion.turn.angle, Math.PI)
+  assert.ok(motion.turn.start >= 0 && motion.turn.end < notes[0].second)
+  assert.equal(motion.sample(0).heading, 0)
+  for (const n of notes.filter(n => n.parity)) {
+    const part = parity.parityLabels.get(n.beat.toFixed(3) + "-" + n.col)
+    assert.equal(
+      part === left || part === Foot.LEFT_TOE,
+      n.parity.override === "Left"
+    )
+  }
+  checkTurnMotion(motion, 1)
+  assert.ok(
+    motion.fastSteps.length <
+      playRotation(engine, notes, { ...options, fixed: true }).motion.fastSteps
+        .length
+  )
+})
+
+test("a rest permits a quarter-turn between planted shoes and keeps the chart landings", () => {
+  const times = [0, 0.2, 2.7, 3.64, 3.83, 3.92, 4.01, 4.11]
+  const notes = [0, 3, 3, 1, 2, 0, 1, 2].map((col, beat) => ({
+    ...note(beat, col),
+    second: times[beat],
+  }))
+  const engine = rotationEngine()
+  const { motion } = playRotation(engine, notes)
+  assert.equal(motion.turn.angle, Math.PI / 2)
+  assert.ok(motion.turn.start > 0.2 && motion.turn.end < 2.7)
+  checkTurnMotion(motion, 1)
+  for (const side of ["left", "right"])
+    assert.equal(
+      motion.sample(motion.turn.start)[side].heel,
+      motion.sample(motion.turn.end)[side].heel
+    )
+  assert.ok(
+    motion.fastSteps.length <
+      playRotation(engine, notes, { fixed: true }).motion.fastSteps.length
+  )
+})
+
+test("a quarter-turn in a short intro leaves time for the first charted step", () => {
+  for (const [lead, canTurn] of [
+    [1.1, false],
+    [1.4, true],
+  ]) {
+    const beatLength = 0.185
+    const notes = [1, 2, 3, 1].map((col, beat) => ({
+      ...note(beat, col),
+      second: lead + beat * beatLength,
+    }))
+    const { motion, parity } = playRotation(rotationEngine(), notes, {
+      lead,
+      beatLength,
+    })
+    assert.equal(Boolean(motion.turn), canTurn)
+    assert.equal(motion.fastSteps.length, canTurn ? 0 : 1)
+    if (canTurn) {
+      assert.equal(Math.abs(motion.turn.angle), Math.PI / 2)
+      assert.ok(motion.turn.start >= 0)
+      for (const track of motion.tracks) {
+        const first = track.find(hit => Number.isFinite(hit.beat))
+        assert.ok(first.start >= motion.turn.end)
+      }
+      const firstSide =
+        parity.parityLabels.get("0.000-1") === left ? "left" : "right"
+      assert.equal(motion.sample(lead)[firstSide].heel, 1)
+    }
+  }
 })

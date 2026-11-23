@@ -3,8 +3,8 @@ import { isHoldNote } from "../../chart/sm/NoteTypes"
 import { clamp } from "../../util/Math"
 
 export const PANEL_SPACING = 0.32 // metres between panel centres
-const FOOT_SPEED_LIMIT = 2.5 // metres per real second, including lift
-const FOOT_TURN_LIMIT = 2 * Math.PI // radians per real second
+export const FOOT_SPEED_LIMIT = 2.5 // metres per real second, including lift
+export const FOOT_TURN_LIMIT = 2 * Math.PI // radians per real second
 const COMFORT_SPEED = 1.85
 const inset = 0.095 // metres from the panel centre toward an edge or corner
 const offsets = [0, -inset, inset]
@@ -52,7 +52,7 @@ export interface Contact {
 // 1.2. The lift sin²(πt) reaches its peak slope during the coast, so the
 // combined peak speed is exactly hypot(1.2 * distance, π * height) / duration.
 const ramp = 1 / 6
-const peakSlope = 1 / (1 - ramp)
+export const peakSlope = 1 / (1 - ramp)
 export function swingProgress(t: number) {
   if (t < ramp) return (peakSlope * t * t) / (2 * ramp)
   if (t > 1 - ramp) return 1 - (peakSlope * (1 - t) ** 2) / (2 * ramp)
@@ -61,6 +61,33 @@ export function swingProgress(t: number) {
 
 export function turnBetween(from: number, to: number) {
   return Math.atan2(Math.sin(to - from), Math.cos(to - from))
+}
+
+// Physical columns in each body frame, in Left, Down, Up, Right order.
+export const SINGLE_FACINGS = [
+  { angle: Math.PI / 2, columns: [2, 0, 3, 1] },
+  { angle: -Math.PI / 2, columns: [1, 3, 0, 2] },
+  { angle: Math.PI, columns: [3, 2, 1, 0] },
+]
+
+export function rotatePoint(point: { x: number; z: number }, angle: number) {
+  const cos = Math.cos(angle),
+    sin = Math.sin(angle)
+  return { x: cos * point.x + sin * point.z, z: -sin * point.x + cos * point.z }
+}
+
+export function worldContact(
+  contact: Contact,
+  angle: number,
+  columns: number[]
+): Contact {
+  return {
+    ...contact,
+    ...rotatePoint(contact, angle),
+    yaw: contact.yaw + angle,
+    heel: columns.indexOf(contact.heel),
+    toe: columns.indexOf(contact.toe),
+  }
 }
 
 function stepHeight(contact: Contact, distance: number, seconds: number) {

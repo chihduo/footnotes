@@ -1,3 +1,4 @@
+import type { DancerChoreography } from "../../../gui/dancer/DancerMotion"
 import {
   Foot,
   FootingStyle,
@@ -16,13 +17,21 @@ export function calculateRowStats(
   nodes: ParityGraphNode[],
   rows: Row[],
   layout: StageLayout,
-  footing: FootingStyle
+  footing: FootingStyle,
+  choreography?: DancerChoreography
 ) {
   const techRows: (Set<TechCategory> | undefined)[] = [undefined]
   const techErrors = new Map<number, Set<TechErrors>>()
   const techCounts: number[] = []
   const techErrorCounts: number[] = []
-  const facingRows: number[] = [0]
+  const yaws =
+    choreography &&
+    new Map(
+      choreography.stances
+        .filter(s => Number.isFinite(s.beat))
+        .map(s => [s.beat, s.yaw])
+    )
+  const facingRows: number[] = [-(yaws?.get(rows[0]?.beat) ?? 0) || 0]
   const candles = new Map<number, Foot>()
 
   // Check first row for ambiguous
@@ -60,7 +69,10 @@ export function calculateRowStats(
       currentRow
     )
 
-    facingRows.push(getPlayerAngle(data.leftPos, data.rightPos))
+    const yaw = yaws?.get(currentRow.beat)
+    facingRows.push(
+      yaw === undefined ? getPlayerAngle(data.leftPos, data.rightPos) : -yaw
+    )
 
     const techs = new Set<TechCategory>()
     const errors = new Set<TechErrors>()
@@ -133,7 +145,13 @@ export function calculateRowStats(
       }
     }
 
-    if (data.rightPos.x < data.leftPos.x) {
+    const lateral = data.rightPos.x - data.leftPos.x
+    const width =
+      yaw === undefined
+        ? lateral
+        : lateral * Math.cos(yaw) +
+          (data.rightPos.y - data.leftPos.y) * Math.sin(yaw)
+    if (width < -1e-8) {
       techs.add(TechCategory.Crossovers)
     }
 

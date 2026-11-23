@@ -1,3 +1,4 @@
+import type { DancerChoreography } from "../../../gui/dancer/DancerMotion"
 import type { DancerTiming } from "../../../gui/dancer/DancerFootwork"
 import { Notedata } from "../../sm/NoteTypes"
 import {
@@ -11,6 +12,8 @@ import {
 import { ParityGraphNode } from "./ParityInternals"
 
 export interface ParityComputeData {
+  choreography?: DancerChoreography
+  plannedRate?: number
   crossingPlan?: "original" | "uncrossed"
   parityLabels: Map<string, Foot>
   states: ParityState[]

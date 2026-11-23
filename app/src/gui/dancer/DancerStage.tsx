@@ -165,6 +165,8 @@ export default function DancerStage({
         !chartView ||
         !layout ||
         !placement ||
+        (chart.stats.parity?.plannedRate !== undefined &&
+          chart.stats.parity.plannedRate !== Options.audio.rate) ||
         (!practice && (!Flags.barlines || !chart.stats.parity?.states?.length))
       ) {
         sprite.visible = false

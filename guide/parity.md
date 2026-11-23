@@ -16,7 +16,8 @@ The **Footing** setting in the Parity preferences chooses how feet are predicted
 **Minimal effort**, the default in Footnotes, moves feet as little as it can: each move costs more the farther and faster the foot travels.
 **Natural** lets a foot step twice in a row when steps are slow and never puts both feet on one arrow, and Minimal effort keeps these rules.
 **Alternating** favors alternating feet, even in slow passages.
-On Dance single and double charts, all three settings avoid sending the same foot between Left and Right around the other foot planted on Up or Down. Holds and explicit foot assignments can require that move.
+These three styles keep the dancer facing the screen. **Free style** uses Minimal effort scoring and can turn on four-panel singles when doing so reduces fast steps.
+On Dance single and double charts, all footing styles avoid sending the same foot between Left and Right around the other foot planted on Up or Down. Holds and explicit foot assignments can require that move.
 In Footnotes, none of them presses two arrows with one foot (a bracket) unless the chart leaves no other way, such as three arrows at once.
 See [How the bot chooses your feet](./footnotes/footing) for the rules.
 

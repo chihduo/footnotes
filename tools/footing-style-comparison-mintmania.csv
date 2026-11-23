@@ -1,0 +1,448 @@
+title,difficulty,meter,playback_rate,chart_rows,minimal_effort_rotation_warning_rows,natural_rotation_warning_rows,fewer_warnings_with_rotations,minimal_effort_fixed_warning_rows,natural_fixed_warning_rows,minimal_effort_turn,minimal_effort_heading_degrees,natural_turn,natural_heading_degrees,simfile,chart_index,description
+Ai Chuu Seishin,Beginner,3,1,121,0,0,Tie,0,0,front,0,front,0,acssm/ACSSM.sm,0,Hiryuu
+Ai Chuu Seishin,Easy,5,1,208,0,0,Tie,0,0,front,0,front,0,acssm/ACSSM.sm,1,Hiryuu
+Ai Chuu Seishin,Medium,8,1,355,7,12,Minimal effort,18,22,intro,90,intro,90,acssm/ACSSM.sm,2,Hiryuu
+Ai Chuu Seishin,Hard,10,1,586,119,126,Minimal effort,175,172,intro,-90,intro,90,acssm/ACSSM.sm,3,Hiryuu
+Ai Chuu Seishin,Challenge,11,1,595,128,134,Minimal effort,128,134,front,0,front,0,acssm/ACSSM.sm,4,Trick Master Mint
+Air,Beginner,2,1,136,0,0,Tie,0,0,front,0,front,0,air/air.sm,0,Trick Master Mint
+Air,Easy,4,1,244,0,0,Tie,0,0,front,0,front,0,air/air.sm,1,Trick Master Mint
+Air,Medium,7,1,366,1,2,Minimal effort,14,14,intro,90,intro,90,air/air.sm,2,Trick Master Mint
+Air,Hard,9,1,521,43,43,Tie,43,43,front,0,front,0,air/air.sm,3,Trick Master Mint
+Air,Challenge,11,1,698,102,112,Minimal effort,124,126,intro,-90,intro,90,air/air.sm,4,Trick Master Mint
+Air,Edit,12,1,933,499,492,Natural,569,576,intro,90,intro,90,air/air.sm,5,KB Edit
+Angel Chronicle,Beginner,1,1,154,0,0,Tie,0,0,front,0,front,0,angelchron/angelchr.sm,0,Trick Master Mint
+Angel Chronicle,Easy,4,1,229,0,0,Tie,0,0,front,0,front,0,angelchron/angelchr.sm,1,Trick Master Mint
+Angel Chronicle,Medium,6,1,328,5,5,Tie,14,15,intro,90,intro,90,angelchron/angelchr.sm,2,Trick Master Mint
+Angel Chronicle,Hard,8,1,416,18,24,Minimal effort,22,27,intro,90,intro,90,angelchron/angelchr.sm,3,Trick Master Mint
+Angel Chronicle,Challenge,10,1,568,32,40,Minimal effort,32,40,front,0,front,0,angelchron/angelchr.sm,4,Trick Master Mint
+Angelic Symphony,Beginner,1,1,131,0,0,Tie,0,0,front,0,front,0,angelsymph/file.sm,0,Trick Master Mint
+Angelic Symphony,Easy,4,1,190,0,0,Tie,0,0,front,0,front,0,angelsymph/file.sm,1,Trick Master Mint
+Angelic Symphony,Medium,6,1,258,0,0,Tie,0,0,front,0,front,0,angelsymph/file.sm,2,Trick Master Mint
+Angelic Symphony,Hard,8,1,315,5,6,Minimal effort,11,12,intro,90,intro,90,angelsymph/file.sm,3,Trick Master Mint
+Angelic Symphony,Challenge,9,1,421,14,19,Minimal effort,14,19,front,0,front,0,angelsymph/file.sm,4,Trick Master Mint
+Baragoku Otome,Beginner,1,1,72,0,0,Tie,0,0,front,0,front,0,barago/file.sm,0,Trick Master Mint
+Baragoku Otome,Easy,3,1,120,0,0,Tie,0,0,front,0,front,0,barago/file.sm,1,Trick Master Mint
+Baragoku Otome,Medium,4,1,143,0,0,Tie,0,0,front,0,front,0,barago/file.sm,2,Trick Master Mint
+Baragoku Otome,Hard,6,1,197,1,1,Tie,3,3,intro,90,intro,90,barago/file.sm,3,Trick Master Mint
+Baragoku Otome,Challenge,9,1,306,10,13,Minimal effort,13,13,intro,90,front,0,barago/file.sm,4,Trick Master Mint
+Baragoku Otome,Edit,10,1,361,59,60,Minimal effort,69,66,intro,90,intro,90,barago/file.sm,5,KB Edit
+Bokusatsu Tenshi Dokuro-chan,Beginner,2,1,135,0,0,Tie,0,0,front,0,front,0,dokuro/file.sm,0,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Easy,4,1,193,0,0,Tie,0,0,front,0,front,0,dokuro/file.sm,1,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Medium,7,1,284,0,1,Minimal effort,6,7,intro,90,intro,90,dokuro/file.sm,2,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Hard,9,1,343,11,20,Minimal effort,19,23,intro,90,intro,90,dokuro/file.sm,3,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Challenge,10,1,409,40,43,Minimal effort,50,51,intro,90,intro,90,dokuro/file.sm,4,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Challenge,9,1,477,44,50,Minimal effort,54,54,intro,90,intro,90,dokuroremix/file.sm,0,Trick Master Mint
+Border of Death,Beginner,1,1,96,0,0,Tie,0,0,front,0,front,0,bod/file.sm,0,Trick Master Mint
+Border of Death,Easy,3,1,138,0,0,Tie,0,0,front,0,front,0,bod/file.sm,1,Trick Master Mint
+Border of Death,Medium,5,1,184,0,0,Tie,3,3,intro,90,intro,90,bod/file.sm,2,Trick Master Mint
+Border of Death,Hard,6,1,235,3,5,Minimal effort,8,9,intro,90,intro,90,bod/file.sm,3,Trick Master Mint
+Border of Death,Challenge,8,1,330,8,11,Minimal effort,8,11,front,0,front,0,bod/file.sm,4,Trick Master Mint
+Brave New World,Beginner,1,1,103,0,0,Tie,0,0,front,0,front,0,bneworld/file.sm,0,Trick Master Mint
+Brave New World,Easy,3,1,174,0,0,Tie,0,0,front,0,front,0,bneworld/file.sm,1,Trick Master Mint
+Brave New World,Medium,5,1,210,0,0,Tie,5,6,intro,90,intro,90,bneworld/file.sm,2,Trick Master Mint
+Brave New World,Hard,7,1,289,3,5,Minimal effort,5,5,intro,90,front,0,bneworld/file.sm,3,Trick Master Mint
+Brave New World,Challenge,10,1,509,95,93,Natural,124,125,intro,-90,intro,90,bneworld/file.sm,4,Trick Master Mint
+Daisuke,Beginner,1,1,107,0,0,Tie,0,0,front,0,front,0,daisuke/Daisuke.sm,0,DahrkDaiz
+Daisuke,Easy,3,1,174,0,0,Tie,0,0,front,0,front,0,daisuke/Daisuke.sm,1,DahrkDaiz
+Daisuke,Medium,7,1,331,2,3,Minimal effort,12,12,intro,90,intro,90,daisuke/Daisuke.sm,2,DahrkDaiz
+Daisuke,Hard,9,1,465,26,29,Minimal effort,26,29,front,0,front,0,daisuke/Daisuke.sm,3,Dahrkdaiz
+Daisuke,Challenge,9,1,516,20,26,Minimal effort,41,49,intro,90,intro,90,daisuke/Daisuke.sm,4,DahrkDaiz
+DIVE2006,Beginner,1,1,128,0,0,Tie,0,0,front,0,front,0,dive2k6/file.sm,0,Trick Master Mint
+DIVE2006,Easy,4,1,197,0,0,Tie,0,0,front,0,front,0,dive2k6/file.sm,1,Trick Master Mint
+DIVE2006,Medium,6,1,290,0,0,Tie,8,11,intro,90,intro,90,dive2k6/file.sm,2,Trick Master Mint
+DIVE2006,Hard,8,1,400,14,24,Minimal effort,27,30,intro,90,intro,90,dive2k6/file.sm,3,Trick Master Mint
+DIVE2006,Challenge,10,1,551,61,71,Minimal effort,72,72,intro,90,intro,90,dive2k6/file.sm,4,Trick Master Mint
+Dotabata Angel Loop,Beginner,1,1,92,0,0,Tie,0,0,front,0,front,0,dotabata/dotabata.sm,0,Trick Master Mint
+Dotabata Angel Loop,Easy,3,1,145,0,0,Tie,0,0,front,0,front,0,dotabata/dotabata.sm,1,Trick Master Mint
+Dotabata Angel Loop,Medium,6,1,201,0,0,Tie,0,0,front,0,front,0,dotabata/dotabata.sm,2,Trick Master Mint
+Dotabata Angel Loop,Hard,8,1,293,0,1,Minimal effort,0,1,front,0,front,0,dotabata/dotabata.sm,3,Trick Master Mint
+Dotabata Angel Loop,Challenge,9,1,347,14,13,Natural,14,13,front,0,front,0,dotabata/dotabata.sm,4,Trick Master Mint
+Eternal Blaze,Beginner,1,1,130,0,0,Tie,0,0,front,0,front,0,eterblaze/file.sm,0,Trick Master Mint
+Eternal Blaze,Easy,3,1,195,0,0,Tie,0,0,front,0,front,0,eterblaze/file.sm,1,Trick Master Mint
+Eternal Blaze,Medium,6,1,278,1,1,Tie,5,6,intro,90,intro,90,eterblaze/file.sm,2,Trick Master Mint
+Eternal Blaze,Hard,8,1,375,6,8,Minimal effort,22,22,intro,90,intro,90,eterblaze/file.sm,3,Trick Master Mint
+Eternal Blaze,Challenge,10,1,515,20,29,Minimal effort,35,34,intro,-90,intro,90,eterblaze/file.sm,4,Trick Master Mint
+Face of Fact,Beginner,1,1,98,0,0,Tie,0,0,front,0,front,0,fof/file.sm,0,Trick Master Mint
+Face of Fact,Easy,3,1,159,0,0,Tie,0,0,front,0,front,0,fof/file.sm,1,Trick Master Mint
+Face of Fact,Medium,6,1,233,0,0,Tie,0,0,front,0,front,0,fof/file.sm,2,Trick Master Mint
+Face of Fact,Hard,8,1,313,4,4,Tie,4,4,front,0,front,0,fof/file.sm,3,Trick Master Mint
+Face of Fact,Challenge,9,1,342,7,8,Minimal effort,7,8,front,0,front,0,fof/file.sm,4,Trick Master Mint
+Face of Fact,Beginner,2,1,178,0,0,Tie,0,0,front,0,front,0,fofpsm/pk.sm,0,Trick Master Mint
+Face of Fact,Easy,5,1,200,0,0,Tie,0,0,front,0,front,0,fofpsm/pk.sm,1,Trick Master Mint
+Face of Fact,Medium,8,1,357,3,4,Minimal effort,3,4,front,0,front,0,fofpsm/pk.sm,2,Trick Master Mint
+Face of Fact,Hard,10,1,442,33,38,Minimal effort,33,38,front,0,front,0,fofpsm/pk.sm,3,Trick Master Mint
+Face of Fact,Challenge,10,1,534,82,82,Tie,82,82,front,0,front,0,fofpsm/pk.sm,4,Trick Master Mint
+Face of Fact,Beginner,1,1,100,0,0,Tie,0,0,front,0,front,0,fofres/file.sm,0,Trick Master Mint
+Face of Fact,Easy,3,1,147,0,0,Tie,0,0,front,0,front,0,fofres/file.sm,1,Trick Master Mint
+Face of Fact,Medium,6,1,269,0,0,Tie,0,0,front,0,front,0,fofres/file.sm,2,Trick Master Mint
+Face of Fact,Hard,8,1,344,0,3,Minimal effort,4,5,intro,90,intro,90,fofres/file.sm,3,Trick Master Mint
+Face of Fact,Challenge,9,1,377,3,12,Minimal effort,12,12,intro,90,front,0,fofres/file.sm,4,Trick Master Mint
+fffff,Beginner,1,1,103,0,0,Tie,0,0,front,0,front,0,fffff/file.sm,0,Trick Master Mint
+fffff,Easy,4,1,183,0,0,Tie,0,0,front,0,front,0,fffff/file.sm,1,Trick Master Mint
+fffff,Medium,6,1,266,0,0,Tie,0,0,front,0,front,0,fffff/file.sm,2,Trick Master Mint
+fffff,Hard,9,1,388,8,11,Minimal effort,11,11,intro,90,front,0,fffff/file.sm,3,Trick Master Mint
+fffff,Challenge,10,1,591,52,55,Minimal effort,52,55,front,0,front,0,fffff/file.sm,4,Trick Master Mint
+Galaxy Babanga Bang!,Beginner,1,1,144,0,0,Tie,0,0,front,0,front,0,gbbang/file.sm,0,Trick Master Mint
+Galaxy Babanga Bang!,Easy,4,1,183,0,0,Tie,0,0,front,0,front,0,gbbang/file.sm,1,Trick Master Mint
+Galaxy Babanga Bang!,Medium,6,1,263,2,2,Tie,4,4,intro,90,intro,90,gbbang/file.sm,2,Trick Master Mint
+Galaxy Babanga Bang!,Hard,7,1,308,4,7,Minimal effort,6,11,intro,90,intro,90,gbbang/file.sm,3,Trick Master Mint
+Galaxy Babanga Bang!,Challenge,8,1,339,11,20,Minimal effort,21,21,intro,90,intro,90,gbbang/file.sm,4,Trick Master Mint
+Go Berzerk,Beginner,2,1,202,0,0,Tie,0,0,front,0,front,0,goberzerk/gb.sm,0,Trick Master Mint
+Go Berzerk,Easy,5,1,273,0,0,Tie,0,0,front,0,front,0,goberzerk/gb.sm,1,Trick Master Mint
+Go Berzerk,Medium,7,1,382,0,0,Tie,8,8,intro,90,intro,90,goberzerk/gb.sm,2,Trick Master Mint
+Go Berzerk,Hard,9,1,514,14,29,Minimal effort,44,47,intro,90,intro,90,goberzerk/gb.sm,3,Trick Master Mint
+Go Berzerk,Challenge,10,1,600,59,66,Minimal effort,83,86,intro,90,intro,90,goberzerk/gb.sm,4,Trick Master Mint
+Go Berzerk,Edit,11,1,614,60,63,Minimal effort,79,82,intro,90,intro,90,goberzerk/gb.sm,5,Oni v.1
+God Knows...,Beginner,1,1,102,0,0,Tie,0,0,front,0,front,0,godknows/file.sm,0,Trick Master Mint
+God Knows...,Easy,4,1,169,0,0,Tie,0,0,front,0,front,0,godknows/file.sm,1,Trick Master Mint
+God Knows...,Medium,6,1,289,5,7,Minimal effort,8,10,intro,90,intro,90,godknows/file.sm,2,Trick Master Mint
+God Knows...,Hard,9,1,418,20,27,Minimal effort,20,27,front,0,front,0,godknows/file.sm,3,Trick Master Mint
+God Knows...,Challenge,11,1,548,74,79,Minimal effort,78,79,intro,-90,front,0,godknows/file.sm,4,Trick Master Mint
+God Knows...,Edit,13,1,838,313,325,Minimal effort,359,364,intro,-90,intro,-90,godknows/file.sm,5,KB Edit
+Gradius,Beginner,1,1,84,0,0,Tie,0,0,front,0,front,0,gradiusfullspeed/gradiusfullspeed.sm,0,cpubasic13
+Gradius,Easy,2,1,138,0,0,Tie,0,0,front,0,front,0,gradiusfullspeed/gradiusfullspeed.sm,1,cpubasic13
+Gradius,Medium,5,1,234,0,0,Tie,0,0,front,0,front,0,gradiusfullspeed/gradiusfullspeed.sm,2,cpubasic13
+Gradius,Hard,8,1,396,18,17,Natural,20,20,intro,90,intro,90,gradiusfullspeed/gradiusfullspeed.sm,3,cpubasic13
+Gradius,Challenge,9,1,559,27,27,Tie,32,29,intro,90,intro,90,gradiusfullspeed/gradiusfullspeed.sm,4,cpubasic13
+Healing Monolith,Beginner,1,1,145,0,0,Tie,0,0,front,0,front,0,healmon/hm.sm,0,Trick Master Mint
+Healing Monolith,Easy,5,1,266,0,0,Tie,0,0,front,0,front,0,healmon/hm.sm,1,Trick Master Mint
+Healing Monolith,Medium,7,1,364,5,6,Minimal effort,15,17,intro,90,intro,90,healmon/hm.sm,2,Trick Master Mint
+Healing Monolith,Hard,9,1,516,55,66,Minimal effort,66,68,intro,90,intro,180,healmon/hm.sm,3,Trick Master Mint
+Healing Monolith,Challenge,11,1,583,118,118,Tie,119,120,intro,180,intro,90,healmon/hm.sm,4,Trick Master Mint
+Healing Vision,Beginner,1,1,83,0,0,Tie,0,0,front,0,front,0,hvgm/file.sm,0,Trick Master Mint
+Healing Vision,Easy,3,1,121,0,0,Tie,0,0,front,0,front,0,hvgm/file.sm,1,Trick Master Mint
+Healing Vision,Medium,5,1,214,0,0,Tie,0,0,front,0,front,0,hvgm/file.sm,2,Trick Master Mint
+Healing Vision,Hard,9,1,355,19,20,Minimal effort,22,22,intro,90,intro,90,hvgm/file.sm,3,Trick Master Mint
+Higurashi no Naku Koro ni,Challenge,9,1,309,16,18,Minimal effort,18,18,intro,90,front,0,higu-blgm/higugroove.sm,0,Trick Master Mint
+Higurashi no Naku Koro ni,Beginner,1,1,98,0,0,Tie,0,0,front,0,front,0,higu/file.sm,0,Trick Master Mint
+Higurashi no Naku Koro ni,Easy,3,1,146,0,0,Tie,0,0,front,0,front,0,higu/file.sm,1,Trick Master Mint
+Higurashi no Naku Koro ni,Medium,5,1,235,0,0,Tie,0,0,front,0,front,0,higu/file.sm,2,Trick Master Mint
+Higurashi no Naku Koro ni,Hard,8,1,390,0,0,Tie,11,11,intro,90,intro,90,higu/file.sm,3,Trick Master Mint
+Higurashi no Naku Koro ni,Challenge,10,1,539,25,28,Minimal effort,28,28,intro,90,front,0,higu/file.sm,4,Trick Master Mint
+Jack Spinnaz,Beginner,1,1,110,0,0,Tie,0,0,front,0,front,0,jackspin/file.sm,0,Trick Master Mint
+Jack Spinnaz,Easy,4,1,183,0,0,Tie,0,0,front,0,front,0,jackspin/file.sm,1,Trick Master Mint
+Jack Spinnaz,Medium,6,1,314,0,0,Tie,1,1,intro,90,intro,90,jackspin/file.sm,2,Trick Master Mint
+Jack Spinnaz,Hard,9,1,504,8,10,Minimal effort,18,21,intro,-90,intro,-90,jackspin/file.sm,3,Trick Master Mint
+Jack Spinnaz,Challenge,10,1,628,45,52,Minimal effort,75,75,intro,90,intro,90,jackspin/file.sm,4,Trick Master Mint
+Kamui,Beginner,1,1,93,0,0,Tie,0,0,front,0,front,0,kamui/kamui.sm,0,Trick Master Mint
+Kamui,Easy,4,1,153,0,0,Tie,0,0,front,0,front,0,kamui/kamui.sm,1,Trick Master Mint
+Kamui,Medium,6,1,256,3,6,Minimal effort,3,6,front,0,front,0,kamui/kamui.sm,2,Trick Master Mint
+Kamui,Hard,9,1,359,17,17,Tie,18,17,intro,90,front,0,kamui/kamui.sm,3,Trick Master Mint
+Kamui,Challenge,10,1,515,59,63,Minimal effort,84,86,intro,90,intro,90,kamui/kamui.sm,4,Trick Master Mint
+Kinjirareta Asobi,Beginner,1,1,97,0,0,Tie,0,0,front,0,front,0,kinjiaso/file.sm,0,Trick Master Mint
+Kinjirareta Asobi,Easy,3,1,163,0,0,Tie,0,0,front,0,front,0,kinjiaso/file.sm,1,Trick Master Mint
+Kinjirareta Asobi,Medium,5,1,236,0,0,Tie,0,0,front,0,front,0,kinjiaso/file.sm,2,Trick Master Mint
+Kinjirareta Asobi,Hard,7,1,322,0,3,Minimal effort,3,3,intro,90,front,0,kinjiaso/file.sm,3,Trick Master Mint
+Kinjirareta Asobi,Challenge,9,1,432,26,30,Minimal effort,44,44,intro,90,intro,90,kinjiaso/file.sm,4,Trick Master Mint
+Legendary WWW Area (PharaohMan),Beginner,1,1,95,0,0,Tie,0,0,front,0,front,0,legendpharaoh/Legendary WWW Area.sm,0,Kilgamayan
+Legendary WWW Area (PharaohMan),Easy,4,1,260,0,0,Tie,0,0,front,0,front,0,legendpharaoh/Legendary WWW Area.sm,1,Kilgamayan
+Legendary WWW Area (PharaohMan),Medium,7,1,367,0,0,Tie,0,0,front,0,front,0,legendpharaoh/Legendary WWW Area.sm,2,Kilgamayan
+Legendary WWW Area (PharaohMan),Hard,9,1,532,38,43,Minimal effort,38,43,front,0,front,0,legendpharaoh/Legendary WWW Area.sm,3,Kilgamayam
+Legendary WWW Area (PharaohMan),Challenge,11,1,641,138,140,Minimal effort,153,157,intro,-90,intro,90,legendpharaoh/Legendary WWW Area.sm,4,Kilgamayan
+Lost my music,Beginner,2,1,168,0,0,Tie,0,0,front,0,front,0,lostmymusic/Lost my music.sm,0,Koiyuki & Mint
+Lost my music,Easy,6,1,271,0,0,Tie,0,0,front,0,front,0,lostmymusic/Lost my music.sm,1,Koiyuki
+Lost my music,Medium,8,1,382,14,19,Minimal effort,14,19,front,0,front,0,lostmymusic/Lost my music.sm,2,Koiyuki
+Lost my music,Hard,9,1,480,45,49,Minimal effort,47,50,intro,180,intro,180,lostmymusic/Lost my music.sm,3,Koiyuki & Mint
+Lost my music,Challenge,10,1,500,73,76,Minimal effort,73,76,front,0,front,0,lostmymusic/Lost my music.sm,4,Koiyuki & Mint
+Mahoro de MAX 300,Beginner,3,1,160,0,0,Tie,0,0,front,0,front,0,mahoro300/file.sm,0,Trick Master Mint
+Mahoro de MAX 300,Easy,6,1,314,4,5,Minimal effort,21,21,intro,90,intro,90,mahoro300/file.sm,1,Trick Master Mint
+Mahoro de MAX 300,Medium,8,1,395,9,18,Minimal effort,21,22,intro,90,intro,90,mahoro300/file.sm,2,Trick Master Mint
+Mahoro de MAX 300,Hard,10,1,473,48,50,Minimal effort,48,50,front,0,front,0,mahoro300/file.sm,3,Trick Master Mint
+Maji Suki Magic,Beginner,1,1,95,0,0,Tie,0,0,front,0,front,0,msmagic/file.sm,0,Trick Master Mint
+Maji Suki Magic,Easy,3,1,151,0,0,Tie,0,0,front,0,front,0,msmagic/file.sm,1,Trick Master Mint
+Maji Suki Magic,Medium,5,1,213,0,0,Tie,0,0,front,0,front,0,msmagic/file.sm,2,Trick Master Mint
+Maji Suki Magic,Hard,8,1,290,5,8,Minimal effort,24,25,intro,90,intro,90,msmagic/file.sm,3,Trick Master Mint
+Maji Suki Magic,Challenge,10,1,439,37,46,Minimal effort,48,50,intro,-90,intro,-90,msmagic/file.sm,4,Trick Master Mint
+Marisa Stole the Precious Thing,Challenge,9,1,356,18,21,Minimal effort,21,21,intro,90,front,0,marisa-pt2/file.sm,0,Trick Master Mint
+Marisa Stole the Precious Thing,Beginner,2,1,169,0,0,Tie,0,0,front,0,front,0,marisa/file.sm,0,Trick Master Mint
+Marisa Stole the Precious Thing,Easy,4,1,251,0,0,Tie,0,0,front,0,front,0,marisa/file.sm,1,Trick Master Mint
+Marisa Stole the Precious Thing,Medium,7,1,313,1,1,Tie,1,1,front,0,front,0,marisa/file.sm,2,Trick Master Mint
+Marisa Stole the Precious Thing,Hard,9,1,433,14,17,Minimal effort,15,17,intro,90,front,0,marisa/file.sm,3,Trick Master Mint
+Marisa Stole the Precious Thing,Challenge,10,1,653,133,142,Minimal effort,149,154,intro,90,intro,90,marisa/file.sm,4,Trick Master Mint
+Marisa Stole the Precious Thing,Edit,10,1,661,132,141,Minimal effort,147,152,intro,90,intro,90,marisa/file.sm,5,r21 Edit
+Marisa Stole the Precious Thing,Edit,11,1,681,218,222,Minimal effort,218,222,front,0,front,0,marisa/file.sm,6,KB Edit 1
+Marisa Stole the Precious Thing,Edit,13,1,880,492,494,Minimal effort,492,494,front,0,front,0,marisa/file.sm,7,KB Edit 2
+Necro fantasia,Beginner,1,1,116,0,0,Tie,0,0,front,0,front,0,necrofan/file.sm,0,Letty Whiterock
+Necro fantasia,Easy,3,1,164,0,0,Tie,0,0,front,0,front,0,necrofan/file.sm,1,Letty Whiterock
+Necro fantasia,Medium,6,1,267,6,6,Tie,6,6,front,0,front,0,necrofan/file.sm,2,Letty Whiterock
+Necro fantasia,Hard,7,1,320,8,12,Minimal effort,8,12,front,0,front,0,necrofan/file.sm,3,Letty Whiterock
+Necro fantasia,Challenge,9,1,446,29,36,Minimal effort,39,40,intro,90,intro,90,necrofan/file.sm,4,Letty Whiterock
+"One Day, One Dream",Beginner,1,1,96,0,0,Tie,0,0,front,0,front,0,1d1d/1d1d.sm,0,Hiryuu
+"One Day, One Dream",Easy,3,1,134,0,0,Tie,0,0,front,0,front,0,1d1d/1d1d.sm,1,Hiryuu
+"One Day, One Dream",Medium,6,1,234,1,1,Tie,6,8,intro,90,intro,90,1d1d/1d1d.sm,2,Hiryuu
+"One Day, One Dream",Hard,8,1,281,4,5,Minimal effort,14,15,intro,90,intro,90,1d1d/1d1d.sm,3,Hiryuu
+"One Day, One Dream",Challenge,9,1,401,10,19,Minimal effort,50,51,intro,90,intro,90,1d1d/1d1d.sm,4,Hiryuu
+PARANOiA HRX,Beginner,3,1,165,0,0,Tie,0,0,front,0,front,0,parahrx/PARANOiA HRX.sm,0,Kewing DarkSun
+PARANOiA HRX,Easy,6,1,286,1,1,Tie,7,7,intro,90,intro,90,parahrx/PARANOiA HRX.sm,1,Kewing DarkSun
+PARANOiA HRX,Medium,7,1,338,8,8,Tie,8,8,front,0,front,0,parahrx/PARANOiA HRX.sm,2,Kewing DarkSun
+PARANOiA HRX,Hard,9,1,407,19,23,Minimal effort,19,23,front,0,front,0,parahrx/PARANOiA HRX.sm,3,Kewing DarkSun
+PARANOiA HRX,Challenge,9,1,384,27,28,Minimal effort,27,28,front,0,front,0,parahrx/PARANOiA HRX.sm,4,Kewing DarkSun
+PEd0PHiLiA,Beginner,2,1,142,0,0,Tie,0,0,front,0,front,0,pedo/pedo.sm,0,Trick Master Mint
+PEd0PHiLiA,Easy,5,1,176,0,0,Tie,0,0,front,0,front,0,pedo/pedo.sm,1,Trick Master Mint
+PEd0PHiLiA,Medium,6,1,249,5,6,Minimal effort,5,6,front,0,front,0,pedo/pedo.sm,2,Trick Master Mint
+PEd0PHiLiA,Hard,8,1,323,8,9,Minimal effort,8,9,front,0,front,0,pedo/pedo.sm,3,Trick Master Mint?
+PEd0PHiLiA,Challenge,10,1,429,96,99,Minimal effort,98,99,intro,90,front,0,pedo/pedo.sm,4,Trick Master Mint
+Release of the Far West Ocean,Beginner,1,1,81,0,0,Tie,0,0,front,0,front,0,rotfwo/file.sm,0,Trick Master Mint
+Release of the Far West Ocean,Easy,3,1,141,0,0,Tie,0,0,front,0,front,0,rotfwo/file.sm,1,Trick Master Mint
+Release of the Far West Ocean,Medium,6,1,219,0,0,Tie,0,0,front,0,front,0,rotfwo/file.sm,2,Trick Master Mint
+Release of the Far West Ocean,Hard,8,1,290,2,2,Tie,2,2,front,0,front,0,rotfwo/file.sm,3,Trick Master Mint
+Release of the Far West Ocean,Challenge,9,1,389,14,18,Minimal effort,20,20,intro,90,intro,90,rotfwo/file.sm,4,Trick Master Mint
+rislim,Beginner,1,1,130,0,0,Tie,0,0,front,0,front,0,rislim/rislim.sm,0,Trick Master Mint
+rislim,Easy,2,1,153,0,0,Tie,0,0,front,0,front,0,rislim/rislim.sm,1,Trick Master Mint
+rislim,Medium,5,1,236,0,0,Tie,0,1,front,0,intro,90,rislim/rislim.sm,2,Trick Master Mint
+rislim,Hard,7,1,340,2,3,Minimal effort,6,6,intro,90,intro,90,rislim/rislim.sm,3,Trick Master Mint
+rislim,Challenge,9,1,530,77,76,Natural,87,86,intro,90,intro,90,rislim/rislim.sm,4,Trick Master Mint
+rislim,Beginner,2,1,136,0,0,Tie,0,0,front,0,front,0,rislimdropout/file.sm,0,Trick Master Mint
+rislim,Easy,6,1,309,0,0,Tie,0,0,front,0,front,0,rislimdropout/file.sm,1,Trick Master Mint
+rislim,Medium,8,1,429,2,4,Minimal effort,2,4,front,0,front,0,rislimdropout/file.sm,2,Trick Master Mint
+rislim,Hard,10,1,537,43,43,Tie,59,63,intro,90,intro,90,rislimdropout/file.sm,3,Trick Master Mint
+rislim,Challenge,11,1,631,82,86,Minimal effort,134,144,intro,90,intro,90,rislimdropout/file.sm,4,Trick Master Mint
+Seishoujo Ryouiki,Challenge,9,1,425,20,23,Minimal effort,24,23,intro,90,front,0,seiryo-dgm/file.sm,0,Dream Traveler Klonoa
+Seishoujo Ryouiki,Beginner,1,1,124,0,0,Tie,0,0,front,0,front,0,seiryo/file.sm,0,Trick Master Mint
+Seishoujo Ryouiki,Easy,3,1,174,0,0,Tie,0,0,front,0,front,0,seiryo/file.sm,1,Trick Master Mint
+Seishoujo Ryouiki,Medium,5,1,262,0,0,Tie,0,0,front,0,front,0,seiryo/file.sm,2,Trick Master Mint
+Seishoujo Ryouiki,Hard,7,1,325,1,1,Tie,1,1,front,0,front,0,seiryo/file.sm,3,Trick Master Mint
+Seishoujo Ryouiki,Challenge,8,1,355,6,6,Tie,6,6,front,0,front,0,seiryo/file.sm,4,Trick Master Mint
+Sweet Magic,Beginner,1,1,76,0,0,Tie,0,0,front,0,front,0,sweetmagic/file.sm,0,Dream Traveler Klonoa
+Sweet Magic,Easy,3,1,121,0,0,Tie,0,0,front,0,front,0,sweetmagic/file.sm,1,Dream Traveler Klonoa
+Sweet Magic,Medium,5,1,186,0,0,Tie,0,0,front,0,front,0,sweetmagic/file.sm,2,Dream Traveler Klonoa
+Sweet Magic,Hard,8,1,273,0,1,Minimal effort,0,2,front,0,charted,-180,sweetmagic/file.sm,3,Dream Traveler Klonoa
+Sweet Magic,Challenge,9,1,348,8,13,Minimal effort,8,13,front,0,front,0,sweetmagic/file.sm,4,Dream Traveler Klonoa
+Tell Me A Story,Beginner,1,1,89,0,0,Tie,0,0,front,0,front,0,tmas/tell me a story.sm,0,Valex
+Tell Me A Story,Easy,2,1,95,0,0,Tie,0,0,front,0,front,0,tmas/tell me a story.sm,1,Valex
+Tell Me A Story,Medium,6,1,201,0,0,Tie,0,0,front,0,front,0,tmas/tell me a story.sm,2,Valex
+Tell Me A Story,Hard,7,1,253,0,0,Tie,0,0,front,0,front,0,tmas/tell me a story.sm,3,Valex
+Tell Me A Story,Challenge,9,1,283,5,6,Minimal effort,5,6,front,0,front,0,tmas/tell me a story.sm,4,Valex
+Tell Me A Story,Edit,10,1,386,22,25,Minimal effort,26,26,intro,90,intro,90,tmas/tell me a story.sm,5,Mint's Tale
+The Grimoire For Alice,Beginner,3,1,178,0,0,Tie,0,0,front,0,front,0,grimalice/file.sm,0,Trick Master Mint
+The Grimoire For Alice,Easy,6,1,308,0,4,Minimal effort,5,8,intro,90,intro,90,grimalice/file.sm,1,Trick Master Mint
+The Grimoire For Alice,Medium,8,1,440,8,12,Minimal effort,20,20,intro,-90,intro,-90,grimalice/file.sm,2,Trick Master Mint
+The Grimoire For Alice,Hard,10,1,569,45,48,Minimal effort,47,49,intro,90,intro,90,grimalice/file.sm,3,Trick Master Mint
+The Grimoire For Alice,Challenge,13,1,813,272,262,Natural,286,283,intro,90,intro,90,grimalice/file.sm,4,Kilgamayan w/ Mint
+The Irony of Chaste,Beginner,3,1,181,0,0,Tie,0,0,front,0,front,0,irony/ironyofchaste.sm,0,Trick Master Mint
+The Irony of Chaste,Easy,6,1,231,0,0,Tie,0,0,front,0,front,0,irony/ironyofchaste.sm,1,Trick Master Mint
+The Irony of Chaste,Medium,8,1,374,3,4,Minimal effort,3,4,front,0,front,0,irony/ironyofchaste.sm,2,Trick Master Mint
+The Irony of Chaste,Hard,10,1,523,84,83,Natural,84,83,front,0,front,0,irony/ironyofchaste.sm,3,Trick Master Mint
+The Irony of Chaste,Challenge,11,1,601,128,127,Natural,128,127,front,0,front,0,irony/ironyofchaste.sm,4,Trick Master Mint
+The Irony of Chaste,Edit,11,1,534,158,150,Natural,158,150,front,0,front,0,irony/ironyofchaste.sm,5,ITG Edit
+WHAT PLANET IS THIS?!,Beginner,1,1,128,0,0,Tie,0,0,front,0,front,0,wpit/WHAT PLANET IS THIS.sm,0,Toph
+WHAT PLANET IS THIS?!,Easy,6,1,274,0,0,Tie,4,4,intro,90,intro,90,wpit/WHAT PLANET IS THIS.sm,1,Toph
+WHAT PLANET IS THIS?!,Medium,8,1,429,5,9,Minimal effort,29,30,intro,90,intro,90,wpit/WHAT PLANET IS THIS.sm,2,Toph
+WHAT PLANET IS THIS?!,Hard,10,1,568,77,83,Minimal effort,77,85,front,0,intro,90,wpit/WHAT PLANET IS THIS.sm,3,Toph
+WHAT PLANET IS THIS?!,Challenge,12,1,660,177,177,Tie,186,193,intro,90,intro,90,wpit/WHAT PLANET IS THIS.sm,4,Toph
+Wonderstory,Beginner,2,1,143,0,0,Tie,0,0,front,0,front,0,wstory/file.sm,0,Trick Master Mint
+Wonderstory,Easy,4,1,263,0,0,Tie,0,0,front,0,front,0,wstory/file.sm,1,Trick Master Mint
+Wonderstory,Medium,6,1,332,2,2,Tie,8,8,intro,90,intro,90,wstory/file.sm,2,Dream Traveler Klonoa
+Wonderstory,Hard,8,1,411,7,9,Minimal effort,16,20,intro,90,intro,90,wstory/file.sm,3,Dream Traveler Klonoa
+Wonderstory,Challenge,9,1,488,18,22,Minimal effort,21,22,intro,90,front,0,wstory/file.sm,4,Trick Master Mint
+YOU,Beginner,1,1,104,0,0,Tie,0,0,front,0,front,0,you/file.sm,0,Trick Master Mint
+YOU,Easy,3,1,158,0,0,Tie,0,0,front,0,front,0,you/file.sm,1,Trick Master Mint
+YOU,Medium,5,1,236,0,0,Tie,0,0,front,0,front,0,you/file.sm,2,Trick Master Mint
+YOU,Hard,7,1,284,0,0,Tie,0,0,front,0,front,0,you/file.sm,3,Trick Master Mint
+YOU,Challenge,9,1,401,18,22,Minimal effort,33,36,intro,90,intro,90,you/file.sm,4,Shuffle Master Mint
+Yuujou Monogatari,Beginner,2,1,86,0,0,Tie,0,0,front,0,front,0,yuumono/Yuujou Monogatari.sm,0,Kilgamayan
+Yuujou Monogatari,Easy,4,1,156,0,0,Tie,0,0,front,0,front,0,yuumono/Yuujou Monogatari.sm,1,Kilgamayan
+Yuujou Monogatari,Medium,7,1,358,0,0,Tie,11,11,intro,90,intro,90,yuumono/Yuujou Monogatari.sm,2,Kilgamayan
+Yuujou Monogatari,Hard,9,1,435,24,28,Minimal effort,41,43,intro,90,intro,90,yuumono/Yuujou Monogatari.sm,3,Kilgamayan
+Yuujou Monogatari,Challenge,10,1,475,57,58,Minimal effort,65,66,intro,90,intro,90,yuumono/Yuujou Monogatari.sm,4,Kilgamayan
+グリグリ,Beginner,2,1,132,0,0,Tie,0,0,front,0,front,0,guriguri/guriguri.sm,0,Snowcrafta
+グリグリ,Easy,4,1,220,0,0,Tie,0,0,front,0,front,0,guriguri/guriguri.sm,1,Snowcrafta
+グリグリ,Medium,6,1,291,1,1,Tie,7,7,intro,90,intro,90,guriguri/guriguri.sm,2,Snowcrafta
+グリグリ,Hard,8,1,359,10,11,Minimal effort,10,13,front,0,intro,90,guriguri/guriguri.sm,3,Snowcrafta
+グリグリ,Challenge,9,1,406,14,14,Tie,14,14,front,0,front,0,guriguri/guriguri.sm,4,Snowcrafta
+Ai Chuu Seishin,Hard,10,0.75,586,38,42,Minimal effort,49,42,intro,90,front,0,acssm/ACSSM.sm,3,Hiryuu
+Ai Chuu Seishin,Challenge,11,0.75,595,36,40,Minimal effort,36,40,front,0,front,0,acssm/ACSSM.sm,4,Trick Master Mint
+Air,Hard,9,0.75,521,2,2,Tie,2,2,front,0,front,0,air/air.sm,3,Trick Master Mint
+Air,Challenge,11,0.75,698,23,29,Minimal effort,28,29,intro,90,front,0,air/air.sm,4,Trick Master Mint
+Angel Chronicle,Hard,8,0.75,416,0,0,Tie,2,2,intro,90,intro,90,angelchron/angelchr.sm,3,Trick Master Mint
+Angel Chronicle,Challenge,10,0.75,568,3,3,Tie,4,4,intro,90,intro,90,angelchron/angelchr.sm,4,Trick Master Mint
+Angelic Symphony,Hard,8,0.75,315,2,2,Tie,3,3,intro,90,intro,90,angelsymph/file.sm,3,Trick Master Mint
+Angelic Symphony,Challenge,9,0.75,421,0,4,Minimal effort,1,5,intro,90,intro,90,angelsymph/file.sm,4,Trick Master Mint
+Baragoku Otome,Hard,6,0.75,197,0,0,Tie,0,0,front,0,front,0,barago/file.sm,3,Trick Master Mint
+Baragoku Otome,Challenge,9,0.75,306,2,3,Minimal effort,2,3,front,0,front,0,barago/file.sm,4,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Hard,9,0.75,343,0,2,Minimal effort,2,3,intro,90,intro,90,dokuro/file.sm,3,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Challenge,10,0.75,409,10,12,Minimal effort,11,13,intro,90,charted,-180,dokuro/file.sm,4,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Challenge,9,0.75,477,4,5,Minimal effort,5,5,intro,90,front,0,dokuroremix/file.sm,0,Trick Master Mint
+Border of Death,Hard,6,0.75,235,0,1,Minimal effort,1,1,intro,90,front,0,bod/file.sm,3,Trick Master Mint
+Border of Death,Challenge,8,0.75,330,0,0,Tie,0,0,front,0,front,0,bod/file.sm,4,Trick Master Mint
+Brave New World,Hard,7,0.75,289,0,0,Tie,1,1,intro,90,intro,90,bneworld/file.sm,3,Trick Master Mint
+Brave New World,Challenge,10,0.75,509,26,29,Minimal effort,31,31,intro,-90,intro,90,bneworld/file.sm,4,Trick Master Mint
+Daisuke,Hard,9,0.75,465,0,0,Tie,14,14,intro,90,intro,90,daisuke/Daisuke.sm,3,Dahrkdaiz
+Daisuke,Challenge,9,0.75,516,0,0,Tie,8,8,intro,90,intro,90,daisuke/Daisuke.sm,4,DahrkDaiz
+DIVE2006,Hard,8,0.75,400,0,0,Tie,3,3,intro,90,intro,90,dive2k6/file.sm,3,Trick Master Mint
+DIVE2006,Challenge,10,0.75,551,5,10,Minimal effort,14,14,intro,90,intro,90,dive2k6/file.sm,4,Trick Master Mint
+Dotabata Angel Loop,Hard,8,0.75,293,0,0,Tie,0,0,front,0,front,0,dotabata/dotabata.sm,3,Trick Master Mint
+Dotabata Angel Loop,Challenge,9,0.75,347,4,4,Tie,6,5,intro,90,intro,90,dotabata/dotabata.sm,4,Trick Master Mint
+Eternal Blaze,Hard,8,0.75,375,0,0,Tie,0,0,front,0,front,0,eterblaze/file.sm,3,Trick Master Mint
+Eternal Blaze,Challenge,10,0.75,515,0,0,Tie,3,3,intro,90,intro,90,eterblaze/file.sm,4,Trick Master Mint
+Face of Fact,Hard,8,0.75,313,1,1,Tie,2,2,rest,90,rest,90,fof/file.sm,3,Trick Master Mint
+Face of Fact,Challenge,9,0.75,342,2,2,Tie,2,2,front,0,front,0,fof/file.sm,4,Trick Master Mint
+Face of Fact,Hard,10,0.75,442,11,11,Tie,11,11,front,0,front,0,fofpsm/pk.sm,3,Trick Master Mint
+Face of Fact,Challenge,10,0.75,534,24,24,Tie,24,24,front,0,front,0,fofpsm/pk.sm,4,Trick Master Mint
+Face of Fact,Hard,8,0.75,344,0,0,Tie,4,4,intro,90,intro,90,fofres/file.sm,3,Trick Master Mint
+Face of Fact,Challenge,9,0.75,377,2,2,Tie,4,4,intro,90,intro,90,fofres/file.sm,4,Trick Master Mint
+fffff,Hard,9,0.75,388,0,0,Tie,3,3,intro,90,intro,90,fffff/file.sm,3,Trick Master Mint
+fffff,Challenge,10,0.75,591,16,17,Minimal effort,16,17,front,0,front,0,fffff/file.sm,4,Trick Master Mint
+Galaxy Babanga Bang!,Hard,7,0.75,308,0,0,Tie,0,1,front,0,charted,180,gbbang/file.sm,3,Trick Master Mint
+Galaxy Babanga Bang!,Challenge,8,0.75,339,0,0,Tie,0,0,front,0,front,0,gbbang/file.sm,4,Trick Master Mint
+Go Berzerk,Hard,9,0.75,514,0,1,Minimal effort,1,1,intro,90,front,0,goberzerk/gb.sm,3,Trick Master Mint
+Go Berzerk,Challenge,10,0.75,600,7,12,Minimal effort,9,13,intro,90,intro,90,goberzerk/gb.sm,4,Trick Master Mint
+God Knows...,Hard,9,0.75,418,2,7,Minimal effort,7,10,intro,90,intro,90,godknows/file.sm,3,Trick Master Mint
+God Knows...,Challenge,11,0.75,548,44,52,Minimal effort,52,52,intro,-90,front,0,godknows/file.sm,4,Trick Master Mint
+Gradius,Hard,8,0.75,396,10,9,Natural,12,10,intro,90,intro,90,gradiusfullspeed/gradiusfullspeed.sm,3,cpubasic13
+Gradius,Challenge,9,0.75,559,11,10,Natural,14,11,intro,90,rest,90,gradiusfullspeed/gradiusfullspeed.sm,4,cpubasic13
+Healing Monolith,Hard,9,0.75,516,21,40,Minimal effort,38,42,intro,90,intro,90,healmon/hm.sm,3,Trick Master Mint
+Healing Monolith,Challenge,11,0.75,583,15,30,Minimal effort,39,40,intro,90,intro,90,healmon/hm.sm,4,Trick Master Mint
+Healing Vision,Hard,9,0.75,355,1,3,Minimal effort,11,11,intro,90,intro,90,hvgm/file.sm,3,Trick Master Mint
+Higurashi no Naku Koro ni,Challenge,9,0.75,309,3,4,Minimal effort,6,6,intro,90,intro,90,higu-blgm/higugroove.sm,0,Trick Master Mint
+Higurashi no Naku Koro ni,Hard,8,0.75,390,0,0,Tie,11,11,intro,90,intro,90,higu/file.sm,3,Trick Master Mint
+Higurashi no Naku Koro ni,Challenge,10,0.75,539,11,15,Minimal effort,19,19,intro,90,intro,90,higu/file.sm,4,Trick Master Mint
+Jack Spinnaz,Hard,9,0.75,504,2,3,Minimal effort,18,20,intro,90,intro,90,jackspin/file.sm,3,Trick Master Mint
+Jack Spinnaz,Challenge,10,0.75,628,6,12,Minimal effort,73,73,intro,90,intro,90,jackspin/file.sm,4,Trick Master Mint
+Kamui,Hard,9,0.75,359,2,2,Tie,2,2,front,0,front,0,kamui/kamui.sm,3,Trick Master Mint
+Kamui,Challenge,10,0.75,515,9,15,Minimal effort,25,25,intro,-90,intro,90,kamui/kamui.sm,4,Trick Master Mint
+Kinjirareta Asobi,Hard,7,0.75,322,0,0,Tie,2,2,intro,90,intro,90,kinjiaso/file.sm,3,Trick Master Mint
+Kinjirareta Asobi,Challenge,9,0.75,432,4,9,Minimal effort,16,16,intro,90,intro,90,kinjiaso/file.sm,4,Trick Master Mint
+Legendary WWW Area (PharaohMan),Hard,9,0.75,532,6,7,Minimal effort,6,7,front,0,front,0,legendpharaoh/Legendary WWW Area.sm,3,Kilgamayam
+Legendary WWW Area (PharaohMan),Challenge,11,0.75,641,12,23,Minimal effort,33,34,intro,90,intro,90,legendpharaoh/Legendary WWW Area.sm,4,Kilgamayan
+Lost my music,Hard,9,0.75,480,16,25,Minimal effort,16,25,front,0,front,0,lostmymusic/Lost my music.sm,3,Koiyuki & Mint
+Lost my music,Challenge,10,0.75,500,34,41,Minimal effort,37,41,intro,90,front,0,lostmymusic/Lost my music.sm,4,Koiyuki & Mint
+Mahoro de MAX 300,Hard,10,0.75,473,5,6,Minimal effort,19,19,intro,90,intro,90,mahoro300/file.sm,3,Trick Master Mint
+Maji Suki Magic,Hard,8,0.75,290,1,1,Tie,1,1,front,0,front,0,msmagic/file.sm,3,Trick Master Mint
+Maji Suki Magic,Challenge,10,0.75,439,3,3,Tie,9,9,intro,90,intro,90,msmagic/file.sm,4,Trick Master Mint
+Marisa Stole the Precious Thing,Challenge,9,0.75,356,0,0,Tie,0,0,front,0,front,0,marisa-pt2/file.sm,0,Trick Master Mint
+Marisa Stole the Precious Thing,Hard,9,0.75,433,0,0,Tie,0,0,front,0,front,0,marisa/file.sm,3,Trick Master Mint
+Marisa Stole the Precious Thing,Challenge,10,0.75,653,41,44,Minimal effort,41,44,front,0,front,0,marisa/file.sm,4,Trick Master Mint
+Necro fantasia,Hard,7,0.75,320,0,0,Tie,0,0,front,0,front,0,necrofan/file.sm,3,Letty Whiterock
+Necro fantasia,Challenge,9,0.75,446,5,4,Natural,5,5,front,0,intro,90,necrofan/file.sm,4,Letty Whiterock
+"One Day, One Dream",Hard,8,0.75,281,0,0,Tie,1,1,intro,90,rest,90,1d1d/1d1d.sm,3,Hiryuu
+"One Day, One Dream",Challenge,9,0.75,401,0,0,Tie,1,1,intro,90,intro,90,1d1d/1d1d.sm,4,Hiryuu
+PARANOiA HRX,Hard,9,0.75,407,14,16,Minimal effort,15,17,charted,180,charted,180,parahrx/PARANOiA HRX.sm,3,Kewing DarkSun
+PARANOiA HRX,Challenge,9,0.75,384,15,16,Minimal effort,15,16,front,0,front,0,parahrx/PARANOiA HRX.sm,4,Kewing DarkSun
+PEd0PHiLiA,Hard,8,0.75,323,0,2,Minimal effort,1,2,intro,90,front,0,pedo/pedo.sm,3,Trick Master Mint?
+PEd0PHiLiA,Challenge,10,0.75,429,13,18,Minimal effort,17,18,intro,90,front,0,pedo/pedo.sm,4,Trick Master Mint
+Release of the Far West Ocean,Hard,8,0.75,290,1,1,Tie,2,2,intro,90,intro,90,rotfwo/file.sm,3,Trick Master Mint
+Release of the Far West Ocean,Challenge,9,0.75,389,2,2,Tie,8,7,intro,90,intro,90,rotfwo/file.sm,4,Trick Master Mint
+rislim,Hard,7,0.75,340,0,0,Tie,0,0,front,0,front,0,rislim/rislim.sm,3,Trick Master Mint
+rislim,Challenge,9,0.75,530,12,12,Tie,18,17,intro,90,intro,90,rislim/rislim.sm,4,Trick Master Mint
+rislim,Hard,10,0.75,537,8,8,Tie,17,17,intro,90,intro,90,rislimdropout/file.sm,3,Trick Master Mint
+rislim,Challenge,11,0.75,631,33,37,Minimal effort,46,48,intro,90,intro,90,rislimdropout/file.sm,4,Trick Master Mint
+Seishoujo Ryouiki,Challenge,9,0.75,425,4,7,Minimal effort,8,9,intro,90,intro,90,seiryo-dgm/file.sm,0,Dream Traveler Klonoa
+Seishoujo Ryouiki,Hard,7,0.75,325,0,0,Tie,1,1,intro,90,intro,90,seiryo/file.sm,3,Trick Master Mint
+Seishoujo Ryouiki,Challenge,8,0.75,355,1,1,Tie,2,2,intro,90,intro,90,seiryo/file.sm,4,Trick Master Mint
+Sweet Magic,Hard,8,0.75,273,0,0,Tie,0,0,front,0,front,0,sweetmagic/file.sm,3,Dream Traveler Klonoa
+Sweet Magic,Challenge,9,0.75,348,3,3,Tie,3,3,front,0,front,0,sweetmagic/file.sm,4,Dream Traveler Klonoa
+Tell Me A Story,Hard,7,0.75,253,0,0,Tie,0,0,front,0,front,0,tmas/tell me a story.sm,3,Valex
+Tell Me A Story,Challenge,9,0.75,283,1,1,Tie,5,6,intro,90,intro,90,tmas/tell me a story.sm,4,Valex
+The Grimoire For Alice,Hard,10,0.75,569,5,4,Natural,6,6,intro,90,intro,90,grimalice/file.sm,3,Trick Master Mint
+The Grimoire For Alice,Challenge,13,0.75,813,61,63,Minimal effort,68,64,intro,90,intro,180,grimalice/file.sm,4,Kilgamayan w/ Mint
+The Irony of Chaste,Hard,10,0.75,523,25,26,Minimal effort,25,26,front,0,front,0,irony/ironyofchaste.sm,3,Trick Master Mint
+The Irony of Chaste,Challenge,11,0.75,601,40,41,Minimal effort,40,41,front,0,front,0,irony/ironyofchaste.sm,4,Trick Master Mint
+WHAT PLANET IS THIS?!,Hard,10,0.75,568,16,15,Natural,19,19,intro,90,intro,90,wpit/WHAT PLANET IS THIS.sm,3,Toph
+WHAT PLANET IS THIS?!,Challenge,12,0.75,660,41,35,Natural,53,54,intro,90,intro,90,wpit/WHAT PLANET IS THIS.sm,4,Toph
+Wonderstory,Hard,8,0.75,411,0,1,Minimal effort,0,1,front,0,front,0,wstory/file.sm,3,Dream Traveler Klonoa
+Wonderstory,Challenge,9,0.75,488,1,1,Tie,1,1,front,0,front,0,wstory/file.sm,4,Trick Master Mint
+YOU,Hard,7,0.75,284,0,0,Tie,0,0,front,0,front,0,you/file.sm,3,Trick Master Mint
+YOU,Challenge,9,0.75,401,3,3,Tie,14,14,intro,90,intro,90,you/file.sm,4,Shuffle Master Mint
+Yuujou Monogatari,Hard,9,0.75,435,2,6,Minimal effort,5,6,intro,90,front,0,yuumono/Yuujou Monogatari.sm,3,Kilgamayan
+Yuujou Monogatari,Challenge,10,0.75,475,12,13,Minimal effort,12,13,front,0,front,0,yuumono/Yuujou Monogatari.sm,4,Kilgamayan
+グリグリ,Hard,8,0.75,359,9,11,Minimal effort,9,12,front,0,intro,90,guriguri/guriguri.sm,3,Snowcrafta
+グリグリ,Challenge,9,0.75,406,7,7,Tie,7,7,front,0,front,0,guriguri/guriguri.sm,4,Snowcrafta
+Ai Chuu Seishin,Hard,10,1.25,586,270,267,Natural,312,307,intro,90,intro,90,acssm/ACSSM.sm,3,Hiryuu
+Ai Chuu Seishin,Challenge,11,1.25,595,318,315,Natural,318,315,front,0,front,0,acssm/ACSSM.sm,4,Trick Master Mint
+Air,Hard,9,1.25,521,64,64,Tie,64,64,front,0,front,0,air/air.sm,3,Trick Master Mint
+Air,Challenge,11,1.25,698,154,156,Minimal effort,154,156,front,0,front,0,air/air.sm,4,Trick Master Mint
+Angel Chronicle,Hard,8,1.25,416,30,35,Minimal effort,34,38,intro,90,intro,90,angelchron/angelchr.sm,3,Trick Master Mint
+Angel Chronicle,Challenge,10,1.25,568,90,102,Minimal effort,92,102,intro,90,front,0,angelchron/angelchr.sm,4,Trick Master Mint
+Angelic Symphony,Hard,8,1.25,315,14,14,Tie,14,14,front,0,front,0,angelsymph/file.sm,3,Trick Master Mint
+Angelic Symphony,Challenge,9,1.25,421,45,49,Minimal effort,49,51,intro,180,intro,180,angelsymph/file.sm,4,Trick Master Mint
+Baragoku Otome,Hard,6,1.25,197,1,1,Tie,3,3,intro,90,intro,90,barago/file.sm,3,Trick Master Mint
+Baragoku Otome,Challenge,9,1.25,306,39,41,Minimal effort,41,46,intro,90,intro,90,barago/file.sm,4,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Hard,9,1.25,343,20,28,Minimal effort,20,28,front,0,front,0,dokuro/file.sm,3,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Challenge,10,1.25,409,75,76,Minimal effort,77,76,intro,90,front,0,dokuro/file.sm,4,Trick Master Mint
+Bokusatsu Tenshi Dokuro-chan,Challenge,9,1.25,477,62,61,Natural,62,61,front,0,front,0,dokuroremix/file.sm,0,Trick Master Mint
+Border of Death,Hard,6,1.25,235,10,10,Tie,10,10,front,0,front,0,bod/file.sm,3,Trick Master Mint
+Border of Death,Challenge,8,1.25,330,21,25,Minimal effort,22,25,intro,180,front,0,bod/file.sm,4,Trick Master Mint
+Brave New World,Hard,7,1.25,289,15,16,Minimal effort,16,16,intro,90,front,0,bneworld/file.sm,3,Trick Master Mint
+Brave New World,Challenge,10,1.25,509,164,159,Natural,204,205,intro,-90,intro,-90,bneworld/file.sm,4,Trick Master Mint
+Daisuke,Hard,9,1.25,465,62,64,Minimal effort,62,65,front,0,intro,180,daisuke/Daisuke.sm,3,Dahrkdaiz
+Daisuke,Challenge,9,1.25,516,79,86,Minimal effort,79,86,front,0,front,0,daisuke/Daisuke.sm,4,DahrkDaiz
+DIVE2006,Hard,8,1.25,400,55,62,Minimal effort,57,62,intro,90,front,0,dive2k6/file.sm,3,Trick Master Mint
+DIVE2006,Challenge,10,1.25,551,172,174,Minimal effort,175,175,intro,90,intro,90,dive2k6/file.sm,4,Trick Master Mint
+Dotabata Angel Loop,Hard,8,1.25,293,14,16,Minimal effort,14,16,front,0,front,0,dotabata/dotabata.sm,3,Trick Master Mint
+Dotabata Angel Loop,Challenge,9,1.25,347,25,29,Minimal effort,25,29,front,0,front,0,dotabata/dotabata.sm,4,Trick Master Mint
+Eternal Blaze,Hard,8,1.25,375,36,36,Tie,41,39,intro,90,intro,90,eterblaze/file.sm,3,Trick Master Mint
+Eternal Blaze,Challenge,10,1.25,515,117,124,Minimal effort,124,124,intro,-90,front,0,eterblaze/file.sm,4,Trick Master Mint
+Face of Fact,Hard,8,1.25,313,32,33,Minimal effort,32,33,front,0,front,0,fof/file.sm,3,Trick Master Mint
+Face of Fact,Challenge,9,1.25,342,41,45,Minimal effort,41,45,front,0,front,0,fof/file.sm,4,Trick Master Mint
+Face of Fact,Hard,10,1.25,442,110,114,Minimal effort,110,114,front,0,front,0,fofpsm/pk.sm,3,Trick Master Mint
+Face of Fact,Challenge,10,1.25,534,216,215,Natural,216,215,front,0,front,0,fofpsm/pk.sm,4,Trick Master Mint
+Face of Fact,Hard,8,1.25,344,19,23,Minimal effort,19,23,front,0,front,0,fofres/file.sm,3,Trick Master Mint
+Face of Fact,Challenge,9,1.25,377,42,49,Minimal effort,51,52,intro,90,intro,90,fofres/file.sm,4,Trick Master Mint
+fffff,Hard,9,1.25,388,24,26,Minimal effort,45,45,intro,90,intro,90,fffff/file.sm,3,Trick Master Mint
+fffff,Challenge,10,1.25,591,134,136,Minimal effort,134,136,front,0,front,0,fffff/file.sm,4,Trick Master Mint
+Galaxy Babanga Bang!,Hard,7,1.25,308,6,11,Minimal effort,7,13,intro,90,intro,90,gbbang/file.sm,3,Trick Master Mint
+Galaxy Babanga Bang!,Challenge,8,1.25,339,26,26,Tie,30,30,charted,-180,charted,-180,gbbang/file.sm,4,Trick Master Mint
+Go Berzerk,Hard,9,1.25,514,50,50,Tie,50,50,front,0,front,0,goberzerk/gb.sm,3,Trick Master Mint
+Go Berzerk,Challenge,10,1.25,600,121,119,Natural,121,119,front,0,front,0,goberzerk/gb.sm,4,Trick Master Mint
+God Knows...,Hard,9,1.25,418,57,65,Minimal effort,58,65,intro,180,front,0,godknows/file.sm,3,Trick Master Mint
+God Knows...,Challenge,11,1.25,548,205,208,Minimal effort,218,221,intro,90,intro,90,godknows/file.sm,4,Trick Master Mint
+Gradius,Hard,8,1.25,396,40,40,Tie,46,47,intro,90,intro,90,gradiusfullspeed/gradiusfullspeed.sm,3,cpubasic13
+Gradius,Challenge,9,1.25,559,97,97,Tie,111,111,intro,90,intro,90,gradiusfullspeed/gradiusfullspeed.sm,4,cpubasic13
+Healing Monolith,Hard,9,1.25,516,146,165,Minimal effort,175,165,intro,90,front,0,healmon/hm.sm,3,Trick Master Mint
+Healing Monolith,Challenge,11,1.25,583,191,178,Natural,199,198,intro,90,intro,90,healmon/hm.sm,4,Trick Master Mint
+Healing Vision,Hard,9,1.25,355,37,39,Minimal effort,37,39,front,0,front,0,hvgm/file.sm,3,Trick Master Mint
+Higurashi no Naku Koro ni,Challenge,9,1.25,309,26,26,Tie,26,26,front,0,front,0,higu-blgm/higugroove.sm,0,Trick Master Mint
+Higurashi no Naku Koro ni,Hard,8,1.25,390,20,25,Minimal effort,28,28,intro,90,intro,90,higu/file.sm,3,Trick Master Mint
+Higurashi no Naku Koro ni,Challenge,10,1.25,539,106,108,Minimal effort,109,109,intro,90,intro,90,higu/file.sm,4,Trick Master Mint
+Jack Spinnaz,Hard,9,1.25,504,60,67,Minimal effort,66,71,intro,-90,intro,-90,jackspin/file.sm,3,Trick Master Mint
+Jack Spinnaz,Challenge,10,1.25,628,173,179,Minimal effort,212,220,intro,90,intro,90,jackspin/file.sm,4,Trick Master Mint
+Kamui,Hard,9,1.25,359,35,40,Minimal effort,41,40,intro,90,front,0,kamui/kamui.sm,3,Trick Master Mint
+Kamui,Challenge,10,1.25,515,162,162,Tie,187,188,intro,90,intro,-90,kamui/kamui.sm,4,Trick Master Mint
+Kinjirareta Asobi,Hard,7,1.25,322,12,16,Minimal effort,15,16,intro,90,front,0,kinjiaso/file.sm,3,Trick Master Mint
+Kinjirareta Asobi,Challenge,9,1.25,432,51,53,Minimal effort,70,71,intro,90,intro,90,kinjiaso/file.sm,4,Trick Master Mint
+Legendary WWW Area (PharaohMan),Hard,9,1.25,532,65,65,Tie,66,71,intro,180,intro,-90,legendpharaoh/Legendary WWW Area.sm,3,Kilgamayam
+Legendary WWW Area (PharaohMan),Challenge,11,1.25,641,176,175,Natural,185,189,intro,-90,intro,-90,legendpharaoh/Legendary WWW Area.sm,4,Kilgamayan
+Lost my music,Hard,9,1.25,480,124,129,Minimal effort,139,137,intro,-90,intro,90,lostmymusic/Lost my music.sm,3,Koiyuki & Mint
+Lost my music,Challenge,10,1.25,500,139,144,Minimal effort,141,146,intro,90,intro,180,lostmymusic/Lost my music.sm,4,Koiyuki & Mint
+Mahoro de MAX 300,Hard,10,1.25,473,143,145,Minimal effort,148,147,intro,-90,intro,90,mahoro300/file.sm,3,Trick Master Mint
+Maji Suki Magic,Hard,8,1.25,290,11,13,Minimal effort,31,32,intro,90,intro,90,msmagic/file.sm,3,Trick Master Mint
+Maji Suki Magic,Challenge,10,1.25,439,134,142,Minimal effort,147,150,intro,90,intro,90,msmagic/file.sm,4,Trick Master Mint
+Marisa Stole the Precious Thing,Challenge,9,1.25,356,31,34,Minimal effort,38,39,intro,90,intro,90,marisa-pt2/file.sm,0,Trick Master Mint
+Marisa Stole the Precious Thing,Hard,9,1.25,433,24,26,Minimal effort,24,26,front,0,front,0,marisa/file.sm,3,Trick Master Mint
+Marisa Stole the Precious Thing,Challenge,10,1.25,653,189,196,Minimal effort,195,205,intro,90,intro,90,marisa/file.sm,4,Trick Master Mint
+Necro fantasia,Hard,7,1.25,320,8,12,Minimal effort,8,12,front,0,front,0,necrofan/file.sm,3,Letty Whiterock
+Necro fantasia,Challenge,9,1.25,446,76,76,Tie,85,86,intro,90,intro,90,necrofan/file.sm,4,Letty Whiterock
+"One Day, One Dream",Hard,8,1.25,281,10,12,Minimal effort,15,17,intro,90,intro,90,1d1d/1d1d.sm,3,Hiryuu
+"One Day, One Dream",Challenge,9,1.25,401,35,48,Minimal effort,63,67,intro,90,intro,90,1d1d/1d1d.sm,4,Hiryuu
+PARANOiA HRX,Hard,9,1.25,407,38,45,Minimal effort,52,53,intro,90,intro,90,parahrx/PARANOiA HRX.sm,3,Kewing DarkSun
+PARANOiA HRX,Challenge,9,1.25,384,42,46,Minimal effort,42,46,front,0,front,0,parahrx/PARANOiA HRX.sm,4,Kewing DarkSun
+PEd0PHiLiA,Hard,8,1.25,323,17,18,Minimal effort,18,22,intro,90,intro,90,pedo/pedo.sm,3,Trick Master Mint?
+PEd0PHiLiA,Challenge,10,1.25,429,124,131,Minimal effort,131,132,intro,90,intro,90,pedo/pedo.sm,4,Trick Master Mint
+Release of the Far West Ocean,Hard,8,1.25,290,6,11,Minimal effort,16,16,intro,90,intro,90,rotfwo/file.sm,3,Trick Master Mint
+Release of the Far West Ocean,Challenge,9,1.25,389,30,36,Minimal effort,36,37,intro,90,intro,90,rotfwo/file.sm,4,Trick Master Mint
+rislim,Hard,7,1.25,340,9,19,Minimal effort,19,22,intro,90,intro,90,rislim/rislim.sm,3,Trick Master Mint
+rislim,Challenge,9,1.25,530,98,98,Tie,109,108,intro,90,intro,90,rislim/rislim.sm,4,Trick Master Mint
+rislim,Hard,10,1.25,537,63,65,Minimal effort,74,81,intro,90,intro,90,rislimdropout/file.sm,3,Trick Master Mint
+rislim,Challenge,11,1.25,631,136,139,Minimal effort,184,193,intro,90,intro,90,rislimdropout/file.sm,4,Trick Master Mint
+Seishoujo Ryouiki,Challenge,9,1.25,425,99,102,Minimal effort,108,106,intro,90,intro,90,seiryo-dgm/file.sm,0,Dream Traveler Klonoa
+Seishoujo Ryouiki,Hard,7,1.25,325,18,19,Minimal effort,20,21,intro,90,intro,90,seiryo/file.sm,3,Trick Master Mint
+Seishoujo Ryouiki,Challenge,8,1.25,355,35,36,Minimal effort,39,40,intro,90,intro,90,seiryo/file.sm,4,Trick Master Mint
+Sweet Magic,Hard,8,1.25,273,10,15,Minimal effort,14,16,intro,90,intro,90,sweetmagic/file.sm,3,Dream Traveler Klonoa
+Sweet Magic,Challenge,9,1.25,348,23,25,Minimal effort,27,32,intro,90,intro,90,sweetmagic/file.sm,4,Dream Traveler Klonoa
+Tell Me A Story,Hard,7,1.25,253,9,15,Minimal effort,18,20,intro,90,intro,90,tmas/tell me a story.sm,3,Valex
+Tell Me A Story,Challenge,9,1.25,283,15,15,Tie,19,20,intro,90,rest,-90,tmas/tell me a story.sm,4,Valex
+The Grimoire For Alice,Hard,10,1.25,569,160,159,Natural,160,159,front,0,front,0,grimalice/file.sm,3,Trick Master Mint
+The Grimoire For Alice,Challenge,13,1.25,813,493,471,Natural,502,492,intro,90,intro,90,grimalice/file.sm,4,Kilgamayan w/ Mint
+The Irony of Chaste,Hard,10,1.25,523,125,124,Natural,125,124,front,0,front,0,irony/ironyofchaste.sm,3,Trick Master Mint
+The Irony of Chaste,Challenge,11,1.25,601,161,160,Natural,161,160,front,0,front,0,irony/ironyofchaste.sm,4,Trick Master Mint
+WHAT PLANET IS THIS?!,Hard,10,1.25,568,198,203,Minimal effort,217,226,intro,90,intro,90,wpit/WHAT PLANET IS THIS.sm,3,Toph
+WHAT PLANET IS THIS?!,Challenge,12,1.25,660,316,311,Natural,341,344,intro,90,intro,90,wpit/WHAT PLANET IS THIS.sm,4,Toph
+Wonderstory,Hard,8,1.25,411,16,22,Minimal effort,16,22,front,0,front,0,wstory/file.sm,3,Dream Traveler Klonoa
+Wonderstory,Challenge,9,1.25,488,35,35,Tie,35,35,front,0,front,0,wstory/file.sm,4,Trick Master Mint
+YOU,Hard,7,1.25,284,3,7,Minimal effort,9,9,intro,90,intro,90,you/file.sm,3,Trick Master Mint
+YOU,Challenge,9,1.25,401,38,43,Minimal effort,62,62,intro,90,intro,90,you/file.sm,4,Shuffle Master Mint
+Yuujou Monogatari,Hard,9,1.25,435,46,50,Minimal effort,59,62,intro,90,intro,90,yuumono/Yuujou Monogatari.sm,3,Kilgamayan
+Yuujou Monogatari,Challenge,10,1.25,475,92,93,Minimal effort,92,93,front,0,front,0,yuumono/Yuujou Monogatari.sm,4,Kilgamayan
+グリグリ,Hard,8,1.25,359,11,14,Minimal effort,11,14,front,0,front,0,guriguri/guriguri.sm,3,Snowcrafta
+グリグリ,Challenge,9,1.25,406,18,18,Tie,18,18,front,0,front,0,guriguri/guriguri.sm,4,Snowcrafta

@@ -42,7 +42,11 @@ export class ParityAnalyzer extends ChartAnalyzer {
       }
     }
     if (item === "audio.rate") {
-      if (this.chart.stats.parity?.crossingPlan || this.pendingJobs.size)
+      if (
+        this.chart.stats.parity?.plannedRate !== undefined ||
+        this.chart.stats.parity?.crossingPlan ||
+        this.pendingJobs.size
+      )
         this.calculateAll()
       return
     }
@@ -51,6 +55,8 @@ export class ParityAnalyzer extends ChartAnalyzer {
     if (item === "chart.parity.footingStyle") {
       if (this.active && Options.chart.parity.enabled) {
         this.terminateWorker()
+        this.chart.stats.parity = undefined
+        EventHandler.emit("parityModified")
         this.initializeWorker().then(() => this.calculateAll())
       }
       return
@@ -65,7 +71,8 @@ export class ParityAnalyzer extends ChartAnalyzer {
         type: "getDebug",
       })
         .then(data => {
-          this.chart.stats.parity!.debug = data.data!
+          if (this.chart.stats.parity && data.data)
+            this.chart.stats.parity.debug = data.data
         })
         .catch(error => {
           console.error("Failed to get parity debug data:", error)
@@ -102,14 +109,21 @@ export class ParityAnalyzer extends ChartAnalyzer {
       debug: Options.debug.parity.showDebug || Options.debug.parity.showGraph,
     })
       .then(event => {
-        notedata.forEach(note => {
-          const key = note.beat.toFixed(3) + "-" + note.col
-          const foot = event.data.parityLabels.get(key)
-          if (foot) {
-            if (!note.parity) note.parity = {}
-            note.parity.foot = foot
-          }
-        })
+        // Debug deltas must still be applied in worker order when the user
+        // changes rate again while a calculation is running.
+        const staleRate =
+          event.data.plannedRate !== undefined &&
+          event.data.plannedRate !== Options.audio.rate
+        if (staleRate && !event.debug) return
+        if (!staleRate)
+          notedata.forEach(note => {
+            const key = note.beat.toFixed(3) + "-" + note.col
+            const foot = event.data.parityLabels.get(key)
+            if (foot) {
+              if (!note.parity) note.parity = {}
+              note.parity.foot = foot
+            }
+          })
         if (!this.chart.stats.parity) {
           this.chart.stats.parity = {
             ...event.data,
@@ -141,7 +155,7 @@ export class ParityAnalyzer extends ChartAnalyzer {
             },
             debugTime: 0,
           }
-        } else {
+        } else if (!staleRate) {
           Object.assign(this.chart.stats.parity, event.data)
         }
         if (event.debug) {
@@ -193,7 +207,7 @@ export class ParityAnalyzer extends ChartAnalyzer {
         }
 
         this.chart.stats.parity.debugTime = performance.now() - start
-        EventHandler.emit("parityModified")
+        if (!staleRate) EventHandler.emit("parityModified")
       })
       .catch(error => {
         console.error("Failed to calculate parity:", error)
@@ -224,6 +238,7 @@ export class ParityAnalyzer extends ChartAnalyzer {
     const worker = new ParityInternals()
     this.worker = worker
     this.worker.onmessage = (event: MessageEvent<ParityOutboundMessage>) => {
+      if (this.worker !== worker) return
       const { id } = event.data
       if (this.pendingJobs.has(id)) {
         const job = this.pendingJobs.get(id)!

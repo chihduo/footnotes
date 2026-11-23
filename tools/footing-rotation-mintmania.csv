@@ -1,0 +1,108 @@
+simfile,chart_index,title,difficulty,meter,chart_rows,first_event_second,front_warning_rows,left_warning_rows,right_warning_rows,back_warning_rows,best_whole_chart_warning_rows,best_with_turn_lead_in_warning_rows,best_one_rest_turn_warning_rows,rest_turn_heading,rest_turn_before_beat,rest_turn_start_second,rest_turn_end_second,feasible_charted_half_turn_routes,charted_half_turn_warning_rows,charted_half_turn_from_beat,charted_half_turn_to_beat,charted_half_turn_direction,charted_half_turn_seconds,integrated_warning_rows,integrated_turn,integrated_heading_degrees
+1d1d/1d1d.sm,3,"One Day, One Dream",Hard,8,281,6.298,14,4,4,14,4,4,4,left,27.75,29.372915966386557,29.736319327731096,0,,,,,,4,intro,90
+1d1d/1d1d.sm,4,"One Day, One Dream",Challenge,9,401,6.298,50,10,10,50,10,10,44,right,198.5,102.53365395785747,102.95665395785748,1,50,12,15,clockwise,3.0000000000000018,10,intro,90
+acssm/ACSSM.sm,3,Ai Chuu Seishin,Hard,10,586,1.76,175,122,119,175,119,175,175,,,,,0,,,,,,119,intro,-90
+acssm/ACSSM.sm,4,Ai Chuu Seishin,Challenge,11,595,1.76,128,151,149,127,127,128,128,,,,,0,,,,,,128,front,0
+air/air.sm,3,Air,Hard,9,521,5.432258426966292,43,48,48,43,43,43,43,,,,,0,,,,,,43,front,0
+air/air.sm,4,Air,Challenge,11,698,5.432258426966292,124,103,102,124,102,102,124,,,,,0,,,,,,102,intro,-90
+air/air.sm,5,Air,Edit,12,933,5.432258426966292,569,499,499,570,499,499,569,,,,,0,,,,,,499,intro,90
+angelchron/angelchr.sm,3,Angel Chronicle,Hard,8,416,2.04,22,18,18,22,18,22,22,,,,,0,,,,,,18,intro,90
+angelchron/angelchr.sm,4,Angel Chronicle,Challenge,10,568,2.04,32,36,36,31,31,32,32,,,,,0,,,,,,32,front,0
+angelsymph/file.sm,3,Angelic Symphony,Hard,8,315,6.04,11,5,5,11,5,5,11,,,,,0,,,,,,5,intro,90
+angelsymph/file.sm,4,Angelic Symphony,Challenge,9,421,6.04,14,17,17,14,14,14,14,,,,,0,,,,,,14,front,0
+barago/file.sm,3,Baragoku Otome,Hard,6,197,6.008,3,1,1,3,1,1,1,right,24,17.273,17.648,0,,,,,,1,intro,90
+barago/file.sm,4,Baragoku Otome,Challenge,9,306,6.008,13,10,10,13,10,10,13,,,,,0,,,,,,10,intro,90
+barago/file.sm,5,Baragoku Otome,Edit,10,361,6.008,69,59,59,69,59,59,69,,,,,0,,,,,,59,intro,90
+bneworld/file.sm,3,Brave New World,Hard,7,289,5.103237410071943,5,3,3,5,3,3,5,,,,,3,5,117,120.5,clockwise,1.5107913669064743,3,intro,90
+bneworld/file.sm,4,Brave New World,Challenge,10,509,5.103237410071943,124,97,95,124,95,95,124,,,,,1,123,156.5,160,clockwise,1.5107913669064743,95,intro,-90
+bod/file.sm,3,Border of Death,Hard,6,235,6.06,8,3,3,8,3,3,5,right,113,60.27,62.705000000000005,0,,,,,,3,intro,90
+bod/file.sm,4,Border of Death,Challenge,8,330,6.06,8,14,14,8,8,8,8,,,,,0,,,,,,8,front,0
+daisuke/Daisuke.sm,3,Daisuke,Hard,9,465,7.164649681528663,26,28,28,26,26,26,26,,,,,0,,,,,,26,front,0
+daisuke/Daisuke.sm,4,Daisuke,Challenge,9,516,7.164649681528663,41,20,21,41,20,20,41,,,,,0,,,,,,20,intro,90
+dive2k6/file.sm,3,DIVE2006,Hard,8,400,6.230548387096774,27,14,14,27,14,14,14,right,15,10.892161290322582,11.289903225806453,0,,,,,,14,intro,90
+dive2k6/file.sm,4,DIVE2006,Challenge,10,551,6.230548387096774,72,61,62,74,61,61,72,,,,,0,,,,,,61,intro,90
+dokuro/file.sm,3,Bokusatsu Tenshi Dokuro-chan,Hard,9,343,3.483529411764706,19,11,11,19,11,11,19,,,,,0,,,,,,11,intro,90
+dokuro/file.sm,4,Bokusatsu Tenshi Dokuro-chan,Challenge,10,409,3.483529411764706,50,40,40,50,40,40,50,,,,,0,,,,,,40,intro,90
+dokuroremix/file.sm,0,Bokusatsu Tenshi Dokuro-chan,Challenge,9,477,5.659058823529412,54,44,44,54,44,44,54,,,,,0,,,,,,44,intro,90
+dotabata/dotabata.sm,3,Dotabata Angel Loop,Hard,8,293,1.2,0,3,3,0,0,0,0,,,,,2,0,159.5,163,counterclockwise,1.5671641791044806,0,front,0
+dotabata/dotabata.sm,4,Dotabata Angel Loop,Challenge,9,347,1.2,14,14,14,12,12,14,14,,,,,0,,,,,,14,front,0
+eterblaze/file.sm,3,Eternal Blaze,Hard,8,375,6.825548387096774,22,6,6,22,6,6,22,,,,,0,,,,,,6,intro,90
+eterblaze/file.sm,4,Eternal Blaze,Challenge,10,515,6.825548387096774,35,21,20,35,20,20,35,,,,,0,,,,,,20,intro,-90
+fffff/file.sm,3,fffff,Hard,9,388,4.758260869565217,11,8,8,11,8,8,11,,,,,1,11,150,155,clockwise,2.173913043478265,8,intro,90
+fffff/file.sm,4,fffff,Challenge,10,591,4.758260869565217,52,62,62,52,52,52,52,,,,,0,,,,,,52,front,0
+fof/file.sm,3,Face of Fact,Hard,8,313,0.58,4,3,3,4,3,4,4,,,,,0,,,,,,4,front,0
+fof/file.sm,4,Face of Fact,Challenge,9,342,0.58,7,10,10,7,7,7,7,,,,,0,,,,,,7,front,0
+fofpsm/pk.sm,3,Face of Fact,Hard,10,442,0.06,33,23,23,33,23,33,33,,,,,0,,,,,,33,front,0
+fofpsm/pk.sm,4,Face of Fact,Challenge,10,534,0.06,82,89,89,82,82,82,82,,,,,0,,,,,,82,front,0
+fofres/file.sm,3,Face of Fact,Hard,8,344,7.107222222222222,4,0,0,4,0,0,4,,,,,1,3,179,185.75,clockwise,3,0,intro,90
+fofres/file.sm,4,Face of Fact,Challenge,9,377,7.107222222222222,12,3,3,12,3,3,12,,,,,0,,,,,,3,intro,90
+gbbang/file.sm,3,Galaxy Babanga Bang!,Hard,7,308,4.808402948402948,6,4,4,6,4,4,6,,,,,0,,,,,,4,intro,90
+gbbang/file.sm,4,Galaxy Babanga Bang!,Challenge,8,339,5.176953316953317,21,11,11,21,11,11,21,,,,,1,20,40,44.5,clockwise,1.6584766584766584,11,intro,90
+goberzerk/gb.sm,3,Go Berzerk,Hard,9,514,5.761395348837209,44,14,14,44,14,14,44,,,,,0,,,,,,14,intro,90
+goberzerk/gb.sm,4,Go Berzerk,Challenge,10,600,5.761395348837209,83,59,59,83,59,59,83,,,,,0,,,,,,59,intro,90
+goberzerk/gb.sm,5,Go Berzerk,Edit,11,614,5.761395348837209,79,60,60,79,60,60,79,,,,,0,,,,,,60,intro,90
+godknows/file.sm,3,God Knows...,Hard,9,418,6.04,20,23,23,21,20,20,20,,,,,0,,,,,,20,front,0
+godknows/file.sm,4,God Knows...,Challenge,11,548,6.04,78,79,74,78,74,74,78,,,,,0,,,,,,74,intro,-90
+godknows/file.sm,5,God Knows...,Edit,13,838,6.04,359,330,313,354,313,313,359,,,,,0,,,,,,313,intro,-90
+gradiusfullspeed/gradiusfullspeed.sm,3,Gradius,Hard,8,396,1.91,20,18,18,21,18,20,18,left,251,88.29809926370329,88.8530992637033,0,,,,,,18,intro,90
+gradiusfullspeed/gradiusfullspeed.sm,4,Gradius,Challenge,9,559,1.91,32,27,31,32,27,32,29,left,251,88.29809926370329,88.65809926370329,9,32,105.5,111,counterclockwise,2.0625,27,intro,90
+grimalice/file.sm,3,The Grimoire For Alice,Hard,10,569,6.259766233766234,47,45,45,47,45,45,47,,,,,0,,,,,,45,intro,90
+grimalice/file.sm,4,The Grimoire For Alice,Challenge,13,813,6.259766233766234,286,272,283,282,272,272,286,,,,,0,,,,,,272,intro,90
+guriguri/guriguri.sm,3,グリグリ,Hard,8,359,5.5772373458102935,10,10,10,10,10,10,10,,,,,1,10,198,208,counterclockwise,3.190131858783488,10,front,0
+guriguri/guriguri.sm,4,グリグリ,Challenge,9,406,5.5772373458102935,14,14,14,14,14,14,14,,,,,0,,,,,,14,front,0
+healmon/hm.sm,3,Healing Monolith,Hard,9,516,9.700857142857142,66,55,56,66,55,55,66,,,,,0,,,,,,55,intro,90
+healmon/hm.sm,4,Healing Monolith,Challenge,11,583,9.853918367346939,119,121,121,118,118,118,119,,,,,0,,,,,,118,intro,180
+higu-blgm/higugroove.sm,0,Higurashi no Naku Koro ni,Challenge,9,309,1.704761904761905,18,16,16,18,16,18,18,,,,,0,,,,,,16,intro,90
+higu/file.sm,3,Higurashi no Naku Koro ni,Hard,8,390,2.3187142857142855,11,0,0,11,0,11,11,,,,,0,,,,,,0,intro,90
+higu/file.sm,4,Higurashi no Naku Koro ni,Challenge,10,539,2.3187142857142855,28,25,25,30,25,28,28,,,,,0,,,,,,25,intro,90
+hvgm/file.sm,3,Healing Vision,Hard,9,355,5.114020408163265,22,19,19,22,19,19,22,,,,,1,22,117.25,120,counterclockwise,1.6836734693877418,19,intro,90
+irony/ironyofchaste.sm,3,The Irony of Chaste,Hard,10,523,0.58,84,79,81,84,79,84,84,,,,,0,,,,,,84,front,0
+irony/ironyofchaste.sm,4,The Irony of Chaste,Challenge,11,601,0.58,128,131,127,126,126,128,128,,,,,0,,,,,,128,front,0
+irony/ironyofchaste.sm,5,The Irony of Chaste,Edit,11,534,0.58,158,134,132,158,132,158,158,,,,,0,,,,,,158,front,0
+jackspin/file.sm,3,Jack Spinnaz,Hard,9,504,4.227931034482759,18,10,8,18,8,8,18,,,,,0,,,,,,8,intro,-90
+jackspin/file.sm,4,Jack Spinnaz,Challenge,10,628,4.227931034482759,75,45,46,75,45,45,75,,,,,0,,,,,,45,intro,90
+kamui/kamui.sm,3,Kamui,Hard,9,359,6.970142857142857,18,17,17,18,17,17,18,,,,,0,,,,,,17,intro,90
+kamui/kamui.sm,4,Kamui,Challenge,10,515,6.970142857142857,84,59,60,84,59,59,84,,,,,0,,,,,,59,intro,90
+kinjiaso/file.sm,3,Kinjirareta Asobi,Hard,7,322,7.956942148760331,3,0,0,3,0,0,3,,,,,6,3,95,99,counterclockwise,1.9834710743801622,0,intro,90
+kinjiaso/file.sm,4,Kinjirareta Asobi,Challenge,9,432,7.956942148760331,44,26,26,44,26,26,44,,,,,1,44,201,203,clockwise,1.9834710743801764,26,intro,90
+legendpharaoh/Legendary WWW Area.sm,3,Legendary WWW Area (PharaohMan),Hard,9,532,8.46,38,53,53,38,38,38,38,,,,,0,,,,,,38,front,0
+legendpharaoh/Legendary WWW Area.sm,4,Legendary WWW Area (PharaohMan),Challenge,11,641,8.46,153,146,138,151,138,138,153,,,,,0,,,,,,138,intro,-90
+lostmymusic/Lost my music.sm,3,Lost my music,Hard,9,480,3.08,47,51,46,45,45,46,47,,,,,0,,,,,,45,intro,180
+lostmymusic/Lost my music.sm,4,Lost my music,Challenge,10,500,3.08,73,83,83,75,73,73,73,,,,,0,,,,,,73,front,0
+mahoro300/file.sm,3,Mahoro de MAX 300,Hard,10,473,3.21,48,53,52,48,48,48,48,,,,,0,,,,,,48,front,0
+marisa-pt2/file.sm,0,Marisa Stole the Precious Thing,Challenge,9,356,5.665058823529412,21,18,18,21,18,18,21,,,,,0,,,,,,18,intro,90
+marisa/file.sm,3,Marisa Stole the Precious Thing,Hard,9,433,5.6800588235294125,15,14,14,15,14,14,15,,,,,0,,,,,,14,intro,90
+marisa/file.sm,4,Marisa Stole the Precious Thing,Challenge,10,653,5.6800588235294125,149,133,133,149,133,133,149,,,,,0,,,,,,133,intro,90
+marisa/file.sm,5,Marisa Stole the Precious Thing,Edit,10,661,5.6800588235294125,147,132,132,147,132,132,147,,,,,0,,,,,,132,intro,90
+marisa/file.sm,6,Marisa Stole the Precious Thing,Edit,11,681,0.033,218,189,189,217,189,218,218,,,,,0,,,,,,218,front,0
+marisa/file.sm,7,Marisa Stole the Precious Thing,Edit,13,880,0.033,492,495,495,493,492,492,492,,,,,0,,,,,,492,front,0
+msmagic/file.sm,3,Maji Suki Magic,Hard,8,290,4.837,24,5,5,24,5,5,22,right,128,55.652,56.077,0,,,,,,5,intro,90
+msmagic/file.sm,4,Maji Suki Magic,Challenge,10,439,4.837,48,38,37,48,37,37,48,,,,,0,,,,,,37,intro,-90
+necrofan/file.sm,3,Necro fantasia,Hard,7,320,3.390281690140845,8,10,10,8,8,8,8,,,,,0,,,,,,8,front,0
+necrofan/file.sm,4,Necro fantasia,Challenge,9,446,3.390281690140845,39,29,29,39,29,29,39,,,,,0,,,,,,29,intro,90
+parahrx/PARANOiA HRX.sm,3,PARANOiA HRX,Hard,9,407,5.565631578947368,19,27,27,19,19,19,19,,,,,1,19,300,304,clockwise,1.2631578947368354,19,front,0
+parahrx/PARANOiA HRX.sm,4,PARANOiA HRX,Challenge,9,384,5.565631578947368,27,30,30,27,27,27,27,,,,,0,,,,,,27,front,0
+pedo/pedo.sm,3,PEd0PHiLiA,Hard,8,323,5.680454545454546,8,9,9,8,8,8,8,,,,,0,,,,,,8,front,0
+pedo/pedo.sm,4,PEd0PHiLiA,Challenge,10,429,5.680454545454546,98,96,96,98,96,96,98,,,,,0,,,,,,96,intro,90
+rislim/rislim.sm,3,rislim,Hard,7,340,7.78,6,2,2,6,2,2,6,,,,,0,,,,,,2,intro,90
+rislim/rislim.sm,4,rislim,Challenge,9,530,7.78,87,77,77,87,77,77,87,,,,,0,,,,,,77,intro,90
+rislimdropout/file.sm,3,rislim,Hard,10,537,7.835,59,43,43,59,43,43,59,,,,,0,,,,,,43,intro,90
+rislimdropout/file.sm,4,rislim,Challenge,11,631,7.835,134,82,84,134,82,82,134,,,,,0,,,,,,82,intro,90
+rotfwo/file.sm,3,Release of the Far West Ocean,Hard,8,290,4.647570716749713,2,2,2,2,2,2,2,,,,,0,,,,,,2,front,0
+rotfwo/file.sm,4,Release of the Far West Ocean,Challenge,9,389,4.647570716749713,20,14,14,20,14,14,20,,,,,0,,,,,,14,intro,90
+seiryo-dgm/file.sm,0,Seishoujo Ryouiki,Challenge,9,425,3.6786496350364963,24,20,20,24,20,20,24,,,,,0,,,,,,20,intro,90
+seiryo/file.sm,3,Seishoujo Ryouiki,Hard,7,325,3.6666496350364963,1,2,2,1,1,1,1,,,,,2,1,37,41,counterclockwise,1.7518248175182514,1,front,0
+seiryo/file.sm,4,Seishoujo Ryouiki,Challenge,8,355,3.6666496350364963,6,9,9,6,6,6,6,,,,,1,6,56.5,60,counterclockwise,1.5328467153284677,6,front,0
+sweetmagic/file.sm,3,Sweet Magic,Hard,8,273,4.419426229508197,0,1,1,0,0,0,0,,,,,0,,,,,,0,front,0
+sweetmagic/file.sm,4,Sweet Magic,Challenge,9,348,4.419426229508197,8,15,15,8,8,8,8,,,,,0,,,,,,8,front,0
+tmas/tell me a story.sm,3,Tell Me A Story,Hard,7,253,3.8,0,0,0,0,0,0,0,,,,,1,0,13.5,20,counterclockwise,3.0723176303765563,0,front,0
+tmas/tell me a story.sm,4,Tell Me A Story,Challenge,9,283,3.8,5,8,8,5,5,5,5,,,,,0,,,,,,5,front,0
+tmas/tell me a story.sm,5,Tell Me A Story,Edit,10,386,3.8,26,22,22,26,22,22,22,right,4.5,5.191660627067906,5.566989128722231,0,,,,,,22,intro,90
+wpit/WHAT PLANET IS THIS.sm,3,WHAT PLANET IS THIS?!,Hard,10,568,2.2065509339629195,77,81,81,77,77,77,77,,,,,0,,,,,,77,front,0
+wpit/WHAT PLANET IS THIS.sm,4,WHAT PLANET IS THIS?!,Challenge,12,660,2.2065509339629195,186,177,179,186,177,186,186,,,,,0,,,,,,177,intro,90
+wstory/file.sm,3,Wonderstory,Hard,8,411,5.370333333333333,16,7,7,16,7,7,16,,,,,0,,,,,,7,intro,90
+wstory/file.sm,4,Wonderstory,Challenge,9,488,5.370333333333333,21,18,19,21,18,18,21,,,,,2,21,316,320,counterclockwise,1.3333333333333428,18,intro,90
+you/file.sm,3,YOU,Hard,7,284,6.670461538461538,0,0,0,0,0,0,0,,,,,1,0,179,182,clockwise,1.3846153846153868,0,front,0
+you/file.sm,4,YOU,Challenge,9,401,6.670461538461538,33,18,18,33,18,18,33,,,,,0,,,,,,18,intro,90
+yuumono/Yuujou Monogatari.sm,3,Yuujou Monogatari,Hard,9,435,2.02,41,24,24,41,24,41,41,,,,,0,,,,,,24,intro,90
+yuumono/Yuujou Monogatari.sm,4,Yuujou Monogatari,Challenge,10,475,2.02,65,57,57,65,57,65,65,,,,,0,,,,,,57,intro,90

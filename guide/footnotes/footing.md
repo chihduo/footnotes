@@ -9,13 +9,15 @@ Rhythm games call this the chart's parity, and Footnotes works it out with SMEdi
 1. **One foot per arrow, two for a jump.** Each arrow is stepped by one foot. When two arrows start together, the bot usually lands one foot on each.
 2. **Two feet never share an arrow.** If one foot is standing on an arrow, putting the other foot on it doesn't press it again. So when the same arrow comes twice in a row, the foot that's already on it steps it again. On the bot, that foot disappears for a moment and lands again on the beat.
 3. **Move as little as you can.** Every move takes effort, more the farther a foot travels and much more the faster it has to get there. The bot keeps a foot where it is when it can, and plans ahead: if an arrow is coming back soon, it leaves a foot near it. [How effort is counted](#how-effort-is-counted) has the details.
-4. **Free the foot on Up or Down.** All three footing styles plan ahead so one foot can leave Up or Down before the other has to swing from Left to Right or back. This also applies on doubles when the two side arrows lie on opposite sides of the planted foot. A sustained hold or a foot assignment in the chart editor can still require the swing.
+4. **Free the foot on Up or Down.** All footing styles plan ahead so one foot can leave Up or Down before the other has to swing from Left to Right or back. This also applies on doubles when the two side arrows lie on opposite sides of the planted foot. A sustained hold or a foot assignment in the chart editor can still require the swing.
 5. **Alternate when it's comfortable.** Left, right, left, right is the default, as long as each foot can stay on its own side of the pad.
 6. **The same foot twice is fine when it's slow.** When steps are 0.4 seconds or more apart, the bot would rather step twice with the same foot than cross your legs over.
 7. **Favor alternating in fast passages.** At intervals of 0.2 seconds or less, the bot prefers to alternate. It can still take two steps with one foot to free the other foot from Up or Down.
-8. **Face the screen.** If the plan puts the left foot on Right and the right foot on Left, the bot looks for another route. It checks the full chart at your playback rate and uses the alternative only if it adds no fast steps for either foot.
+8. **Face the screen.** Minimal effort, Natural and Alternating keep the dancer facing the screen. If the plan puts the left foot on Right and the right foot on Left, the bot looks for a route that adds no fast steps for either foot.
 9. **Keep holds pressed.** The shoe stays in contact with the panel through the end of the hold.
 10. **Use the heel and toes together when needed.** If three arrows fall together, or a jump comes during a hold, one foot can cover two neighboring panels. When one hold ends exactly as a neighboring hold begins, the foot can also pivot with the heel on one panel and the toes on the other.
+
+On four-panel singles, **Free style** can turn 90° or 180° during the intro, turn sideways during a break, or follow charted taps and jumps into a half-turn. It chooses at most one turn, and only when the shoes and body have time to rotate and the whole chart has fewer rows marked **Fast steps** at your playback rate. After a half-turn, the left foot can stand on Right and the right foot on Left with the legs side by side. The arrow labels still name the physical foot. The dancer faces the screen again after the song.
 
 ## How fast is slow?
 
@@ -38,7 +40,7 @@ Each time a foot moves to another arrow, the bot counts the effort of the move:
 
 The first part makes every move cost something, so feet stay put when they can. The second part grows with the square of the speed, like the energy of swinging your leg, so long, fast moves cost the most.
 
-Minimal effort adds 60 for any move straight across the pad. For example, a foot can still move from Down to Up while the other stays on Right. The separate rule about swinging around a foot planted on Up or Down applies at every tempo.
+Minimal effort and Free style add 60 for any move straight across the pad. For example, a foot can still move from Down to Up while the other stays on Right. The separate rule about swinging around a foot planted on Up or Down applies at every tempo.
 
 | Move                        | Time the foot has | Effort |
 | --------------------------- | ----------------- | ------ |
@@ -70,13 +72,14 @@ That's 4.2 panels of travel instead of 6.2, for one extra step with the same foo
 
 ## The Footing setting
 
-The **Footing** menu in the bottom bar chooses between three sets of rules while you practice. The chart editor has the same setting in **Preferences > Parity > Footing**.
+The **Footing** menu in the bottom bar lets you choose a footing style while you practice. The chart editor has the same setting in **Preferences > Parity > Footing**.
 
-- **Minimal effort** (the default) uses all the rules above.
+- **Minimal effort** (the default) favors short, low-speed steps while facing the screen.
 - **Natural** uses the same rules, except that it counts movement, including moves across the pad, much more lightly, so it alternates feet more and plans ahead less. It was the default before Minimal effort.
 - **Alternating** prefers to alternate feet, even in slow passages. It can take two steps with one foot to avoid swinging around the other foot on Up or Down.
+- **Free style** uses Minimal effort scoring and can turn on four-panel singles to reduce fast steps.
 
-All three styles use the same checks for crossed feet, holds and fast steps.
+All styles check foot crossings, hold contacts and fast steps.
 The bot switches to the new footing straight away.
 
 ## When the footing looks wrong

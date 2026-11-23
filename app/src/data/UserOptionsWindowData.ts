@@ -1,6 +1,7 @@
 import { Ticker } from "pixi.js"
 import { App } from "../App"
 import { TimingWindowCollection } from "../chart/play/TimingWindowCollection"
+import { FOOTING_STYLES } from "../chart/stats/parity/ParityDataTypes"
 import { ValueInputOptions } from "../gui/inputs/ValueInput"
 import { Options } from "../util/Options"
 
@@ -265,10 +266,10 @@ export const USER_OPTIONS_WINDOW_DATA: UserOption[] = [
             id: "chart.parity.footingStyle",
             input: {
               type: "dropdown",
-              values: ["Minimal effort", "Natural", "Alternating"],
+              values: FOOTING_STYLES,
             },
             tooltip:
-              "Minimal effort limits travel and speed. Natural allows same-foot steps in slow passages and avoids putting both feet on one arrow. Alternating prefers to switch feet. On Dance pads, all three avoid swinging one foot between Left and Right around the other foot on Up or Down.",
+              "Minimal effort limits travel and speed. Natural allows same-foot steps in slow passages and avoids putting both feet on one arrow. Alternating prefers to switch feet. These three styles face the screen. Free style adds timed turns to Minimal effort on four-panel singles. On Dance pads, all styles avoid swinging one foot between Left and Right around the other foot on Up or Down.",
           },
           {
             type: "item",

@@ -117,7 +117,11 @@ function placeKnee(
   direction.subVectors(ankle, hip)
   const distance = Math.max(0.0001, direction.length())
   direction.divideScalar(distance)
-  pole.set(-Math.sin(yaw) + side * 0.11, 0, -Math.cos(yaw))
+  pole.set(
+    -Math.sin(yaw) + side * 0.11 * Math.cos(yaw),
+    0,
+    -Math.cos(yaw) - side * 0.11 * Math.sin(yaw)
+  )
   pole.addScaledVector(direction, -pole.dot(direction)).normalize()
   const along = Math.min(
     distance,
@@ -484,7 +488,7 @@ export class DancerScene {
   }
 
   draw(pose: DancerPose) {
-    const { left, right, yaw } = pose
+    const { left, right, yaw, heading } = pose
     const feet = [left, right]
     const shift = left.unload - right.unload
     const { x, z } = pose.hips
@@ -512,10 +516,14 @@ export class DancerScene {
     }
     this.hips.position.set(x, hipY, z)
     this.hips.rotation.set(0, yaw, shift * 0.045, "YXZ")
-    this.chest.position.set(x + shift * 0.012, hipY + 0.063, z)
+    this.chest.position.set(
+      x + shift * 0.012 * cos,
+      hipY + 0.063,
+      z - shift * 0.012 * sin
+    )
     this.chest.rotation.set(
       -0.09 - pose.compression * 0.8,
-      yaw * 0.69,
+      heading + (yaw - heading) * 0.69,
       -shift * 0.075,
       "YXZ"
     )
@@ -523,7 +531,12 @@ export class DancerScene {
       .set(0, 0.355, 0)
       .applyQuaternion(this.chest.quaternion)
       .add(this.chest.position)
-    this.anatomy.head.rotation.set(-0.035, yaw * 0.39, -shift * 0.025, "YXZ")
+    this.anatomy.head.rotation.set(
+      -0.035,
+      heading + (yaw - heading) * 0.39,
+      -shift * 0.025,
+      "YXZ"
+    )
     for (const tile of this.tiles) tile.material.color.copy(this.floorColor)
     for (const [i, foot] of feet.entries()) {
       const side = i === 0 ? -1 : 1
