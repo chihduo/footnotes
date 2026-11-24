@@ -544,6 +544,28 @@ test("a charted half-turn removes a fast row in either direction and lands the l
   }
 })
 
+test("Free style tucks both elbows into a half-turn and opens the arms to finish", () => {
+  for (const mirror of [false, true]) {
+    const { motion } = playRotation(rotationEngine(), halfTurnNotes(mirror))
+    const { start, end } = motion.turn
+    const rest = motion.sample(-1).arms
+    const winding = motion.sample(start + 0.35 * (end - start)).arms
+    const braking = motion.sample(end - 0.05).arms
+    assert.deepEqual(motion.sample(start + 0.62 * (end - start)).arms, winding)
+    assert.deepEqual(motion.sample(end + 0.025).arms, braking)
+    for (const [i, arm] of winding.entries()) {
+      assert.ok(Math.abs(arm.upper.x) > Math.abs(rest[i].upper.x) + 0.03)
+      assert.ok(Math.abs(arm.upper.x) < Math.abs(braking[i].upper.x) - 0.05)
+      assert.ok(arm.forearm.z < rest[i].forearm.z - 0.04)
+      assert.ok(Math.abs(braking[i].upper.x) > Math.abs(rest[i].upper.x) + 0.07)
+      assert.ok(
+        Math.abs(braking[i].forearm.x) > Math.abs(rest[i].forearm.x) + 0.06
+      )
+    }
+    assert.deepEqual(motion.sample(motion.restTime).arms, rest)
+  }
+})
+
 test("a charted half-turn requires free panels, permitted feet, and enough real time", () => {
   const engine = rotationEngine(),
     notes = halfTurnNotes()

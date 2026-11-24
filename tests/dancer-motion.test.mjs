@@ -9,7 +9,7 @@ const vite = await createServer({
   optimizeDeps: { noDiscovery: true, include: [] },
   server: { middlewareMode: true, hmr: false, ws: false, watch: null },
 })
-const { DancerMotion, PANEL_SPACING } = await vite.ssrLoadModule(
+const { DancerMotion, PANEL_SPACING, turnAtCenter } = await vite.ssrLoadModule(
   "/app/src/gui/dancer/DancerMotion.ts"
 )
 const { Foot, TechCategory } = await vite.ssrLoadModule(
@@ -48,6 +48,7 @@ function motion(
     type = "dance-single",
     rate = 1,
     songLength = 0,
+    choreography,
   } = {}
 ) {
   const chart = {
@@ -56,6 +57,7 @@ function motion(
         states: [{}, ...rows, {}],
         facingRows: angles,
         techRows: techs,
+        choreography,
       },
     },
     getNotedata: () => notes,
@@ -466,4 +468,335 @@ test("a tap can arrive turned toward an upcoming bracket", () => {
   assert.equal(bracket.heel, 0)
   assert.equal(bracket.toe, 1)
   assert.ok(Math.abs(bracket.yaw + (3 * Math.PI) / 4) < 1e-8)
+})
+
+// Keep the same planned shoe path and change only the time allowed to travel it.
+function timedSideStep(duration, rate = 1) {
+  const clip = motion([row(4, -1, 3, [R])], { rate, songLength: 10 })
+  clip.tracks[1][1].start = 4 - duration
+  return clip
+}
+
+test("both hands hang by the thighs at rest and during a slow weight transfer", () => {
+  const idle = motion([]).sample(0).arms
+  for (const { upper, forearm } of idle) {
+    assert.ok(-upper.y > 0.232 && -forearm.y > 0.197)
+    assert.ok(Math.abs(upper.x + forearm.x) < 0.055)
+    assert.ok(Math.abs(upper.z + forearm.z) < 0.04)
+  }
+
+  const clip = timedSideStep(1.4)
+  const start = clip.tracks[1][1].start
+  const middle = clip.sample((start + 4) / 2)
+  assert.ok(middle.right.lift > 0)
+  assert.notEqual(middle.hips.x, clip.sample(start).hips.x)
+  for (const t of [
+    -1,
+    start,
+    start + 0.3,
+    (start + 4) / 2,
+    3.9,
+    4,
+    7,
+    clip.restTime,
+  ])
+    assert.deepEqual(clip.sample(t).arms, idle)
+})
+
+test("the same side step raises the wrist and increases its reach with real movement speed", () => {
+  const reach = (duration, rate) => {
+    const clip = timedSideStep(duration, rate)
+    const t = 4 - duration / 2
+    const { upper, forearm } = clip.sample(t).arms[0]
+    assert.ok(clip.sample(t).right.lift > 0)
+    clip.sample(clip.restTime)
+    assert.deepEqual(clip.sample(t).arms[0], { upper, forearm })
+    return {
+      out: Math.abs(upper.x + forearm.x),
+      height: upper.y + forearm.y,
+    }
+  }
+  const slow = reach(1.4, 1),
+    medium = reach(0.4, 1),
+    fast = reach(0.16, 1)
+  assert.ok(medium.out > slow.out + 0.015 && fast.out > medium.out + 0.1)
+  assert.ok(medium.height > slow.height && fast.height > medium.height + 0.04)
+
+  // Changing playback rate changes real velocity on identical chart timings.
+  const half = reach(0.32, 0.5),
+    normal = reach(0.32, 1),
+    double = reach(0.32, 2)
+  assert.ok(half.out < normal.out && normal.out < double.out)
+  // Equal real durations give the same gesture at any playback rate.
+  for (const rate of [0.5, 1, 2]) {
+    const same = reach(0.16 * rate, rate)
+    assert.ok(Math.abs(same.out - fast.out) < 1e-9)
+    assert.ok(Math.abs(same.height - fast.height) < 1e-9)
+  }
+})
+
+test("a wide step reaches before takeoff and locks the elbow and forearm through landing", () => {
+  for (const rate of [0.5, 1, 2]) {
+    const landing = 2 * rate
+    for (const stepRight of [true, false]) {
+      const clip = motion(
+        [stepRight ? row(landing, -1, 3, [R]) : row(landing, 0, -1, [L])],
+        { rate, songLength: 5 * rate }
+      )
+      const foot = stepRight ? "right" : "left"
+      const reaching = stepRight ? 0 : 1,
+        folding = 1 - reaching
+      const takeoff = clip.tracks[folding][1].start
+      const neutral = clip.sample(0).arms
+      const prep = clip.sample(takeoff - 0.04 * rate)
+      assert.equal(prep[foot].lift, 0)
+      const mid = clip.sample((takeoff + landing) / 2)
+      assert.ok(mid[foot].lift > 0)
+      for (const joint of ["upper", "forearm"]) {
+        const base = Math.abs(neutral[reaching][joint].x)
+        const extension = Math.abs(mid.arms[reaching][joint].x) - base
+        assert.ok(extension > 0.02)
+        assert.ok(
+          Math.abs(prep.arms[reaching][joint].x) > base + 0.15 * extension
+        )
+      }
+      assert.ok(
+        Math.abs(mid.arms[reaching].upper.x) >
+          Math.abs(mid.arms[folding].upper.x) + 0.025
+      )
+      assert.ok(Math.abs(mid.arms[folding].upper.x) >= 0.03)
+      assert.ok(mid.arms[folding].forearm.z < neutral[folding].forearm.z)
+      for (const t of [
+        takeoff + 0.04 * rate,
+        landing - 0.01 * rate,
+        landing,
+        landing + 0.06 * rate,
+      ])
+        assert.deepEqual(clip.sample(t).arms, mid.arms)
+      assert.notDeepEqual(clip.sample(landing + 0.13 * rate).arms, mid.arms)
+      assert.deepEqual(clip.sample(landing + 0.23 * rate).arms, neutral)
+      assert.deepEqual(clip.sample((takeoff + landing) / 2), mid)
+    }
+  }
+})
+
+test("the hand carries speed to the final centimetre and stops without rebound", () => {
+  for (const rate of [0.5, 1, 2]) {
+    const clip = motion([row(2 * rate, -1, 3, [R])], {
+      rate,
+      songLength: 5 * rate,
+    })
+    const takeoff = clip.tracks[1][1].start
+    const tip = t => {
+      const { upper, forearm } = clip.sample(takeoff + t * rate).arms[0]
+      // Track a point fifteen centimetres past the wrist along the palm.
+      return ["x", "y", "z"].map(
+        k => upper[k] + (1 + 0.15 / 0.203) * forearm[k]
+      )
+    }
+    const distance = (a, b) => Math.hypot(...a.map((x, i) => x - b[i]))
+    const goal = tip(0.1)
+    const dt = 0.0005
+    let previous = tip(-0.13),
+      started,
+      stopped,
+      atCentimetre,
+      speedAtThreeCm
+    for (let i = 1; i <= 600; i++) {
+      const t = -0.13 + i * dt
+      const hand = tip(t)
+      const before = distance(previous, goal),
+        remaining = distance(hand, goal)
+      const speed = distance(hand, previous) / dt
+      if (speed > 0.001) started ??= t
+      assert.ok(remaining <= before + 1e-12)
+      if (before >= 0.03 && remaining < 0.03) speedAtThreeCm = speed
+      if (before >= 0.01 && remaining < 0.01) {
+        atCentimetre = t
+        assert.ok(speed > 0.85 * speedAtThreeCm && speed > 1)
+      }
+      if (remaining < 1e-10) stopped ??= t
+      if (stopped !== undefined) assert.ok(remaining < 1e-10)
+      previous = hand
+    }
+    assert.ok(stopped - started > 0.09 && stopped - started < 0.13)
+    assert.ok(stopped > atCentimetre && stopped - atCentimetre < 0.015)
+  }
+})
+
+test("both arms catch a jump landing and stay quiet on repeated taps and a planted hold", () => {
+  const clip = motion(
+    [
+      row(1, 0, 3, [L, R]),
+      row(2, 0, 3, [R], { held: [L] }),
+      row(2.25, 0, 3, [R], { held: [L] }),
+      row(2.5, 0, 3, [R], { held: [L] }),
+    ],
+    { notes: [{ beat: 2, col: 0, type: "Hold", hold: 5 }], songLength: 5 }
+  )
+  const neutral = clip.sample(0).arms
+  const landing = clip.sample(1)
+  const flight = clip.sample(0.9)
+  assert.ok(flight.left.lift > 0 && flight.right.lift > 0)
+  assert.deepEqual(flight.hips, landing.hips)
+  for (const [i, arm] of landing.arms.entries()) {
+    assert.ok(Math.abs(arm.upper.x) > Math.abs(neutral[i].upper.x) + 0.08)
+    assert.ok(Math.abs(arm.forearm.x) > Math.abs(neutral[i].forearm.x) + 0.06)
+    assert.deepEqual(clip.sample(1.1).arms[i], arm)
+  }
+  assert.ok(clip.sample(2.18).right.lift > 0)
+  for (const t of [1.5, 1.91, 2, 2.18, 2.42, 2.8, 3.4]) {
+    const pose = clip.sample(t)
+    assert.ok(pose.left.holding)
+    assert.deepEqual(pose.arms, neutral)
+  }
+})
+
+test("a jump keeps its arm hold while a dense run is already moving the shoes", () => {
+  const clip = motion(
+    [
+      row(1, 0, 3, [L, R]),
+      row(1.1, 2, 3, [L]),
+      row(1.21, 2, 1, [R]),
+      row(1.32, 0, 1, [L]),
+      row(1.43, 0, 3, [R]),
+    ],
+    { songLength: 3 }
+  )
+  const landing = clip.sample(1)
+  assert.ok(
+    Math.abs(landing.arms[0].upper.x) >
+      Math.abs(clip.sample(0).arms[0].upper.x) + 0.08
+  )
+  for (const t of [1.02, 1.05, 1.08])
+    assert.deepEqual(clip.sample(t).arms, landing.arms)
+  assert.ok(clip.sample(1.05).left.lift > 0)
+  assert.notDeepEqual(clip.sample(1.4).arms, landing.arms)
+})
+
+test("the same in-place half-turn braces at speed and keeps the hands down when taken slowly", () => {
+  const idle = motion([])
+  function halfTurn(duration) {
+    const start = 2,
+      end = start + duration
+    const stretch = t => start + ((t - start) * duration) / 2
+    const tracks = turnAtCenter(start, 0, Math.PI, 1).map((track, i) => [
+      idle.tracks[i][0],
+      ...track.slice(1).map(hit => ({
+        ...hit,
+        start: stretch(hit.start),
+        second: stretch(hit.second),
+      })),
+    ])
+    const stances = [
+      idle.stances[0],
+      { ...idle.stances[0], second: end, turnStart: start, yaw: Math.PI },
+    ]
+    return motion([], {
+      songLength: end + 2,
+      choreography: {
+        rate: 1,
+        tracks,
+        stances,
+        turn: { start, end, angle: Math.PI, fromYaw: 0, toYaw: Math.PI },
+      },
+    })
+  }
+
+  const fast = halfTurn(1.5),
+    slow = halfTurn(9)
+  const rest = idle.sample(0).arms
+  const braced = fast.sample(2.75)
+  assert.ok(Math.abs(braced.heading - Math.PI / 2) < 1e-9)
+  for (const [i, arm] of braced.arms.entries()) {
+    assert.ok(Math.abs(arm.upper.x) > Math.abs(rest[i].upper.x) + 0.025)
+    assert.ok(arm.forearm.z < rest[i].forearm.z - 0.05)
+  }
+  for (const t of [2, 4.25, 6.5, 8.75, 11]) {
+    for (const [i, arm] of slow.sample(t).arms.entries())
+      for (const joint of ["upper", "forearm"]) {
+        const a = arm[joint],
+          b = rest[i][joint]
+        assert.ok(Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z) < 0.001)
+      }
+  }
+})
+
+test("the same reach has the same chest-local arm pose facing sideways or backwards", () => {
+  const front = motion([row(3, -1, 3, [R])], { songLength: 6 })
+  for (const angle of [Math.PI / 2, -Math.PI / 2, Math.PI]) {
+    const cos = Math.cos(angle),
+      sin = Math.sin(angle)
+    const turned = motion([], {
+      songLength: 6,
+      choreography: {
+        rate: 1,
+        turn: { start: 0, end: 1, fromYaw: 0, toYaw: angle, angle },
+        tracks: front.tracks.map(track =>
+          track
+            .filter(c => c.second <= 3)
+            .map(c => ({
+              ...c,
+              x: c.x * cos + c.z * sin,
+              z: -c.x * sin + c.z * cos,
+              yaw: c.yaw + angle,
+            }))
+        ),
+        stances: front.stances
+          .filter(s => s.second <= 3)
+          .map(s => ({ ...s, yaw: s.yaw + angle })),
+      },
+    })
+    for (const t of [2.72, 2.85, 3, 3.16]) {
+      const expected = front.sample(t).arms
+      const pose = turned.sample(t)
+      assert.equal(pose.heading, angle)
+      for (const [i, arm] of pose.arms.entries())
+        for (const segment of ["upper", "forearm"])
+          for (const axis of ["x", "y", "z"])
+            assert.ok(
+              Math.abs(arm[segment][axis] - expected[i][segment][axis]) < 1e-9
+            )
+    }
+  }
+})
+
+test("arm segments keep their lengths and elbows stay bent through a fast changing phrase", () => {
+  const clip = motion(
+    [
+      row(1, 0, 3, [L, R]),
+      row(1.23, 0, 2, [R]),
+      row(1.35, 1, 2, [L]),
+      row(1.47, 1, 3, [R]),
+      row(1.6, 0, 3, [L]),
+      row(1.84, 2, 1, [L, R]),
+    ],
+    { angles: [0, 1.2, -1.1, 0.8, 0, 1.4], songLength: 3 }
+  )
+  const dt = 0.005
+  let previous = clip.sample(0).arms
+  let opened = false
+  for (let t = dt; t <= clip.restTime; t += dt) {
+    const arms = clip.sample(t).arms
+    for (const [i, { upper, forearm }] of arms.entries()) {
+      assert.ok(Math.abs(Math.hypot(upper.x, upper.y, upper.z) - 0.239) < 1e-9)
+      assert.ok(
+        Math.abs(Math.hypot(forearm.x, forearm.y, forearm.z) - 0.203) < 1e-9
+      )
+      const cosine =
+        (upper.x * forearm.x + upper.y * forearm.y + upper.z * forearm.z) /
+        (0.239 * 0.203)
+      assert.ok(cosine < Math.cos((12 * Math.PI) / 180))
+      const elbowOut = (i === 0 ? -1 : 1) * upper.x
+      assert.ok(elbowOut >= 0.03)
+      opened ||= elbowOut > 0.1 && cosine < Math.cos((30 * Math.PI) / 180)
+      for (const segment of ["upper", "forearm"]) {
+        const a = previous[i][segment],
+          b = arms[i][segment]
+        assert.ok(Math.hypot(b.x - a.x, b.y - a.y, b.z - a.z) < 0.02)
+      }
+    }
+    previous = arms
+  }
+  assert.ok(opened)
 })

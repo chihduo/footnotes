@@ -27,11 +27,15 @@ import { getParityColor } from "../../util/Color"
 import { clamp } from "../../util/Math"
 import { Options } from "../../util/Options"
 import { createDancerAnatomy } from "./DancerAnatomy"
+import { FOREARM_LENGTH } from "./DancerArms"
 import { getDancerFitZoom, resizeDancerProjection } from "./DancerFraming"
-import { PANEL_SPACING, type DancerPose, type FootPose } from "./DancerMotion"
+import {
+  chestFacing,
+  PANEL_SPACING,
+  type DancerRenderPose,
+} from "./DancerMotion"
 
 const up = new Vector3(0, 1, 0)
-const down = new Vector3(0, -1, 0)
 const direction = new Vector3()
 const pole = new Vector3()
 const thighLength = 0.425
@@ -180,23 +184,7 @@ export class DancerScene {
   private floorColor = new Color(0x47596d)
   private tiles: Mesh<BoxGeometry, MeshLambertMaterial>[] = []
   private legs = [this.buildLeg(0), this.buildLeg(1)]
-  private arms = this.anatomy.hands.map(hand => ({
-    upper: limb(this.chest, this.jersey, 0.058, 0.061, 0.043),
-    lower: profile(this.chest, this.skin, [
-      [0, 0],
-      [0.041, 0],
-      [0.044, 0.22],
-      [0.036, 0.53],
-      [0.028, 0.75],
-      [0.022, 0.92],
-      [0.0205, 0.97],
-      [0.0196, 1],
-    ]),
-    hand,
-    shoulder: new Vector3(),
-    elbow: new Vector3(),
-    wrist: new Vector3(),
-  }))
+  private arms = this.anatomy.hands.map((hand, i) => this.buildArm(hand, i))
   private cameraRestored = false
   private padWidth = 1
 
@@ -216,7 +204,6 @@ export class DancerScene {
   ) {
     this.scene.add(this.pad, this.body)
     this.body.add(this.hips, this.chest, this.anatomy.head)
-    this.chest.add(...this.anatomy.hands)
     // SVGRenderer supports ambient fill only through AmbientLight.
     this.scene.add(
       this.renderer instanceof SVGRenderer
@@ -364,6 +351,32 @@ export class DancerScene {
     if (event.key !== "Home") this.rememberCamera()
   }
 
+  private buildArm(hand: Mesh, index: number) {
+    const forearm = new Group()
+    this.chest.add(forearm)
+    const skin = profile(forearm, this.skin, [
+      [0, 0],
+      [0.041, 0],
+      [0.044, 0.22],
+      [0.036, 0.53],
+      [0.028, 0.75],
+      [0.022, 0.92],
+      [0.0205, 0.97],
+      [0.0196, 1],
+    ])
+    // The palm is authored along -Y. Put it on the same unscaled joint as
+    // the forearm skin, with its wrist fixed at the end of the bone.
+    skin.rotation.x = Math.PI
+    skin.scale.y = FOREARM_LENGTH
+    hand.position.y = -FOREARM_LENGTH
+    forearm.add(hand)
+    return {
+      upper: limb(this.chest, this.jersey, 0.058, 0.061, 0.043),
+      shoulder: new Vector3(index === 0 ? -0.161 : 0.161, 0.3, 0),
+      forearm,
+    }
+  }
+
   private buildLeg(index: number) {
     const shoe = new Group()
     this.body.add(shoe)
@@ -487,7 +500,7 @@ export class DancerScene {
     this.rememberCamera()
   }
 
-  draw(pose: DancerPose) {
+  draw(pose: DancerRenderPose) {
     const { left, right, yaw, heading } = pose
     const feet = [left, right]
     const shift = left.unload - right.unload
@@ -523,7 +536,7 @@ export class DancerScene {
     )
     this.chest.rotation.set(
       -0.09 - pose.compression * 0.8,
-      heading + (yaw - heading) * 0.69,
+      chestFacing(pose),
       -shift * 0.075,
       "YXZ"
     )
@@ -556,7 +569,16 @@ export class DancerScene {
         this.tiles[foot.heel]?.material.color.lerp(this.shoes[i].color, 0.65)
         this.tiles[foot.toe]?.material.color.lerp(this.toes[i].color, 0.65)
       }
-      this.poseArm(i, foot, feet[1 - i], yaw, pose.compression)
+      const arm = this.arms[i]
+      const { upper, forearm } = pose.arms[i]
+      arm.forearm.position.addVectors(arm.shoulder, upper)
+      connect(arm.upper, arm.shoulder, arm.forearm.position)
+      arm.forearm.rotation.set(
+        Math.atan2(-forearm.z, Math.hypot(forearm.x, forearm.y)),
+        0,
+        Math.atan2(forearm.x, -forearm.y),
+        "ZXY"
+      )
     }
     this.render()
   }
@@ -585,42 +607,6 @@ export class DancerScene {
       ctx.restore()
     }
     this.present(this.canvas, this.extent)
-  }
-
-  private poseArm(
-    i: number,
-    foot: FootPose,
-    other: FootPose,
-    yaw: number,
-    compression: number
-  ) {
-    const side = i === 0 ? -1 : 1
-    const stride = clamp(
-      -(
-        (foot.x - other.x) * Math.sin(yaw) +
-        (foot.z - other.z) * Math.cos(yaw)
-      ) / PANEL_SPACING,
-      -1,
-      1
-    )
-    const arm = this.arms[i]
-    const open = foot.unload + other.unload
-    arm.shoulder.set(side * 0.161, 0.3, 0)
-    arm.elbow.copy(arm.shoulder)
-    arm.elbow.x += side * (0.077 + open * 0.039)
-    arm.elbow.y -= 0.223 - Math.abs(stride) * 0.026
-    arm.elbow.z += 0.035 + stride * 0.115
-    arm.wrist.copy(arm.elbow)
-    arm.wrist.x += side * 0.025
-    arm.wrist.y -= 0.177 - compression * 0.4
-    arm.wrist.z += -0.096 + stride * 0.115
-    connect(arm.upper, arm.shoulder, arm.elbow)
-    connect(arm.lower, arm.elbow, arm.wrist)
-    arm.hand.position.copy(arm.wrist)
-    arm.hand.quaternion.setFromUnitVectors(
-      down,
-      direction.subVectors(arm.wrist, arm.elbow).normalize()
-    )
   }
 
   private disposeMeshes(group: Group | Scene) {

@@ -7,6 +7,7 @@ import {
 } from "../../chart/stats/parity/ParityDataTypes"
 import type { StageLayout } from "../../chart/stats/parity/StageLayouts"
 import { clamp, lerp } from "../../util/Math"
+import { planArmGestures, sampleArmGesture, type ArmAccent } from "./DancerArms"
 import {
   PANEL_SPACING,
   rotatePoint,
@@ -73,6 +74,14 @@ export interface DancerPose {
   compression: number
   coaching: string
   paceWarning: string
+}
+
+export interface DancerRenderPose extends DancerPose {
+  arms: ReturnType<typeof sampleArmGesture>
+}
+
+export function chestFacing({ heading, yaw }: DancerPose) {
+  return heading + (yaw - heading) * 0.69
 }
 
 export function smooth(t: number) {
@@ -718,6 +727,8 @@ export function turnAtCenter(
 }
 
 export class DancerMotion extends DancerStepPlan {
+  private armKeys?: ReturnType<typeof planArmGestures>
+
   constructor(chart: Chart, layout: StageLayout, rate = 1, songEnd = 0) {
     super(chart.stats.parity, layout, getDancerTiming(chart, rate))
     if (this.stances.length === 1) {
@@ -782,5 +793,172 @@ export class DancerMotion extends DancerStepPlan {
       facingHome + LANDING_SECONDS * this.rate,
       landing + (WEIGHT_SETTLE_SECONDS + BALANCE_SAMPLE_SECONDS) * this.rate
     )
+  }
+
+  private armMotion(start: number, end: number) {
+    const center = (start + end) / 2
+    const seconds = clamp((end - start) / this.rate, 0.1, 0.32)
+    const interval = (seconds * this.rate) / 4
+    // Measure the path through the movement. A jump can land at its starting
+    // position and a turn can move the shoulders with almost no hip travel.
+    const poses = Array.from({ length: 5 }, (_, i) =>
+      super.sample(center + (i - 2) * interval)
+    )
+    let bodyTravel = 0,
+      shoeTravel = 0,
+      turnTravel = 0
+    for (let i = 1; i < poses.length; i++) {
+      const a = poses[i - 1],
+        b = poses[i]
+      const angle = Math.abs(turnBetween(chestFacing(a), chestFacing(b)))
+      const rise =
+        Math.min(b.left.lift, b.right.lift) -
+        b.compression -
+        (Math.min(a.left.lift, a.right.lift) - a.compression)
+      bodyTravel += Math.hypot(
+        b.hips.x - a.hips.x,
+        b.hips.z - a.hips.z,
+        rise,
+        0.24 * angle
+      )
+      shoeTravel += Math.hypot(
+        b.left.x - a.left.x,
+        b.left.z - a.left.z,
+        b.left.lift - a.left.lift,
+        b.right.x - a.right.x,
+        b.right.z - a.right.z,
+        b.right.lift - a.right.lift
+      )
+      turnTravel += angle
+    }
+    // Body speed in metres per real second sets the range. Brisk footwork
+    // and rotation can use more of it, while a slow torso keeps the hands low.
+    const bodySpeed = bodyTravel / seconds
+    const shoeSpeed = shoeTravel / seconds
+    const turnSpeed = turnTravel / seconds
+    const moving = smooth((bodySpeed - 0.14) / (0.95 - 0.14))
+    const effort = smooth(
+      Math.max(shoeSpeed / 1.8, turnSpeed / BODY_TURN_LIMIT)
+    )
+    return { pose: poses[2], intensity: moving * (0.55 + 0.45 * effort) }
+  }
+
+  private planArms() {
+    const rate = this.rate
+    const cues: ArmAccent[] = []
+    const turns: Pick<BodyTurn, "start" | "end" | "angle">[] = this.turn
+      ? [this.turn]
+      : []
+    if (this.turn && Number.isFinite(this.unwindStart)) {
+      turns.push({
+        start: this.unwindStart,
+        end: this.stances[this.stances.length - 1].second,
+        angle: -this.turn.angle,
+      })
+    }
+    for (const turn of turns) {
+      const duration = turn.end - turn.start
+      const strength = Math.min(
+        1,
+        (Math.abs(turn.angle) * rate) / (1.5 * duration)
+      )
+      const tuck = turn.start + Math.min(0.18 * rate, duration * 0.22)
+      const open = turn.end - Math.min(0.055 * rate, duration * 0.12)
+      // A short turn has one locked winding pose. In a longer turn, allow
+      // the arms to lower or open again as the shoulders and feet change pace.
+      const sections = Math.max(1, Math.floor((open - tuck) / (0.8 * rate)))
+      for (let i = 0; i < sections; i++) {
+        const second = lerp(tuck, open, i / sections)
+        const holdUntil = lerp(tuck, open, (i + 1) / sections)
+        const { intensity } = this.armMotion(second, holdUntil)
+        cues.push({
+          second,
+          holdUntil,
+          priority: 3,
+          drive: { intensity, lateral: 0, stride: 0, brace: 0, tuck: strength },
+        })
+      }
+      const brakeWindow = Math.min(duration / 2, 0.7 * rate)
+      const { intensity } = this.armMotion(turn.end - brakeWindow, turn.end)
+      cues.push({
+        second: open,
+        holdUntil: turn.end + 0.11 * rate,
+        priority: 3,
+        drive: { intensity, lateral: 0, stride: 0, brace: strength, tuck: 0 },
+      })
+    }
+
+    for (const [i, track] of this.tracks.entries()) {
+      const other = this.tracks[1 - i]
+      for (let j = 1; j < track.length; j++) {
+        const hit = track[j],
+          old = track[j - 1]
+        const duration = hit.second - hit.start
+        if (hit.height <= 0 || duration <= 0) continue
+        const partner = hit.jump ? other[indexAt(other, hit.second)] : undefined
+        const jump =
+          partner?.second === hit.second &&
+          partner.jump &&
+          partner.height > 0 &&
+          partner.start < partner.second
+        const second = jump
+          ? hit.second
+          : hit.start + Math.min(0.035 * rate, duration / 2)
+        if (turns.some(turn => second >= turn.start && second <= turn.end))
+          continue
+        if (jump) {
+          if (i === 0) {
+            const brace = Math.min(1, hit.height / 0.08, partner.height / 0.08)
+            const { intensity } = this.armMotion(
+              Math.max(hit.start, partner.start),
+              hit.second
+            )
+            cues.push({
+              second,
+              holdUntil: second + 0.11 * rate,
+              priority: 2,
+              drive: { intensity, lateral: 0, stride: 0, brace, tuck: 0 },
+            })
+          }
+          continue
+        }
+        const dx = (hit.x - old.x) / PANEL_SPACING
+        const dz = (hit.z - old.z) / PANEL_SPACING
+        const distance = Math.hypot(dx, dz)
+        if (distance < 0.18) continue // a retap or a small in-panel adjustment
+        // Capture the body frame and the support lever once. A changing hip
+        // position during the hold must not keep steering the wrist.
+        const { pose, intensity } = this.armMotion(hit.start, hit.second)
+        const yaw = chestFacing(pose),
+          cos = Math.cos(yaw),
+          sin = Math.sin(yaw)
+        const support = i === 0 ? pose.right : pose.left
+        const hipOffset =
+          (pose.hips.x - support.x) * cos - (pose.hips.z - support.z) * sin
+        const lean =
+          clamp(hipOffset / PANEL_SPACING, -1, 1) * (1 - support.unload)
+        const travel = Math.min(1, distance)
+        const lateral = Math.tanh(
+          1.2 * (dx * cos - dz * sin + 0.45 * travel * lean)
+        )
+        const stride = Math.tanh((i === 0 ? 1 : -1) * (dx * sin + dz * cos))
+        cues.push({
+          second,
+          holdUntil: hit.second + 0.065 * rate,
+          priority: (intensity * distance) / (1 + distance),
+          drive: { intensity, lateral, stride, brace: 0.1 * travel, tuck: 0 },
+        })
+      }
+    }
+    return planArmGestures(cues, rate)
+  }
+
+  override sample(second: number): DancerRenderPose {
+    this.armKeys ??= this.planArms()
+    const i = indexAt(this.armKeys, second)
+    return {
+      ...super.sample(second),
+      arms: sampleArmGesture(this.armKeys[i], this.armKeys[i + 1], second),
+    }
   }
 }
