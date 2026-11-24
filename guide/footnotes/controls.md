@@ -22,7 +22,7 @@ Everything you need while practicing is on screen. The keyboard shortcuts below 
 - **Time** and **Beat:** click either one to type the position you want to jump to.
 - **Songs:** opens the [Songs page](https://chihduo.github.io/footnotes/songs/), to pick another song.
 - **Chart** shows the current chart's level and difficulty, such as **7 Hard**. Click it to open the chart list and switch difficulty. Click outside the window or click **Chart** again to close it.
-- **Footing** lets you choose **Minimal effort**, **Natural**, **Alternating** or **Free style**. Free style allows turns on four-panel singles. See [How the bot chooses your feet](./footing).
+- **Footing** lets you choose **Minimal effort**, **Free style**, **Natural** or **Alternating**. Free style allows turns on four-panel singles. See [How the bot chooses your feet](./footing).
 - **Exit practice:** switches to the full SMEditor chart editor.
 
 **Note layout**

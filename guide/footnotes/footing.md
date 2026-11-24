@@ -75,9 +75,9 @@ That's 4.2 panels of travel instead of 6.2, for one extra step with the same foo
 The **Footing** menu in the bottom bar lets you choose a footing style while you practice. The chart editor has the same setting in **Preferences > Parity > Footing**.
 
 - **Minimal effort** (the default) favors short, low-speed steps while facing the screen.
-- **Natural** uses the same rules, except that it counts movement, including moves across the pad, much more lightly, so it alternates feet more and plans ahead less. It was the default before Minimal effort.
-- **Alternating** prefers to alternate feet, even in slow passages. It can take two steps with one foot to avoid swinging around the other foot on Up or Down.
 - **Free style** uses Minimal effort scoring and can turn on four-panel singles to reduce fast steps.
+- **Natural** faces the screen and gives less weight to foot travel than Minimal effort does, including moves across the pad. It alternates feet more and plans ahead less. It was the default before Minimal effort.
+- **Alternating** prefers to alternate feet, even in slow passages. It can take two steps with one foot to avoid swinging around the other foot on Up or Down.
 
 All styles check foot crossings, hold contacts and fast steps.
 The bot switches to the new footing straight away.

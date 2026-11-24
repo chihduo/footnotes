@@ -14,9 +14,8 @@ globalThis.self = {}
 const { ParityInternals } = await vite.ssrLoadModule(
   "/app/src/chart/stats/parity/ParityInternals.ts"
 )
-const { Foot, FOOTING_STYLES, TechCategory } = await vite.ssrLoadModule(
-  "/app/src/chart/stats/parity/ParityDataTypes.ts"
-)
+const { Foot, FOOTING_STYLES, DEFAULT_FOOTING_STYLE, TechCategory } =
+  await vite.ssrLoadModule("/app/src/chart/stats/parity/ParityDataTypes.ts")
 const { getDancerTiming, FOOT_SPEED_LIMIT, FOOT_TURN_LIMIT, turnBetween } =
   await vite.ssrLoadModule("/app/src/gui/dancer/DancerFootwork.ts")
 const { DancerMotion, BODY_TURN_LIMIT, HIP_SPEED_LIMIT } =
@@ -26,6 +25,16 @@ const { STAGE_LAYOUTS } = await vite.ssrLoadModule(
 )
 delete globalThis.self
 await vite.close()
+
+test("the Footing menu lists Free style immediately after the default Minimal effort", () => {
+  assert.equal(DEFAULT_FOOTING_STYLE, "Minimal effort")
+  assert.deepEqual(FOOTING_STYLES, [
+    "Minimal effort",
+    "Free style",
+    "Natural",
+    "Alternating",
+  ])
+})
 
 const left = Foot.LEFT_HEEL,
   right = Foot.RIGHT_HEEL

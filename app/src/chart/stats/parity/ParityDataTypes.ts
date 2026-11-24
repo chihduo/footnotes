@@ -48,21 +48,21 @@ export type FootOverride = "Left" | "Right" | Foot
 // Minimal effort: like Natural, but each move costs effort that grows with
 // how far the foot travels and with the square of its speed, so feet move as
 // little as they can.
+// Free style uses Minimal effort scoring and can turn on four-panel singles.
 // Natural: a foot may step twice in a row when steps are slow, and two feet
 // never stand on one arrow.
 // Alternating: prefers to alternate, crossing over or switching feet to do so.
-// Free style uses Minimal effort scoring and can turn on four-panel singles.
 // All styles avoid lateral swings around a foot planted on Up or Down.
 export type FootingStyle =
   | "Minimal effort"
+  | "Free style"
   | "Natural"
   | "Alternating"
-  | "Free style"
 export const FOOTING_STYLES: FootingStyle[] = [
   "Minimal effort",
+  "Free style",
   "Natural",
   "Alternating",
-  "Free style",
 ]
 export const DEFAULT_FOOTING_STYLE: FootingStyle = "Minimal effort"
 
