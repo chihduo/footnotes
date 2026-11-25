@@ -125,13 +125,19 @@ export class SchedulableSoundEffect {
     }
   }
 
-  /** Schedule a cue in song seconds, optionally limiting it to the recorded audio. */
-  playAt(second: number, songTime: number, songRate: number, songEnd?: number) {
+  /** A bounded cue must start within the song. Its tail can ring out past the end. */
+  playAt(
+    second: number,
+    songTime: number,
+    songRate: number,
+    songEnd?: number,
+    endBehavior: "clip" | "ringOut" = "clip"
+  ) {
     const start = Math.max(second, songTime)
     let duration: number | undefined
     if (songEnd !== undefined) {
       if (second < 0 || start >= songEnd) return
-      duration = (songEnd - start) / songRate
+      if (endBehavior === "clip") duration = (songEnd - start) / songRate
     }
     this.play((start - songTime) / songRate, duration)
   }

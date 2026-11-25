@@ -46,7 +46,7 @@ On fast runs the dancer shortens its steps and keeps its feet low. If the sugges
 
 ## Controls
 
-The assist tick marks each step and the metronome marks each beat. Both start enabled and go quiet when you pause or the music ends.
+The assist tick marks each step and the metronome marks each beat. Both start enabled and stop immediately when you pause. At the end of the song, the last metronome click finishes ringing.
 
 | Action                               | Keys                                                                                              |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------- |

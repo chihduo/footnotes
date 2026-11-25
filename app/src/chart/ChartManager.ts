@@ -532,7 +532,8 @@ export class ChartManager {
             barSecond + Options.play.effectOffset,
             this.time,
             Options.audio.rate,
-            songEnd
+            songEnd,
+            "ringOut"
           )
         }
         if (measureBeats.length > 0) {
