@@ -37,7 +37,7 @@ On Dance and Pump single and double charts, the 3D dancer shows which foot to us
 <p>
   <img src=".github/readme/step-bot.svg" width="32%" alt="Follow the shoes. Blue is your left foot and orange is your right. Watch the dancer shift weight onto one foot before lifting the other." />
   <img src=".github/readme/step-arrows.svg" width="32%" alt="Read the arrows. Step when an arrow reaches its target. For a hold, keep that panel pressed until the tail passes." />
-  <img src=".github/readme/step-pace.svg" width="32%" alt="Practice at your pace. Lower Playback to slow the music. Click Loop at the start and end of a phrase to repeat it." />
+  <img src=".github/readme/step-pace.svg" width="32%" alt="Practice at your pace. Lower Playback to slow the music. Mark the start and end of a phrase with A–B loop to repeat it." />
 </p>
 
 Use **3D dancer** in the top bar to show or hide the dancer. The camera starts behind it, looking down at 45°. Drag over the pad to rotate, and scroll or pinch to zoom. The pad stays fixed while the dancer moves. Double-click to restore the rear view, or use **Fit** to see the whole body from your current angle.
@@ -46,7 +46,7 @@ On fast runs the dancer shortens its steps and keeps its feet low. If the sugges
 
 ## Controls
 
-The assist tick marks each step and the metronome marks each beat. Both start enabled and stop immediately when you pause. At the end of the song, the last metronome click finishes ringing.
+The assist tick marks each step and the metronome marks each beat. Both start enabled and stop immediately when you pause. With Loop off, the last metronome click finishes ringing when the song ends. Turn on **Loop** beside Play to repeat the whole song. During a repeat, the metronome counts through the dancer’s return to center and into the opening downbeat.
 
 | Action                               | Keys                                                                                              |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------- |

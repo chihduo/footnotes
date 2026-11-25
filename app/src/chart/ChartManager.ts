@@ -8,6 +8,7 @@ import mine from "../../assets/sound/mine.wav"
 import { App } from "../App"
 import { AUDIO_EXT } from "../data/FileData"
 import { KEYBIND_DATA } from "../data/KeybindData"
+import { DancerMotion } from "../gui/dancer/DancerMotion"
 import { WaterfallManager } from "../gui/element/WaterfallManager"
 import { AppUpdateNotification } from "../gui/notification/AppUpdateNotification"
 import { CoreUpdateNotification } from "../gui/notification/CoreUpdateNotification"
@@ -32,6 +33,7 @@ import { clamp, maxArr, minArr } from "../util/Math"
 import { Options } from "../util/Options"
 import { basename, dirname, extname } from "../util/Path"
 import { tpsUpdate } from "../util/Performance"
+import { PracticeLoop } from "../util/PracticeLoop"
 import { RecentFileHandler } from "../util/RecentFileHandler"
 import { SchedulableSoundEffect } from "../util/SchedulableSoundEffect"
 import {
@@ -46,6 +48,7 @@ import {
 import { FileHandler } from "../util/file-handler/FileHandler"
 import { ChartRenderer } from "./ChartRenderer"
 import { ChartAudio } from "./audio/ChartAudio"
+import { metronomeClicks, planSongLoop, type SongLoop } from "./audio/Metronome"
 import { GameTypeRegistry } from "./gameTypes/GameTypeRegistry"
 import { NoteskinRegistry } from "./gameTypes/noteskin/NoteskinRegistry"
 import { GameplayStats } from "./play/GameplayStats"
@@ -65,6 +68,8 @@ import {
 import { requiresSMEData, serializeSMEData } from "./sm/SMEParser"
 import { Simfile } from "./sm/Simfile"
 import { Cached, TIMING_EVENT_NAMES, TimingEvent } from "./sm/TimingTypes"
+import type { ParityState } from "./stats/parity/ParityDataTypes"
+import { STAGE_LAYOUTS } from "./stats/parity/StageLayouts"
 
 const SNAPS = [1, 2, 3, 4, 6, 8, 12, 16, 24, 48, -1]
 const EFFECT_BUFFER = 0.2
@@ -159,8 +164,15 @@ export class ChartManager {
   private partialScroll = 0
   private noteFlashIndex = 0
   private assistTickIndex = 0
-  private lastMetronomeDivision = -1
-  private lastMetronomeMeasure = -1
+  private metronomeThrough?: number
+  private practicePlan?: {
+    chart: Chart
+    states?: ParityState[]
+    rate: number
+    visualEnd: number
+    motion?: DancerMotion
+    loop?: SongLoop
+  }
   private holdFlashes: HoldNotedataEntry[] = []
 
   private lastSong: string | null = null
@@ -372,7 +384,25 @@ export class ChartManager {
     setInterval(() => {
       if (!this.loadedSM || !this.loadedChart || !this.chartView) return
       const updateStart = performance.now()
-      const time = this.chartAudio.seek()
+      let time = this.chartAudio.seek()
+      const songEnd = Options.practice.enabled
+        ? this.chartAudio.getScheduledSongDuration()
+        : undefined
+      const loop =
+        Options.practice.loopSong && songEnd
+          ? this.getSongLoop(this.loadedChart, songEnd)
+          : undefined
+      if (loop && time >= loop.end - loop.lead) {
+        const period = loop.end - loop.start
+        const passes = 1 + Math.floor((time - (loop.end - loop.lead)) / period)
+        const shift = passes * period
+        this.chartAudio.repeatAt(time - shift)
+        // Preserve both the outgoing click's decay and any opening beat
+        // already queued by the lookahead. Carry timer lateness into the pass.
+        if (this.metronomeThrough !== undefined) this.metronomeThrough -= shift
+        time = this.time
+        this.setNoteIndex()
+      }
       if (this.chartAudio.isPlaying()) {
         // If digit keys are pressed, modify the current chart
         if (!this.holdEditing.every(x => !x)) {
@@ -416,9 +446,6 @@ export class ChartManager {
       }
 
       const notedata = this.loadedChart.getNotedata()
-      const songEnd = Options.practice.enabled
-        ? this.chartAudio.getScheduledSongDuration()
-        : undefined
       const canScheduleCues =
         songEnd === undefined || (songEnd > 0 && time < songEnd)
       if (this.chartAudio.isPlaying()) {
@@ -501,48 +528,32 @@ export class ChartManager {
           this.assistTickIndex++
         }
       }
-      // Play metronome
       if (
-        canScheduleCues &&
+        (canScheduleCues || loop) &&
         this.chartAudio.isPlaying() &&
         Options.audio.metronome &&
         Flags.assist
       ) {
-        const td = this.loadedChart.timingData
-        const offsetBeat = this.loadedChart.getBeatFromSeconds(
-          this.time + Options.play.effectOffset + EFFECT_BUFFER
-        )
-
-        const scheduledBeats = new Set()
-
-        const startMeasure = td.getBeatFromMeasure(this.lastMetronomeMeasure)
-        const divLength = td.getDivisionLength(startMeasure)
-        const startBeat = startMeasure + divLength * this.lastMetronomeDivision
-
-        const measureBeats = [
-          ...td.getMeasureBeats(startBeat, offsetBeat),
-        ].slice(1)
-        for (const [barBeat, isMeasure] of measureBeats) {
-          if (this.beat > barBeat) continue
-          const barSecond = td.getSecondsFromBeat(barBeat)
-          if (scheduledBeats.has(barSecond)) continue
-          scheduledBeats.add(barSecond)
-          const sound = isMeasure ? this.me_high : this.me_low
+        const lookahead = EFFECT_BUFFER * Options.audio.rate
+        const to = time + lookahead
+        const from = this.metronomeThrough ?? time
+        const offset = Options.play.effectOffset
+        for (const [second, downbeat] of metronomeClicks(
+          this.loadedChart.timingData,
+          (from < time - lookahead ? time : from) - offset,
+          to - offset,
+          loop
+        )) {
+          const sound = downbeat ? this.me_high : this.me_low
           sound.playAt(
-            barSecond + Options.play.effectOffset,
+            second + offset,
             this.time,
             Options.audio.rate,
-            songEnd,
+            loop ? undefined : songEnd,
             "ringOut"
           )
         }
-        if (measureBeats.length > 0) {
-          const lastBeat = measureBeats.at(-1)![0]
-          this.lastMetronomeMeasure = Math.floor(td.getMeasure(lastBeat))
-          this.lastMetronomeDivision = Math.round(
-            td.getDivisionOfMeasure(lastBeat)
-          )
-        }
+        this.metronomeThrough = to
       }
 
       // Update the game logic
@@ -567,6 +578,7 @@ export class ChartManager {
     }, 5)
 
     EventHandler.on("chartModified", () => {
+      this.practicePlan = undefined
       if (this.loadedChart) {
         this.setNoteIndex()
         EventHandler.emit("chartModifiedAfter")
@@ -574,6 +586,12 @@ export class ChartManager {
     })
 
     EventHandler.on("userOptionUpdated", (option: string) => {
+      if (option === "practice.loopSong") {
+        this.me_high.cancelPending()
+        this.me_low.cancelPending()
+        this.metronomeThrough = this.time
+        return
+      }
       if (
         option != "audio.rate" &&
         option != "play.effectOffset" &&
@@ -722,7 +740,7 @@ export class ChartManager {
     this._beat = beat
 
     this.setNoteIndex()
-    this.resetMetronomePosition()
+    this.metronomeThrough = this.time
   }
 
   get time() {
@@ -734,7 +752,7 @@ export class ChartManager {
     this.chartAudio.seek(time)
     this._beat = this.loadedChart.getBeatFromSeconds(time)
     this.setNoteIndex()
-    this.resetMetronomePosition()
+    this.metronomeThrough = this.time
   }
 
   /**
@@ -786,6 +804,8 @@ export class ChartManager {
       if (option == "No") await this.removeAutosaves()
     }
 
+    PracticeLoop.clear()
+    this.practicePlan = undefined
     // Destroy everything if no path specified
     if (!path) {
       this.smPath = ""
@@ -1167,15 +1187,80 @@ export class ChartManager {
     this.assistTick.stop()
     this.me_high.stop()
     this.me_low.stop()
-    this.resetMetronomePosition()
+    this.metronomeThrough = this.time
   }
 
-  private resetMetronomePosition() {
-    if (!this.loadedChart) return
-    const timing = this.loadedChart.timingData
-    const beat = this.beat
-    this.lastMetronomeMeasure = Math.floor(timing.getMeasure(beat))
-    this.lastMetronomeDivision = Math.floor(timing.getDivisionOfMeasure(beat))
+  // The transport and renderer use the same timed return, including when the
+  // dancer is hidden. Construct the plan only when its inputs change.
+  private getPracticePlan(chart: Chart, duration: number) {
+    const rate = Options.audio.rate
+    const states = chart.stats.parity?.states
+    const visualEnd =
+      duration > 0 ? (this.chartView?.getVisualTime(duration) ?? duration) : 0
+    let plan = this.practicePlan
+    if (
+      !plan ||
+      plan.chart !== chart ||
+      plan.states !== states ||
+      plan.rate !== rate ||
+      plan.visualEnd !== visualEnd
+    ) {
+      const layout = STAGE_LAYOUTS[chart.gameType.id]
+      plan = {
+        chart,
+        states,
+        rate,
+        visualEnd,
+        motion: layout
+          ? new DancerMotion(chart, layout, rate, visualEnd)
+          : undefined,
+      }
+      this.practicePlan = plan
+    }
+    return plan
+  }
+
+  getDancerMotion(chart: Chart) {
+    return this.getPracticePlan(chart, this.chartAudio.getSongLength()).motion
+  }
+
+  private getSongLoop(chart: Chart, duration: number) {
+    const plan = this.getPracticePlan(chart, duration)
+    if (!plan.loop) {
+      const lead = EFFECT_BUFFER * plan.rate
+      const offset = plan.visualEnd - duration
+      const first = Math.min(
+        plan.motion?.firstPreparation ?? 0,
+        plan.motion?.turn?.start ?? Infinity
+      )
+      const ready = Math.max(
+        duration,
+        chart.getLastSecond(),
+        (plan.motion?.restTime ?? 0) - offset
+      )
+      plan.loop = planSongLoop(
+        chart.timingData,
+        Number.isFinite(first) ? first - offset : 0,
+        ready,
+        lead
+      )
+    }
+    return plan.loop.end > plan.loop.start ? plan.loop : undefined
+  }
+
+  startSongLoop() {
+    const chart = this.loadedChart
+    if (!chart) return
+    const loop = this.getSongLoop(chart, this.chartAudio.getSongLength())
+    if (!loop) return
+    const time = this.time
+    const playing = this.chartAudio.isPlaying()
+    // Skip-to-start selects time zero or beat zero, whichever comes later.
+    const first = Math.max(0, chart.getSecondsFromBeat(0))
+    const atStart = Math.abs(time) < 0.001 || Math.abs(time - first) < 0.001
+    if ((!playing && atStart) || time >= loop.end - loop.lead)
+      this.time = loop.start - loop.lead
+    if (!playing) this.playPause()
   }
 
   private setNoteIndex() {
@@ -1216,7 +1301,10 @@ export class ChartManager {
     if (this.chartAudio.isPlaying()) {
       this.chartAudio.pause()
       this._beat = this.loadedChart?.getBeatFromSeconds(this.time) ?? 0
-    } else this.chartAudio.play()
+    } else {
+      this.metronomeThrough = this.time
+      this.chartAudio.play()
+    }
     EventHandler.emit("playStateChanged")
   }
 

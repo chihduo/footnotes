@@ -2,8 +2,11 @@ import { WaterfallManager } from "../gui/element/WaterfallManager"
 
 class SafeAudioBufferSourceNode extends AudioBufferSourceNode {
   private started = false
+  startTime = 0
   start(when?: number, offset?: number, duration?: number): void {
-    if (!this.started) super.start(when, offset, duration)
+    if (this.started) return
+    super.start(when, offset, duration)
+    this.startTime = when ?? 0
     this.started = true
   }
   stop(when?: number): void {
@@ -163,6 +166,12 @@ export class SchedulableSoundEffect {
       source.disconnect()
       this._sources = this._sources.filter(s => s != source)
     }
+  }
+
+  cancelPending() {
+    const now = this._audioContext.currentTime
+    for (const source of this._sources)
+      if (source.startTime > now) source.stop()
   }
 
   stop() {

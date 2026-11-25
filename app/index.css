@@ -1531,6 +1531,11 @@ body.practice .practice-hide {
   font-size: 0.875rem;
 }
 
+#status-widget .practice-song-loop:focus-visible {
+  outline: 2px solid var(--text-color);
+  outline-offset: -3px;
+}
+
 /* Links in the practice bar, like Songs, look like its buttons */
 #status-widget a.practice-button {
   display: flex;

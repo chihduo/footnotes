@@ -5,6 +5,7 @@ import { Flags } from "../../../util/Flags"
 import { useOption } from "../../../util/Hooks"
 import { Keybinds } from "../../../util/Keybinds"
 import { Options } from "../../../util/Options"
+import { PracticeLoop } from "../../../util/PracticeLoop"
 import { PracticeMode } from "../../../util/PracticeMode"
 import { ReactIcon } from "../../Icons"
 import { DropdownInput } from "../../inputs/DropdownInput"
@@ -17,6 +18,7 @@ export function PlaybackBar(props: {
   state: EditMode
 }) {
   const practice = useOption<boolean>("practice.enabled")
+  const loopSong = useOption<boolean>("practice.loopSong")
   const footing = useOption<string>("chart.parity.footingStyle")
   return (
     <div className="playback-bar">
@@ -77,6 +79,17 @@ export function PlaybackBar(props: {
           style={{ display: props.playing ? "none" : "block" }}
         />
       </button>
+      {practice && (
+        <button
+          type="button"
+          className={`practice-button practice-song-loop${loopSong ? " active" : ""}`}
+          aria-pressed={loopSong}
+          title="Repeat the whole song"
+          onClick={() => PracticeLoop.toggleSong(props.app)}
+        >
+          Loop
+        </button>
+      )}
       {!Flags.viewMode && Flags.recordMode && !practice && (
         <button
           tabIndex={-1}

@@ -2,7 +2,6 @@ import { Sprite, Texture } from "pixi.js"
 import { useEffect, useRef } from "react"
 import type { App } from "../../App"
 import type { Chart } from "../../chart/sm/Chart"
-import type { ParityState } from "../../chart/stats/parity/ParityDataTypes"
 import { STAGE_LAYOUTS } from "../../chart/stats/parity/StageLayouts"
 import { EventHandler } from "../../util/EventHandler"
 import { Flags } from "../../util/Flags"
@@ -14,7 +13,7 @@ import {
 } from "../../util/PracticeLayout"
 import { BaseTimelineWidget } from "../widget/timeline/BaseTimelineWidget"
 import { PAD_CENTER_FROM_TOP } from "./DancerFraming"
-import { DancerMotion } from "./DancerMotion"
+import type { DancerMotion } from "./DancerMotion"
 import { DancerScene } from "./DancerScene"
 import "./dancer.css"
 
@@ -79,10 +78,7 @@ export default function DancerStage({
     let texture: Texture | undefined
     let motion: DancerMotion | undefined
     let activeChart: Chart | undefined
-    let states: ParityState[] | undefined
     let lastTime = NaN
-    let songEnd = NaN
-    let rate = NaN
     let area: DancerArea | undefined
     let scale = 0
     let viewHeight = 0
@@ -173,6 +169,7 @@ export default function DancerStage({
         layer.hidden = true
         fastButton.hidden = true
         activeChart = undefined
+        motion = undefined
         return
       }
       layer.hidden = false
@@ -183,19 +180,10 @@ export default function DancerStage({
         scene.setLayout(layout)
         resizeScene()
       }
-      const duration = app.chartManager.chartAudio.getSongLength()
-      const visualEnd = duration > 0 ? chartView.getVisualTime(duration) : 0
-      if (
-        chart !== activeChart ||
-        states !== chart.stats.parity?.states ||
-        rate !== Options.audio.rate ||
-        songEnd !== visualEnd
-      ) {
+      const nextMotion = app.chartManager.getDancerMotion(chart)
+      if (nextMotion && nextMotion !== motion) {
         activeChart = chart
-        states = chart.stats.parity?.states
-        rate = Options.audio.rate
-        songEnd = visualEnd
-        motion = new DancerMotion(chart, layout, rate, songEnd)
+        motion = nextMotion
         fastButton.hidden = !practice || !motion.fastSteps.length
         count.textContent = "Fast steps (" + motion.fastSteps.length + ")"
         lastTime = NaN
@@ -208,6 +196,7 @@ export default function DancerStage({
       const pose = motion.sample(time)
       scene.draw(pose)
       if (!practice) return
+      const states = chart.stats.parity?.states
       const tip = !states
         ? "Calculating footing…"
         : states.length <= 2

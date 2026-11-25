@@ -8,6 +8,7 @@ const SAVE_BLACKLIST = [
   "chart.CMod",
   "play.timingCollection",
   "practice.enabled",
+  "practice.loopSong",
   // Retired floating-window preferences from the 2D practice layout.
   "practice.dancerPosition",
   "practice.dancerSize",
@@ -173,6 +174,7 @@ export class DefaultOptions {
   }
   static practice = {
     enabled: false,
+    loopSong: false,
     botHeight: 0.38,
     showDancer: true,
     stageCamera: [] as number[],

@@ -1,16 +1,27 @@
-import { App } from "../App"
+import type { App } from "../App"
 import { WaterfallManager } from "../gui/element/WaterfallManager"
 import { EventHandler } from "./EventHandler"
+import { Options } from "./Options"
 
-/**
- * A-B loop for dance practice. The Loop button marks the start of a section,
- * then its end, and playback repeats that section until the button is
- * clicked again.
- */
+/** Whole-song and A–B repeat controls for dance practice. */
 export class PracticeLoop {
   static startBeat: number | null = null
   static endBeat: number | null = null
   private static timer?: ReturnType<typeof setInterval>
+
+  static async toggleSong(app: App) {
+    const manager = app.chartManager
+    if (!manager.loadedChart) return
+    const enable = !Options.practice.loopSong
+    this.clear()
+    if (!enable) return
+    Options.practice.loopSong = true
+    const audio = manager.chartAudio
+    if (audio.getSongLength() === 0) await audio.loaded
+    if (manager.chartAudio !== audio || !Options.practice.loopSong) return
+    if (audio.getSongLength() === 0) Options.practice.loopSong = false
+    else manager.startSongLoop()
+  }
 
   static get looping() {
     return this.startBeat !== null && this.endBeat !== null
@@ -22,13 +33,14 @@ export class PracticeLoop {
   static next(app: App) {
     const chartManager = app.chartManager
     if (!chartManager.loadedChart) return
+    if (Options.practice.loopSong) Options.practice.loopSong = false
     const beat = Math.max(0, Math.round(chartManager.beat))
     if (this.startBeat === null) {
       this.startBeat = beat
     } else if (this.endBeat === null) {
       if (beat == this.startBeat) {
         WaterfallManager.create(
-          "Move to the end of the section, then click Loop again"
+          "Move to the end of the section, then click A–B loop again"
         )
         return
       }
@@ -43,6 +55,7 @@ export class PracticeLoop {
   }
 
   static clear() {
+    if (Options.practice.loopSong) Options.practice.loopSong = false
     if (this.timer) clearInterval(this.timer)
     this.timer = undefined
     if (this.startBeat === null && this.endBeat === null) return

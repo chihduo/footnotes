@@ -10,20 +10,16 @@ function formatTime(seconds: number) {
   return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`
 }
 
-// The practice Loop button: marks the start of a section, then its end, then
-// stops looping. It shows the section's times.
+// Show the start and end of the selected A–B section.
 export function PracticeLoopButton() {
   const [, setVersion] = useState(0)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const changed = () => setVersion(version => version + 1)
-    const songLoaded = () => PracticeLoop.clear()
     EventHandler.on("practiceLoopChanged", changed)
-    EventHandler.on("smLoaded", songLoaded)
     return () => {
       EventHandler.off("practiceLoopChanged", changed)
-      EventHandler.off("smLoaded", songLoaded)
     }
   }, [])
 
@@ -31,13 +27,13 @@ export function PracticeLoopButton() {
     if (ref.current)
       Keybinds.createKeybindTooltip(
         ref.current
-      )`Loop a section: click to mark its start, click again to mark its end, and click once more to stop looping`
+      )`Mark the start and end of a section to repeat it. Click again to stop looping`
   }, [])
 
   const chart = window.app.chartManager.loadedChart
   const time = (beat: number) =>
     formatTime(chart?.getSecondsFromBeat(beat) ?? 0)
-  let label = "Loop"
+  let label = "A–B loop"
   if (PracticeLoop.looping) {
     label = `${time(PracticeLoop.startBeat!)}–${time(PracticeLoop.endBeat!)}`
   } else if (PracticeLoop.startBeat !== null) {

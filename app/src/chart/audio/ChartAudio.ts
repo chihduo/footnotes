@@ -554,12 +554,15 @@ export class ChartAudio {
   rate(rate: number) {
     if (this._destroyed) return
     if (this._rate == rate) return
+    const position = this.seek()
     this._rate = rate
     if (!this._source) return
-    if (this._isPlaying)
-      this._playbackTime +=
-        (this._audioContext.currentTime - this._startTimestamp) *
-        this._source.playbackRate.value
+    if (this._isPlaying && position < 0) {
+      // The source's future start time was set at the old rate.
+      this.repeatAt(position)
+      return
+    }
+    this._playbackTime = position
     this._startTimestamp = this._audioContext.currentTime
     this._source.playbackRate.value = rate
   }
@@ -578,8 +581,7 @@ export class ChartAudio {
       this._source.start(
         Math.max(
           0,
-          this._audioContext.currentTime -
-            this._playbackTime / Options.audio.rate
+          this._audioContext.currentTime - this._playbackTime / this._rate
         ),
         Math.max(0, this._playbackTime)
       )
@@ -614,6 +616,14 @@ export class ChartAudio {
     } else {
       this._playbackTime = playbackTime
     }
+  }
+
+  /** Wrap a playing song clock without cancelling independently scheduled clicks. */
+  repeatAt(time: number) {
+    if (!this.isPlaying()) return
+    this._isPlaying = false
+    this._playbackTime = time
+    this.play()
   }
 
   /**
