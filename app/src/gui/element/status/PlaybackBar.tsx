@@ -82,12 +82,13 @@ export function PlaybackBar(props: {
       {practice && (
         <button
           type="button"
-          className={`practice-button practice-song-loop${loopSong ? " active" : ""}`}
+          className={`practice-song-loop${loopSong ? " active" : ""}`}
+          aria-label="Loop"
           aria-pressed={loopSong}
           title="Repeat the whole song"
           onClick={() => PracticeLoop.toggleSong(props.app)}
         >
-          Loop
+          <ReactIcon id="LOOP" width={24} height={24} />
         </button>
       )}
       {!Flags.viewMode && Flags.recordMode && !practice && (
